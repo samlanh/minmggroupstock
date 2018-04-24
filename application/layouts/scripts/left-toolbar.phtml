@@ -73,6 +73,8 @@
 	$url_chart_po =  array($this->url(array('module'=>'report','controller'=>'index','action'=>'pochart'),null, true), "MENU_REPORT_INDEX_POCHART");
 	$url_chart_so =  array($this->url(array('module'=>'report','controller'=>'index','action'=>'sochart'),null, true), "MENU_REPORT_INDEX_SOCHART");
 	$url_measure  = array($this->url(array('module'=>'product','controller'=>'measure','action'=>'index'),null, true), "MEASURE");
+	
+	$url_staff  = array($this->url(array('module'=>'product','controller'=>'staff','action'=>'index'),null, true), "STAFF");
 	$url_other  = array($this->url(array('module'=>'product','controller'=>'other','action'=>'index'),null, true), "OTHER");
 	$url_pricelevel = array($this->url(array('module'=>'product','controller'=>'pricelevel','action'=>'index'),null, true), "PRICE_LEVEL");
 	$module=$request->getModuleName();
@@ -162,6 +164,10 @@
             			<li>
 	            			<a href="<?php echo $url_measure[0]; ?>">
 							 <i class="icon-bulb"></i><?php echo $tr->translate($url_measure[1])?></a>
+	            		<li>
+	            		<li>
+	            			<a href="<?php echo $url_staff[0]; ?>">
+							 <i class="icon-bulb"></i><?php echo $tr->translate($url_staff[1])?></a>
 	            		<li>
 					</ul>
 				</li>
