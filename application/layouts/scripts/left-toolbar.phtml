@@ -8,6 +8,9 @@
 	
 	$url_pro_add =  array($this->url(array('module'=>'product','controller'=>'index','action'=>'add'),null, true), "ADD_NEW_PRODUCT");
 	$url_pro_list =  array($this->url(array('module'=>'product','controller'=>'index','action'=>'index'),null, true), "PRODUCT_LIST");
+	
+	$url_request_stocks =  array($this->url(array('module'=>'product','controller'=>'requeststock','action'=>'index'),null, true), "REQUEST_STOCK");
+	
 	$url_category =  array($this->url(array('module'=>'product','controller'=>'category','action'=>'index'),null, true), "PRODUCT_CATEGORY");
 	$url_brand = array($this->url(array('module'=>'product','controller'=>'brand','action'=>'index'),null, true), "BRAND_NAME");
 	$url_curr =  array($this->url(array('module'=>'product','controller'=>'current-stock','action'=>'index'),null, true), "MENU_PRODUCT_CURRENT_STOCK_INDEX");
@@ -106,6 +109,12 @@
 							<a href="<?php echo $url_pro_list[0]; ?>">
 							<i class="icon-bulb"></i><?php echo $tr->translate($url_pro_list[1])?></a>
 						</li>
+						
+						<li>
+							<a href="<?php echo $url_request_stocks[0]; ?>">
+							<i class="icon-bulb"></i><?php echo $tr->translate($url_request_stocks[1])?></a>
+						</li>
+						
 						<li>
 							<a href="<?php echo $url_damagedstock[0]; ?>">
 							<i class="icon-bulb"></i><?php echo $tr->translate($url_damagedstock[1])?></a>

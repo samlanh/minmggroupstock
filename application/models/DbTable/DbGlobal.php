@@ -792,6 +792,61 @@ class Application_Model_DbTable_DbGlobal extends Zend_Db_Table_Abstract
    		return $rows;
    	}
    }
+   
+   static function getCurrentLang(){
+   	$session_lang=new Zend_Session_Namespace('lang');
+   	if(!empty($session_lang->lang_id)){
+   		if ($session_lang->lang_id>2){
+   			return 2;
+   		}
+   		return $session_lang->lang_id;
+   	}else{
+   		return 2;
+   	}
+   }
+   
+   public function getVewOptoinTypeByTypes($type=null,$limit =null){
+   	$db = $this->getAdapter();
+   	$lang = $this->getCurrentLang();
+   	$array = array(1=>"name_en",2=>"name_kh");
+   	$sql="SELECT key_code as id,".$array[$lang]." AS name ,displayby FROM `tb_view` WHERE status =1 AND name_en!='' ";//just concate
+   	if($type!=null){
+   		$sql.=" AND type = $type ";
+   	}
+   	if($limit!=null){
+   		$sql.=" LIMIT $limit ";
+   	}
+   	$rows = $db->fetchAll($sql);
+   	return $rows;
+   }
+    
+   public function getRequestNo(){
+   	$this->_name='tb_staff_request';
+   	$db = $this->getAdapter();
+   	$sql=" SELECT id FROM $this->_name ORDER BY id DESC LIMIT 1 ";
+   	$acc_no = $db->fetchOne($sql);
+   	$new_acc_no= (int)$acc_no+1;
+   	$acc_no= strlen((int)$acc_no+1);
+   	$pre ='R';
+   	for($i = $acc_no;$i<4;$i++){
+   		$pre.='0';
+   	}
+   	return $pre.$new_acc_no;
+   }
+   
+   public function getStaffNo(){
+   	$this->_name='tb_staff';
+   	$db = $this->getAdapter();
+   	$sql=" SELECT id FROM $this->_name ORDER BY id DESC LIMIT 1 ";
+   	$acc_no = $db->fetchOne($sql);
+   	$new_acc_no= (int)$acc_no+1;
+   	$acc_no= strlen((int)$acc_no+1);
+   	$pre ="S";
+   	for($i = $acc_no;$i<4;$i++){
+   		$pre.='0';
+   	}
+   	return $pre.$new_acc_no;
+   }
    	
 }
 ?>

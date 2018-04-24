@@ -1,6 +1,6 @@
 <?php
 
-class Product_Model_DbTable_DbDamagedStock extends Zend_Db_Table_Abstract
+class Product_Model_DbTable_DbRequestStock extends Zend_Db_Table_Abstract
 {
 	protected $_name = "tb_product";
 	public function setName($name)
@@ -17,14 +17,15 @@ class Product_Model_DbTable_DbDamagedStock extends Zend_Db_Table_Abstract
 				  (SELECT p.`item_code` FROM `tb_product` AS p WHERE p.id=d.`pro_id` LIMIT 1) AS item_code,
 				  (SELECT p.`item_name` FROM `tb_product` AS p WHERE p.id=d.`pro_id` LIMIT 1) AS item_name,
 				  d.`cur_qty`,
-				  d.`qty_damaged`,
-				  d.`remain_qty`,
-				  (SELECT m.name FROM `tb_measure` AS m WHERE m.id=(SELECT p.measure_id FROM `tb_product` AS p WHERE p.id=d.`pro_id` LIMIT 1) LIMIT 1),
+				  d.`qty_adjust`,
+				  d.`defer_qty`,
+				  (d.`qty_adjust`-d.`cur_qty`) AS defer_qty,
+				  (SELECT m.name FROM `tb_measure` AS m WHERE m.id=(SELECT p.measure_id FROM `tb_product` AS p WHERE p.id=d.`pro_id` LIMIT 1) LIMIT 1) AS measure,
 				  (SELECT sl.name FROM `tb_sublocation` AS sl WHERE sl.id=d.`location_id`)AS location,
 				  d.`date`,
 				  (SELECT u.fullname FROM `tb_acl_user` AS u WHERE u.user_id=d.`user_id`) AS `user`
 				FROM
-				  `tb_product_damaged` AS d  WHERE d.`date` BETWEEN '".$start_date."' AND '".$end_date."'";
+				  `tb_product_adjust` AS d  WHERE d.`date` BETWEEN '".$start_date."' AND '".$end_date."'";
 		$where = '';
 		 		/*if($data["ad_search"]!=""){
 		 			$s_where=array();
@@ -62,21 +63,21 @@ class Product_Model_DbTable_DbDamagedStock extends Zend_Db_Table_Abstract
 							'qty_unit'		=>	$data["qty_unit_".$i],
 							'qty_per_unit'	=>	$data["qty_per_unit_".$i],
 							'qty_measure'	=>	$data["qty_measure_".$i],
-							'qty_damaged'	=>	$data["qty_".$i],
-							'remain_qty'	=>	$data["remain_qty_".$i],
+							'qty_adjust'	=>	$data["qty_".$i],
+							'defer_qty'	    =>	$data["remain_qty_".$i],
 							'date'			=>	date('Y-m-d'),
 							'remark'		=>	$data["remark_".$i],
 							'user_id'		=>	$result["user_id"],
 					);
-					$this->_name="tb_product_damaged";
+					$this->_name="tb_product_adjust";
 					$this->insert($arr);
 	
 					$rs = $this->getProductQtyById($data["pro_id_".$i],$data["from_loc"]);
 	
 					if(!empty($rs)){
 						$arr_p = array(
-								'qty'			=>	$data["remain_qty_".$i],
-								'damaged_qty'	=>	$rs["damaged_qty"]+$data["qty_".$i],
+								'qty'			=>	$data["qty_".$i],
+								//'damaged_qty'	=>	$rs["damaged_qty"]+$data["qty_".$i],
 						);
 						$this->_name="tb_prolocation";
 						$where = array('pro_id=?'=>$data["pro_id_".$i],"location_id=?"=>$data["from_loc"]);
@@ -85,8 +86,8 @@ class Product_Model_DbTable_DbDamagedStock extends Zend_Db_Table_Abstract
 						$arr_p = array(
 								'pro_id'			=>	$data["pro_id_".$i],
 								'location_id'		=>	$result["branch_id"],
-								'qty'				=>	$data["new_qty_".$i],
-								'damaged_qty'		=>	$data["qty_".$i],
+								'qty'				=>	$data["qty_".$i],
+								'damaged_qty'		=>	0,
 								'qty_warning'		=>	0,
 								'last_mod_userid'	=>	$result["user_id"],
 								'last_mod_date'		=>	date('Y-m-d'),
@@ -120,7 +121,7 @@ class Product_Model_DbTable_DbDamagedStock extends Zend_Db_Table_Abstract
 				FROM
 				  `tb_product` AS p,
 				  `tb_prolocation` AS pl 
-				WHERE p.`id` = pl.`pro_id` AND p.status=1 AND pl.`location_id`=".$result["branch_id"];
+				WHERE p.`id` = pl.`pro_id` AND p.status=1 ";
 		//$location = $db_globle->getAccessPermission('pl.`location_id`');
 		return $db->fetchAll($sql);
 	}
@@ -154,7 +155,6 @@ class Product_Model_DbTable_DbDamagedStock extends Zend_Db_Table_Abstract
 				  p.`qty_perunit` ,
 				  p.`item_code`,
 				  p.`unit_label`,
-				  p.price,
 				  (SELECT m.`name` FROM `tb_measure` AS m WHERE m.id=p.`measure_id` LIMIT 1) AS measure,
 				  (SELECT b.name FROM `tb_brand` AS b WHERE b.id=p.`brand_id`) AS brand,
 				  (SELECT c.name FROM `tb_category` AS c WHERE c.id = p.`cate_id`) AS category,
@@ -693,5 +693,15 @@ class Product_Model_DbTable_DbDamagedStock extends Zend_Db_Table_Abstract
 			$where=$this->getAdapter()->quoteInto('pro_id=?',$post['item_id_'.$i]);
 			$this->update($array,$where);
 		}
+	}
+	
+	function getAllStaffName(){
+		$db_globle = new Application_Model_DbTable_DbGlobal();
+		$user_info = new Application_Model_DbTable_DbGetUserInfo();
+		$result = $user_info->getUserInfo();
+		$db = $this->getAdapter();
+		$sql = "SELECT id,`staff_name` AS `name` FROM `tb_staff` WHERE STATUS=1 AND `staff_name`!=''";
+		$location = $db_globle->getAccessPermission('pl.`location_id`');
+		return $db->fetchAll($sql.$location);
 	}
 }
