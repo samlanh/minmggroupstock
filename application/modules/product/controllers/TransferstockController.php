@@ -33,8 +33,8 @@ public function init()
 				'end_date'		=>	date("Y-m-d"),
     		);
 		}
-   		$rows=$db->getAllRequestStock($data);
-   		$columns=array("TRANSFER_NO","TRANSFER_DTE","FROM_LOCATION","TO_LOCATION","TOTAL_QTY","NOTE","BY_USER","STATUS");
+   		$rows=$db->getAllTransferStock($data);
+   		$columns=array("TRANSFER_NO","TRANSFER_DTE","FROM_LOCATION","TO_LOCATION","TOTAL_QTY","NOTE","APPROVE","BY_USER","STATUS");
    		$link=array(
    				'module'=>'product','controller'=>'transferstock','action'=>'edit',
    		);
@@ -76,6 +76,9 @@ public function init()
 			}
 		}
 		$row=$db_request->getTransferById($id);
+		if($row['is_approve']==1){
+			Application_Form_FrmMessage::Sucessfull("Can not edit!!!", '/product/transferstock/');
+		}
 		$this->view->rows=$db_request->getTransferItemsbyId($id);
 		$frm = new Product_Form_FrmTransferStock();
 		Application_Model_Decorator::removeAllDecorator($frm);
@@ -101,5 +104,33 @@ public function init()
 			echo Zend_Json::encode($rs);
 			exit();
 		}
+	}
+	
+	public function viewAction()
+	{
+		$data = $this->getRequest()->getPost();
+		$list = new Application_Form_Frmlist();
+		$db = new Product_Model_DbTable_DbTransferStock();
+		$date =new Zend_Date();
+		if($this->getRequest()->isPost()){
+			$data = $this->getRequest()->getPost();
+			$data['start_date']=date("Y-m-d",strtotime($data['start_date']));
+			$data['end_date']=date("Y-m-d",strtotime($data['end_date']));
+		}else{
+			$data = array(
+					'ad_search'		=>	'',
+					'start_date'	=>	date("Y-m-d"),
+					'end_date'		=>	date("Y-m-d"),
+			);
+		}
+		$rows=$db->getAllTransferStock($data);
+		$columns=array("TRANSFER_NO","TRANSFER_DTE","FROM_LOCATION","TO_LOCATION","TOTAL_QTY","NOTE","APPROVE","BY_USER","STATUS");
+		$link=array(
+				'module'=>'product','controller'=>'transferstock','action'=>'edit',
+		);
+		$this->view->list=$list->getCheckList(0, $columns, $rows,array('transfer_no'=>$link,'transfer_date'=>$link,'location_name'=>$link));
+		$frm = new Product_Form_FrmTransferStock();
+		Application_Model_Decorator::removeAllDecorator($frm);
+		$this->view->formFilter = $frm->filter();
 	}
 }

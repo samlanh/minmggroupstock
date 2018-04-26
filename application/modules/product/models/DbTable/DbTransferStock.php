@@ -12,7 +12,7 @@ class Product_Model_DbTable_DbTransferStock extends Zend_Db_Table_Abstract
 		return Application_Model_DbTable_DbGlobal::GlobalgetUserId();
 	}
 	
-	function getAllRequestStock($data){
+	function getAllTransferStock($data){
 		$db = $this->getAdapter();
 		$db_globle = new Application_Model_DbTable_DbGlobal();
 		$start_date = date("Y-m-d",strtotime($data["start_date"]));
@@ -21,27 +21,24 @@ class Product_Model_DbTable_DbTransferStock extends Zend_Db_Table_Abstract
 			      (SELECT l.name FROM `tb_sublocation` AS l WHERE l.id=t.`from_location` AND l.status=1 LIMIT 1) AS location_name,
 			      (SELECT l.name FROM `tb_sublocation` AS l WHERE l.id=t.`to_location` AND l.status=1 LIMIT 1) AS to_location_name,
 			      (SELECT SUM(qty) FROM `rms_transferstock_detail` AS td WHERE t.id=td.transferid ) AS total_qty,
-			      t.note,(SELECT u.fullname FROM `tb_acl_user` AS u WHERE u.user_id=t.user_id LIMIT 1 )AS user_id,
+			      t.note,(SELECT v.name_en FROM `tb_view` AS v WHERE v.key_code=t.`is_approve` AND v.type=17 LIMIT 1) AS approve,
+			      (SELECT u.fullname FROM `tb_acl_user` AS u WHERE u.user_id=t.user_id LIMIT 1 )AS user_id,
 			      (SELECT v.name_en FROM `tb_view` AS v WHERE v.key_code=t.status LIMIT 1 )AS `status`
 			    FROM `rms_transferstock` AS t  ";
 				$from_date =(empty($data['start_date']))? '1': " t.transfer_date >= '".$data['start_date']." 00:00:00'";
 				$to_date = (empty($data['end_date']))? '1': " t.transfer_date <= '".$data['end_date']." 23:59:59'";
 				$where = " where ".$from_date." AND ".$to_date;
-// 		 		if($data["ad_search"]!=""){
-// 		 			$s_where=array();
-// 		 			$s_search=addslashes(trim($data['ad_search']));
-// 		 			$s_search = str_replace(' ', '', $s_search);
-// 		 			$s_where[]="REPLACE(sr.reques_no,' ','')   LIKE '%{$s_search}%'";
-// 		 			$s_where[]="REPLACE((SELECT s.staff_name FROM `tb_staff` AS s WHERE s.id=sr.`staff_id`),' ','')   LIKE '%{$s_search}%'";
-// 		 			$s_where[]="REPLACE((SELECT SUM(sd.`total_qty`) FROM `tb_staff_request_detail` AS sd WHERE sd.staff_request_id=sr.id AND sr.`status`=1),' ','')   LIKE '%{$s_search}%'";
-		 			
-// 		 			$where.=' AND ('.implode(' OR ', $s_where).')';
-// 		 		} 
+		 		if($data["ad_search"]!=""){
+		 			$s_where=array();
+		 			$s_search=addslashes(trim($data['ad_search']));
+		 			$s_search = str_replace(' ', '', $s_search);
+		 			$s_where[]="REPLACE(t.transfer_no,' ','')   LIKE '%{$s_search}%'";
+		 			$where.=' AND ('.implode(' OR ', $s_where).')';
+		 		} 
 // 		$location = $db_globle->getAccessPermission('m.`location_id`');
 		$order=' ORDER BY t.id DESC';
 		//echo $sql;
 		return $db->fetchAll($sql.$where.$order);
-			
 	}
 	
 	public function addTransferStock($data){
