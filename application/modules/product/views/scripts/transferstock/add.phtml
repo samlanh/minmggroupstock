@@ -26,7 +26,7 @@ $formFilter = $this->formFilter;
 					<div class="form-group">
 						<label class="col-md-2 control-label"><?php echo $tr->translate("TRANSFER_NO");?></label>
 						<div class="col-md-4">
-							<?php echo $formFilter->getElement('request_no');?>
+							<?php echo $formFilter->getElement('transfer_no');?>
 						</div>	
 						<label class="col-md-2 control-label"><?php echo $tr->translate("REQUEST_DATE");?></label>
 						<div class="col-md-4">
@@ -107,10 +107,14 @@ $formFilter = $this->formFilter;
 <script type="text/javascript">
 
 $('#frm_request').submit(function() {
-	var staff_id = $("#staff_id").val();
-    if(staff_id==''){
-        alert("<?php echo $tr->translate("SELECT_REQUEST_NAME");?>");
-        $('#staff_id').select2('open');
+    if($("#from_loc").val()==''){
+        alert("<?php echo $tr->translate("SELECT BRANCH");?>");
+        $('#from_loc').select2('open');
+        return false;
+    }
+    if($("#branch").val()=='' ){
+        alert("<?php echo $tr->translate("SELECT BRANCH");?>");
+        $('#branch').select2('open');
         return false;
     }
     var rowId = $('#identity').val();
@@ -163,8 +167,8 @@ function addNew(){
 			template+='<td style="white-space: nowrap;"><label id="lb_cu_qty_'+index+'"></label><input type="hidden" id="current_qty_'+index+'"  name="current_qty_'+index+'" value="'+data.qty+'" class="form-control"><input type="hidden" name="measure_'+index+'" id="measure_'+index+'" value="'+data.measure+'"/></td>'; 
 			template+='<td><input type="text" id="qty_unit_'+index+'" onKeyup="TotalQty('+index+')" name="qty_unit_'+index+'"  value="1" class="form-control"><input type="hidden" name="unit_label_'+index+'" id="unit_label_'+index+'" value="'+data.unit_label+'"/></td>'; 
 			template+='<input type="hidden" id="qty_per_unit_'+index+'" onKeyup="TotalQty('+index+')" name="qty_per_unit_'+index+'"  value="0" class="form-control"><input type="hidden" id="qty_measure_'+index+'" name="qty_measure_'+index+'" onKeyup="" value="'+data.qty_perunit+'" class="form-control">';
-			template+='<td style="white-space: nowrap;"><label id="lb_remain_'+index+'"></label><input type="hidden" id="remain_qty_'+index+'" name="remain_qty_'+index+'" class="form-control"><input type="hidden" name="qty_'+index+'" id="qty_'+index+'" value="0"/></td>';
-			template+='<input type="hidden" id="re_qty_'+index+'" onKeyup="TotalQty('+index+')" name="re_qty_'+index+'"  value="" class="form-control"><input type="hidden" name="cost_'+index+'" id="cost_'+index+'" value="'+data.price+'"/>'; 
+			template+='<td style="white-space: nowrap;"><label id="lb_remain_'+index+'"></label><input type="hidden" id="remain_qty_'+index+'" name="remain_qty_'+index+'" class="form-control"><input type="hidden" name="qty_'+index+'" id="qty_'+index+'" value="0"/><input type="hidden" name="cost_'+index+'" id="cost_'+index+'" value="'+data.price+'"/></td>';
+			template+='<input type="hidden" id="re_qty_'+index+'" onKeyup="TotalQty('+index+')" name="re_qty_'+index+'"  value="" class="form-control">'; 
 			template+='<td><input type="text" id="remark_'+index+'" name="remark_'+index+'" class="form-control"></td>';
 			template+='<td><button type="button" onClick="deleteRecord('+index+',1)" name="save_close" class="btn default"><?php echo $tr->translate("DELETE");?></button></td>';
 			template+='</tr>';
@@ -387,5 +391,19 @@ function addNewLocation(){
             $("#result").html('There is error while submit');
         }
     });
+}
+
+function checkBranch(){
+	if($("#from_loc").val()== $("#branch").val()){
+		$("#from_loc").val('');
+		$('#from_loc').select2('open');
+	}
+}
+
+function checklocation(){
+	if( $("#from_loc").val()== $("#branch").val()){
+		$("#branch").val('');
+		$('#branch').select2('open');
+	}
 }
 </script>

@@ -46,6 +46,7 @@ class Product_Form_FrmTransferStock extends Zend_Form
 		$from_loc = new Zend_Form_Element_Select("from_loc");
     	$from_loc->setAttribs(array(
     			'class'=>'form-control select2me',
+    			'onChange'=>'checkBranch()',
     	));
 		$opt = array(''=>$tr->translate("SELECT BRANCH"));
 		if(!empty($rs_from_loc)){
@@ -59,6 +60,7 @@ class Product_Form_FrmTransferStock extends Zend_Form
 		$branch = new Zend_Form_Element_Select("branch");
 		$branch->setAttribs(array(
 				'class'=>'form-control select2me',
+				'onChange'=>'checklocation()',
 		));
 		$opt = array(''=>$tr->translate("SELECT BRANCH"));
 		if(!empty($rs_from_loc)){
@@ -89,27 +91,24 @@ class Product_Form_FrmTransferStock extends Zend_Form
 		$receive_date ->setValue($date->get('M/d/Y'));
 		$this->addElement($receive_date);
 		
-		$request_no = New Zend_Form_Element_Text("request_no");
+		$transfer_no = New Zend_Form_Element_Text("transfer_no");
 		$re_cod=$db_global->getTransferStockNo();
-		$request_no->setAttribs(array(
+		$transfer_no->setAttribs(array(
 				'class'=>'form-control',
 				'readonly'=>true
 		));
-		$request_no->setValue($re_cod);
+		$transfer_no->setValue($re_cod);
 		
 		if($data != null) {
-			 
-// 			$from_loc	->setValue($data["branch_id"]);
-// 			$request_no	->setValue($data["reques_no"]);
-// 			$reques_date->setValue($data["date_request"]);
-// 			$receive_date->setValue($data["receive_date"]);
-// 			$purpose	->setValue($data["purpose"]);
-// 			$note	->setValue($data["note"]);
-// 			$status	->setValue($data["status"]);
+			$from_loc		->setValue($data["from_location"]);
+			$branch		    ->setValue($data["to_location"]);
+		    $transfer_no	->setValue($data["transfer_no"]);
+		    $reques_date	->setValue(date("m/d/Y",strtotime($data["transfer_date"])));
+			$note			->setValue($data["note"]);
+			$status			->setValue($data["status"]);
 		}
 		
-		$this->addElements(array($request_no,$branch,
-				$purpose,$request_no,$pro_name,$from_loc,$status));
+		$this->addElements(array($branch,$purpose,$transfer_no,$pro_name,$from_loc,$status));
 		return $this;
 	}
 	
@@ -133,7 +132,7 @@ class Product_Form_FrmTransferStock extends Zend_Form
 		if(!empty($re_start_date)){
 			$start_date ->setValue($re_start_date);
 		}else{
-			$start_date ->setValue($date->get('MM/d/Y'));
+			//$start_date ->setValue($date->get('MM/d/Y'));
 		}
 		
 		$end_date = New Zend_Form_Element_Text("end_date");

@@ -33,15 +33,12 @@ public function init()
 				'end_date'		=>	date("Y-m-d"),
     		);
 		}
-   
    		$rows=$db->getAllRequestStock($data);
-   		$columns=array("LOCATION","REQUEST_NO","REQUEST_NAME","TOTAL_QTY","REQUEST_DATE","RECEIVE_DTE","NOTE","BY_USER","STATUS");
-   		
-   		
+   		$columns=array("TRANSFER_NO","TRANSFER_DTE","FROM_LOCATION","TO_LOCATION","TOTAL_QTY","NOTE","BY_USER","STATUS");
    		$link=array(
-   				'module'=>'product','controller'=>'requeststock','action'=>'edit',
+   				'module'=>'product','controller'=>'transferstock','action'=>'edit',
    		);
-   		$this->view->list=$list->getCheckList(0, $columns, $rows,array('location_name'=>$link,'reques_no'=>$link,'staff_name'=>$link));
+   		$this->view->list=$list->getCheckList(0, $columns, $rows,array('transfer_no'=>$link,'transfer_date'=>$link,'location_name'=>$link));
    		$frm = new Product_Form_FrmTransferStock();
     	Application_Model_Decorator::removeAllDecorator($frm);
     	$this->view->formFilter = $frm->filter();
@@ -71,15 +68,15 @@ public function init()
 		if($this->getRequest()->isPost()){
 			$post=$this->getRequest()->getPost();
 			$post['id']=$id;
-			$db_result = $db_request->updateRequest($post);
+			$db_result = $db_request->updateTransfer($post);
 			if(isset($post["saveclose"])){
-				Application_Form_FrmMessage::Sucessfull("INSERT_SUCCESS", '/product/requeststock/');
+				Application_Form_FrmMessage::Sucessfull("UPDATE_SUCCESS", '/product/transferstock/');
 			}else{
-				Application_Form_FrmMessage::Sucessfull("INSERT_SUCCESS", '/product/requeststock/add');
+				Application_Form_FrmMessage::Sucessfull("UPDATE_SUCCESS", '/product/transferstock/');
 			}
 		}
-		$row=$db_request->getStaffRequestById($id);
-		$this->view->rows=$db_request->getStaffRequestItemsbyId($id);
+		$row=$db_request->getTransferById($id);
+		$this->view->rows=$db_request->getTransferItemsbyId($id);
 		$frm = new Product_Form_FrmTransferStock();
 		Application_Model_Decorator::removeAllDecorator($frm);
 		$this->view->formFilter = $frm->add($row);

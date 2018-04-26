@@ -2,7 +2,7 @@
 
 class Product_Model_DbTable_DbTransferStock extends Zend_Db_Table_Abstract
 {
-	protected $_name = "tb_product";
+	protected $_name = "rms_transferstock";
 	public function setName($name)
 	{
 		$this->_name=$name;
@@ -17,35 +17,34 @@ class Product_Model_DbTable_DbTransferStock extends Zend_Db_Table_Abstract
 		$db_globle = new Application_Model_DbTable_DbGlobal();
 		$start_date = date("Y-m-d",strtotime($data["start_date"]));
 		$end_date = date("Y-m-d",strtotime($data["end_date"]));
-		$sql ="SELECT sr.id,(SELECT l.name FROM `tb_sublocation` AS l WHERE l.id=sr.`branch_id` AND l.status=1 LIMIT 1) AS location_name,
-		        	sr.reques_no,(SELECT s.staff_name FROM `tb_staff` AS s WHERE s.id=sr.`staff_id` LIMIT 1) AS staff_name,
-		        	(SELECT SUM(sd.`total_qty`) FROM `tb_staff_request_detail` AS sd WHERE sd.staff_request_id=sr.id AND sr.`status`=1 LIMIT 1)AS qty,
-		            sr.date_request,sr.receive_date,sr.note,
-			        (SELECT u.fullname FROM `tb_acl_user` AS u WHERE u.user_id=sr.user_id LIMIT 1 )AS user_id,
-			        (SELECT v.name_en FROM `tb_view` AS v WHERE v.key_code=sr.status LIMIT 1 )AS `status`
-			     FROM `tb_staff_request` AS sr ";
-				$from_date =(empty($data['start_date']))? '1': " sr.date_request >= '".$data['start_date']." 00:00:00'";
-				$to_date = (empty($data['end_date']))? '1': " sr.date_request <= '".$data['end_date']." 23:59:59'";
+		$sql ="SELECT t.id,t.transfer_no,DATE_FORMAT(t.transfer_date, '%d-%b-%Y')AS transfer_date,
+			      (SELECT l.name FROM `tb_sublocation` AS l WHERE l.id=t.`from_location` AND l.status=1 LIMIT 1) AS location_name,
+			      (SELECT l.name FROM `tb_sublocation` AS l WHERE l.id=t.`to_location` AND l.status=1 LIMIT 1) AS to_location_name,
+			      (SELECT SUM(qty) FROM `rms_transferstock_detail` AS td WHERE t.id=td.transferid ) AS total_qty,
+			      t.note,(SELECT u.fullname FROM `tb_acl_user` AS u WHERE u.user_id=t.user_id LIMIT 1 )AS user_id,
+			      (SELECT v.name_en FROM `tb_view` AS v WHERE v.key_code=t.status LIMIT 1 )AS `status`
+			    FROM `rms_transferstock` AS t  ";
+				$from_date =(empty($data['start_date']))? '1': " t.transfer_date >= '".$data['start_date']." 00:00:00'";
+				$to_date = (empty($data['end_date']))? '1': " t.transfer_date <= '".$data['end_date']." 23:59:59'";
 				$where = " where ".$from_date." AND ".$to_date;
-		 		if($data["ad_search"]!=""){
-		 			$s_where=array();
-		 			$s_search=addslashes(trim($data['ad_search']));
-		 			$s_search = str_replace(' ', '', $s_search);
-		 			$s_where[]="REPLACE(sr.reques_no,' ','')   LIKE '%{$s_search}%'";
-		 			$s_where[]="REPLACE((SELECT s.staff_name FROM `tb_staff` AS s WHERE s.id=sr.`staff_id`),' ','')   LIKE '%{$s_search}%'";
-		 			$s_where[]="REPLACE((SELECT SUM(sd.`total_qty`) FROM `tb_staff_request_detail` AS sd WHERE sd.staff_request_id=sr.id AND sr.`status`=1),' ','')   LIKE '%{$s_search}%'";
+// 		 		if($data["ad_search"]!=""){
+// 		 			$s_where=array();
+// 		 			$s_search=addslashes(trim($data['ad_search']));
+// 		 			$s_search = str_replace(' ', '', $s_search);
+// 		 			$s_where[]="REPLACE(sr.reques_no,' ','')   LIKE '%{$s_search}%'";
+// 		 			$s_where[]="REPLACE((SELECT s.staff_name FROM `tb_staff` AS s WHERE s.id=sr.`staff_id`),' ','')   LIKE '%{$s_search}%'";
+// 		 			$s_where[]="REPLACE((SELECT SUM(sd.`total_qty`) FROM `tb_staff_request_detail` AS sd WHERE sd.staff_request_id=sr.id AND sr.`status`=1),' ','')   LIKE '%{$s_search}%'";
 		 			
-		 			$where.=' AND ('.implode(' OR ', $s_where).')';
-		 		} 
-		$location = $db_globle->getAccessPermission('m.`location_id`');
-		$order=' ORDER BY sr.id DESC';
+// 		 			$where.=' AND ('.implode(' OR ', $s_where).')';
+// 		 		} 
+// 		$location = $db_globle->getAccessPermission('m.`location_id`');
+		$order=' ORDER BY t.id DESC';
 		//echo $sql;
 		return $db->fetchAll($sql.$where.$order);
 			
 	}
 	
 	public function addTransferStock($data){
-		print_r($data);exit();
 		$db = $this->getAdapter();
 		$db->beginTransaction();
 		try{
@@ -53,16 +52,16 @@ class Product_Model_DbTable_DbTransferStock extends Zend_Db_Table_Abstract
 			$user_id = $this->getUserId();
 			$date =new Zend_Date();
 			$request = array(
-					'branch_id'		=>	$data["from_loc"],
-					'reques_no'		=>	$data["request_no"],
-					'staff_id'		=>	$data["staff_id"],
-					'date_request'	=>	date("Y-m-d",strtotime($data["reques_date"])),
-					'receive_date'	=>	date("Y-m-d",strtotime($data["receive_date"])),
-					'create_date'	=>	date("Y-m-d H:i:s"),
-					'purpose'		=>	$data["purpose"],
-					'note'			=>	$data["note"],
-					'status'		=>	$data["status"],
-					'user_id'		=>	$user_id,
+					'transfer_no'		=>	$data["transfer_no"],
+					'transfer_date'		=>	date("Y-m-d",strtotime($data["reques_date"])),
+					'create_date'		=>	date("Y-m-d H:i:s"),
+					'modify_date'		=>	date("Y-m-d H:i:s"),
+					'from_location'		=>	$data["from_loc"],
+					'to_location'		=>	$data["branch"],
+					'is_approve'		=>	0,
+					'note'				=>	$data["note"],
+					'status'			=>	$data["status"],
+					'user_id'			=>	$user_id,
 			);
 			$this->_name="rms_transferstock";
 			$transfer_id=$this->insert($request);
@@ -71,19 +70,12 @@ class Product_Model_DbTable_DbTransferStock extends Zend_Db_Table_Abstract
 				foreach($identitys as $i)
 				{
 					$arr = array(
-							'staff_request_id'=>$transfer_id,
+							'transferid'=>$transfer_id,
 							'pro_id'		=>	$data["pro_id_".$i],
 							'curr_qty'		=>	$data["current_qty_".$i],
-							'request_qty'	=>	$data["qty_unit_".$i],
-							'qty_per_unit'	=>	$data["qty_per_unit_".$i],
-							'total_qty'		=>	$data["qty_".$i],
-							'receive_qty'	=>	$data["re_qty_".$i],
-							'qty_perunit'	=>	$data["qty_measure_".$i],
-							'defer_qty'	    =>	$data["remain_qty_".$i],
-							'cost'	    	=>	$data["cost_".$i],
+							'qty'			=>	$data["qty_unit_".$i],
+							'cost'			=>	$data["cost_".$i],
 							'note'			=>	$data["remark_".$i],
-							'user_id'		=>	$user_id,
-							'status'		=>	$data["status"],
 					);
 					$this->_name="rms_transferstock_detail";
 					$this->insert($arr);
@@ -118,91 +110,45 @@ class Product_Model_DbTable_DbTransferStock extends Zend_Db_Table_Abstract
 		}
 	}
 	
-	public function updateRequest($data){
+	public function updateTransfer($data){
 		$db = $this->getAdapter();
 		$db->beginTransaction();
 		try{
 			$user_info = new Application_Model_DbTable_DbGetUserInfo();
 			$user_id = $this->getUserId();
 			$date =new Zend_Date();
-			///sum qty to stock 
-			$row_detail=$this->getStaffRequestDetail($data['id']);
-			if(!empty($row_detail)){
-				foreach($row_detail as $row){
-				    $rs = $this->getProductQtyById($row["pro_id"],$data["from_loc"]);
-				    //print_r($rs);exit();
-					if(!empty($rs)){
-						$arr_qty = array(
-								'qty'=>($rs['qty'])+($row["total_qty"]),
-						);
-						$this->_name="tb_prolocation";
-						$where = array('pro_id=?'=>$rs["pro_id"],"location_id=?"=>$rs["location_id"]);
-						$this->update($arr_qty, $where);
-					} 
-				}
-			}
-			
 			$request = array(
-					'branch_id'		=>	$data["from_loc"],
-					'reques_no'		=>	$data["request_no"],
-					'staff_id'		=>	$data["staff_id"],
-					'date_request'	=>	date("Y-m-d",strtotime($data["reques_date"])),
-					'receive_date'	=>	date("Y-m-d",strtotime($data["receive_date"])),
-					'create_date'	=>	date("Y-m-d H:i:s"),
-					'purpose'		=>	$data["purpose"],
-					'note'			=>	$data["note"],
-					'status'		=>	$data["status"],
-					'user_id'		=>	$user_id,
+					'transfer_no'		=>	$data["transfer_no"],
+					'transfer_date'		=>	date("Y-m-d",strtotime($data["reques_date"])),
+					'modify_date'		=>	date("Y-m-d H:i:s"),
+					'from_location'		=>	$data["from_loc"],
+					'to_location'		=>	$data["branch"],
+					'is_approve'		=>	0,
+					'note'				=>	$data["note"],
+					'status'			=>	$data["status"],
+					'user_id'			=>	$user_id,
 			);
-			$this->_name="tb_staff_request";
+			$this->_name="rms_transferstock";
 			$where=" id=".$data['id'];
 			$this->update($request, $where);
 			
-			
-			$sql = "DELETE FROM tb_staff_request_detail WHERE staff_request_id=".$data["id"];
+			$sql = "DELETE FROM rms_transferstock_detail WHERE transferid=".$data["id"];
 			$db->query($sql);
+			
 			if(!empty($data['identity'])){
 				$identitys = explode(',',$data['identity']);
 				foreach($identitys as $i)
 				{
 					$arr = array(
-							'staff_request_id'=>$data['id'],
+							'transferid'	=>  $data['id'],
 							'pro_id'		=>	$data["pro_id_".$i],
 							'curr_qty'		=>	$data["current_qty_".$i],
-							'request_qty'	=>	$data["qty_unit_".$i],
-							'qty_per_unit'	=>	$data["qty_per_unit_".$i],
-							'total_qty'		=>	$data["qty_".$i],
-							'receive_qty'	=>	$data["re_qty_".$i],
-							'qty_perunit'	=>	$data["qty_measure_".$i],
-							'defer_qty'	    =>	$data["remain_qty_".$i],
-							'cost'	    	=>	$data["cost_".$i],
+							'qty'			=>	$data["qty_unit_".$i],
+							'cost'			=>	$data["cost_".$i],
 							'note'			=>	$data["remark_".$i],
-							'user_id'		=>	$user_id,
-							'status'		=>	$data["status"],
 					);
-					$this->_name="tb_staff_request_detail";
+					$this->_name="rms_transferstock_detail";
 					$this->insert($arr);
-					$rs = $this->getProductQtyById($data["pro_id_".$i],$data["from_loc"]);
-					if(!empty($rs)){
-						$arr_p = array(
-								'qty'=>($rs['qty'])-($data["qty_".$i]),
-						);
-						$this->_name="tb_prolocation";
-						$where = array('pro_id=?'=>$data["pro_id_".$i],"location_id=?"=>$data["from_loc"]);
-						$this->update($arr_p, $where);
-					}else{
-						$arr_p = array(
-								'pro_id'			=>	$data["pro_id_".$i],
-								'location_id'		=>	$data["from_loc"],
-								'qty'				=>	$data["qty_".$i],
-								'damaged_qty'		=>	0,
-								'qty_warning'		=>	0,
-								'last_mod_userid'	=>	$user_id,
-								'last_mod_date'		=>	date('Y-m-d'),
-						);
-						$this->_name="tb_prolocation";
-						$this->insert($arr_p);
-					}
 				}
 			}
 			$db->commit();
@@ -314,22 +260,23 @@ class Product_Model_DbTable_DbTransferStock extends Zend_Db_Table_Abstract
 		return $db->fetchRow($sql.$location);
 	}
 	
-	function getStaffRequestById($id){
+	function getTransferById($id){
 		$db = $this->getAdapter();
-		$sql = " SELECT * FROM `tb_staff_request` WHERE id=$id";
+		$sql = " SELECT * FROM `rms_transferstock` WHERE id=$id";
 	  	return $db->fetchRow($sql);
 	}
 	
-	function getStaffRequestItemsbyId($id){
+	function getTransferItemsbyId($id){
 		$db = $this->getAdapter();
-		$sql = "SELECT  sd.*,(SELECT m.`name` FROM `tb_measure` AS m WHERE m.id=p.`measure_id` LIMIT 1) AS measure,
-        			p.`item_name` ,
+		$sql = "SELECT  td.*,(SELECT m.`name` FROM `tb_measure` AS m WHERE m.id=p.`measure_id` LIMIT 1) AS measure,
+			        p.`item_name` ,
 					p.`qty_perunit` ,
 					p.`item_code`,
 					p.`unit_label`
-        		FROM `tb_staff_request_detail` AS sd,`tb_product` AS p
-    			WHERE sd.`pro_id`=p.`id`
-    			AND sd.`staff_request_id`=$id";	
+					
+				FROM `rms_transferstock_detail` AS td,`tb_product` AS p
+				WHERE td.`pro_id`=p.`id`
+				AND td.`transferid`=$id";	
 		return $db->fetchAll($sql);
 	}
 	

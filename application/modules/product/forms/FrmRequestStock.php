@@ -162,7 +162,7 @@ class Product_Form_FrmRequestStock extends Zend_Form
 		if(!empty($re_start_date)){
 			$start_date ->setValue($re_start_date);
 		}else{
-			$start_date ->setValue($date->get('MM/d/Y'));
+			//$start_date ->setValue($date->get('MM/d/Y'));
 		}
 		
 		$end_date = New Zend_Form_Element_Text("end_date");

@@ -5,16 +5,15 @@ $url_cancel =  $this->url(array('module'=>'product','controller'=>'transferstock
 $url_getcurrentitem =  $this->url(array('module'=>'product','controller'=>'adjust-stock','action'=>'get-current-quantity'));
 $url_getProduct =  $this->url(array('module'=>'product','controller'=>'damagedstock','action'=>'get-product'),null,true);
 $formFilter = $this->formFilter;
-$rows=$this->rows;
  
 ?>
-<title><?php echo $tr->translate("REQUEST_STOCK");?></title>
+<title><?php echo $tr->translate("TRANSFER_STOCK");?></title>
 <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>-->
 <br/>
 <div class="portlet box blue">
 		<div class="portlet-title">
 				<div class="caption">
-					<i class="icon-home"></i><?php echo $tr->translate("REQUEST_STOCK");?>
+					<i class="icon-home"></i><?php echo $tr->translate("TRANSFER_STOCK");?>
 				</div>
 				<div class="caption pull-right">
 					<a href="<?php echo $url_cancel;?>" class="btn btn-bg blue  ">
@@ -26,53 +25,33 @@ $rows=$this->rows;
 			<form class="form-horizontal" method="post" action=""  id="frm_request">
 				<div class="form-body">	
 					<div class="form-group">
-						<label class="col-md-2 control-label"><?php echo $tr->translate("BRANCH");?></label>
+						<label class="col-md-2 control-label"><?php echo $tr->translate("TRANSFER_NO");?></label>
 						<div class="col-md-4">
-							<?php echo $formFilter->getElement('from_loc');?>
-						</div>
-						<label class="col-md-2 control-label"><?php echo $tr->translate("REQUEST_NO");?></label>
-						<div class="col-md-4">
-							<?php echo $formFilter->getElement('request_no');?>
+							<?php echo $formFilter->getElement('transfer_no');?>
 						</div>	
-					</div>
-					<div class="form-group">
-						<label class="col-md-2 control-label"><?php echo $tr->translate("REQUEST_NAME");?></label>
-						<div class="col-md-4">
-							<?php echo $formFilter->getElement('staff_id');?>
-						</div>
 						<label class="col-md-2 control-label"><?php echo $tr->translate("REQUEST_DATE");?></label>
 						<div class="col-md-4">
 							<?php echo $formFilter->getElement('reques_date');?>
 						</div>	
 					</div>
 					<div class="form-group">
-						<label class="col-md-2 control-label"><?php echo $tr->translate("STAFF_REQ_NO");?></label>
+						<label class="col-md-2 control-label"><?php echo $tr->translate("FROM_LOCATION");?></label>
 						<div class="col-md-4">
-							<?php echo $formFilter->getElement('request_staff_no');?>
+							<?php echo $formFilter->getElement('from_loc');?>
 						</div>
-						<label class="col-md-2 control-label"><?php echo $tr->translate("RECEIVE_DATE");?></label>
+						<label class="col-md-2 control-label"><?php echo $tr->translate("TO_LOCATION");?></label>
 						<div class="col-md-4">
-							<?php echo $formFilter->getElement('receive_date');?>
+							<?php echo $formFilter->getElement('branch');?>
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-md-2 control-label"><?php echo $tr->translate("POSITION");?></label>
+						<label class="col-md-2 control-label"><?php echo $tr->translate("NOTE");?></label>
 						<div class="col-md-4">
-							<?php echo $formFilter->getElement('positiont_text');?>
+							<?php echo $formFilter->getElement('note');?>
 						</div>
 						<label class="col-md-2 control-label"><?php echo $tr->translate("STATUS");?></label>
 						<div class="col-md-4">
 							<?php echo $formFilter->getElement('status');?>
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-md-2 control-label"><?php echo $tr->translate("PURPOSE");?></label>
-						<div class="col-md-4">
-							<?php echo $formFilter->getElement('purpose');?>
-						</div>
-						<label class="col-md-2 control-label"><?php echo $tr->translate("NOTE");?></label>
-						<div class="col-md-4">
-							<?php echo $formFilter->getElement('note');?>
 						</div>
 					</div>
 					<div class="portlet box blue">
@@ -98,9 +77,9 @@ $rows=$this->rows;
 												<th><?php echo $tr->translate("PRODUCT_NAME");?></th>
 												<th><?php echo $tr->translate("CURRENT_QTY");?></th>
 												<th><?php echo $tr->translate("REQUEST_QTY");?></th>
-												<th><?php echo $tr->translate("ADJUST_QTY_PER_UNIT");?></th>
-												<th><?php echo $tr->translate("ADJUST_TOTAL_QTY");?></th>
-												<th><?php echo $tr->translate("RECEIVE_QTY");?></th>
+												<!-- <th><?php echo $tr->translate("ADJUST_QTY_PER_UNIT");?></th> -->
+												<th><?php echo $tr->translate("TOTAL_QTY");?></th>
+												<!--<th><?php echo $tr->translate("RECEIVE_QTY");?></th> -->
 												<th><?php echo $tr->translate("REMARK");?></th>
 												<th><?php echo $tr->translate("ACTION");?></th>
 											</tr>
@@ -114,7 +93,7 @@ $rows=$this->rows;
 							</div>
 							
 							<div class="form-group">
-								<div  class="col-md-12 col-md-offset-5 col-md-8">
+								<div  class="col-md-12 col-md-offset-4 col-md-8">
 									<a href="<?php echo $this->baseUrl();?>/product/transferstock"><button type="button" class="btn red"><i class="fa fa-times"></i> <?php echo $tr->translate("EXIT")?></button></a>
 									<button type="submit" name="saveclose" value="saveclose" class="btn btn-primary" ><i class="glyphicon glyphicon-log-in"></i> <?php echo $tr->translate("SAVE_CLOSE")?></button>
 								</div>
@@ -127,10 +106,14 @@ $rows=$this->rows;
 <script type="text/javascript">
 
 $('#frm_request').submit(function() {
-	var staff_id = $("#staff_id").val();
-    if(staff_id==''){
-        alert("<?php echo $tr->translate("SELECT_REQUEST_NAME");?>");
-        $('#staff_id').select2('open');
+    if($("#from_loc").val()==''){
+        alert("<?php echo $tr->translate("SELECT BRANCH");?>");
+        $('#from_loc').select2('open');
+        return false;
+    }
+    if($("#branch").val()=='' ){
+        alert("<?php echo $tr->translate("SELECT BRANCH");?>");
+        $('#branch').select2('open');
         return false;
     }
     var rowId = $('#identity').val();
@@ -148,9 +131,7 @@ $('#frm_request').submit(function() {
 });
 
 jQuery(document).ready(function(){
-	//addRow();
-	setStaffInfo();
-	OldaddNew();
+	oldaddNew();
 });
 var index=0;
 url_get_qty = '<?php echo $this->url(array('module'=>'product','controller'=>'requeststock','action'=>'getproduct'))?>';
@@ -183,9 +164,9 @@ function addNew(){
 			template+='<td style="white-space: nowrap;">'+data.item_name+'<input type="hidden"  id="pro_id_'+index+'" name="pro_id_'+index+'" value="'+data.id+'" </td>';
 			template+='<td style="white-space: nowrap;"><label id="lb_cu_qty_'+index+'"></label><input type="hidden" id="current_qty_'+index+'"  name="current_qty_'+index+'" value="'+data.qty+'" class="form-control"><input type="hidden" name="measure_'+index+'" id="measure_'+index+'" value="'+data.measure+'"/></td>'; 
 			template+='<td><input type="text" id="qty_unit_'+index+'" onKeyup="TotalQty('+index+')" name="qty_unit_'+index+'"  value="1" class="form-control"><input type="hidden" name="unit_label_'+index+'" id="unit_label_'+index+'" value="'+data.unit_label+'"/></td>'; 
-			template+='<td><input type="text" id="qty_per_unit_'+index+'" onKeyup="TotalQty('+index+')" name="qty_per_unit_'+index+'"  value="0" class="form-control"><input type="hidden" id="qty_measure_'+index+'" name="qty_measure_'+index+'" onKeyup="" value="'+data.qty_perunit+'" class="form-control"></td>';
-			template+='<td style="white-space: nowrap;"><label id="lb_remain_'+index+'"></label><input type="hidden" id="remain_qty_'+index+'" name="remain_qty_'+index+'" class="form-control"><input type="hidden" name="qty_'+index+'" id="qty_'+index+'" value="0"/></td>';
-			template+='<td><input type="text" id="re_qty_'+index+'" onKeyup="TotalQty('+index+')" name="re_qty_'+index+'"  value="" class="form-control"><input type="hidden" name="cost_'+index+'" id="cost_'+index+'" value="'+data.price+'"/></td>'; 
+			template+='<input type="hidden" id="qty_per_unit_'+index+'" onKeyup="TotalQty('+index+')" name="qty_per_unit_'+index+'"  value="0" class="form-control"><input type="hidden" id="qty_measure_'+index+'" name="qty_measure_'+index+'" onKeyup="" value="'+data.qty_perunit+'" class="form-control">';
+			template+='<td style="white-space: nowrap;"><label id="lb_remain_'+index+'"></label><input type="hidden" id="remain_qty_'+index+'" name="remain_qty_'+index+'" class="form-control"><input type="hidden" name="qty_'+index+'" id="qty_'+index+'" value="0"/><input type="hidden" name="cost_'+index+'" id="cost_'+index+'" value="'+data.price+'"/></td>';
+			template+='<input type="hidden" id="re_qty_'+index+'" onKeyup="TotalQty('+index+')" name="re_qty_'+index+'"  value="" class="form-control">'; 
 			template+='<td><input type="text" id="remark_'+index+'" name="remark_'+index+'" class="form-control"></td>';
 			template+='<td><button type="button" onClick="deleteRecord('+index+',1)" name="save_close" class="btn default"><?php echo $tr->translate("DELETE");?></button></td>';
 			template+='</tr>';
@@ -207,18 +188,17 @@ function addNew(){
     });
 }
 
-function OldaddNew(){
-	<?php if(!empty($rows)) foreach ($rows As $rs){?> 
-	    index++;
-	 
+function oldaddNew(){
+	<?php if(!empty($this->rows)) foreach ($this->rows As $rs){?>
+	      index++;
 			template='<tr id="row_location_'+index+'">';
 			template+='<td>'+index+'</td>';
-			template+='<td style="white-space: nowrap;"> <label id="pro_name_'+index+'"></label><input type="hidden"  id="pro_id_'+index+'" name="pro_id_'+index+'" value=" " </td>';
-			template+='<td style="white-space: nowrap;"><label id="lb_cu_qty_'+index+'"></label><input type="hidden" id="current_qty_'+index+'"  name="current_qty_'+index+'" value=" " class="form-control"><input type="hidden" name="measure_'+index+'" id="measure_'+index+'" value=" "/></td>'; 
-			template+='<td><input type="text" id="qty_unit_'+index+'" onKeyup="TotalQty('+index+')" name="qty_unit_'+index+'"  value="1" class="form-control"><input type="hidden" name="unit_label_'+index+'" id="unit_label_'+index+'" value=" "/></td>'; 
-			template+='<td><input type="text" id="qty_per_unit_'+index+'" onKeyup="TotalQty('+index+')" name="qty_per_unit_'+index+'"  value="0" class="form-control"><input type="hidden" id="qty_measure_'+index+'" name="qty_measure_'+index+'" onKeyup="" value=" " class="form-control"></td>';
-			template+='<td style="white-space: nowrap;"><label id="lb_remain_'+index+'"></label><input type="hidden" id="remain_qty_'+index+'" name="remain_qty_'+index+'" class="form-control"><input type="hidden" name="qty_'+index+'" id="qty_'+index+'" value="0"/></td>';
-			template+='<td><input type="text" id="re_qty_'+index+'" onKeyup="TotalQty('+index+')" name="re_qty_'+index+'"  value="" class="form-control"><input type="hidden" name="cost_'+index+'" id="cost_'+index+'" value=" "/></td>'; 
+			template+='<td style="white-space: nowrap;"><label id="pro_name_'+index+'"></label><input type="hidden"  id="pro_id_'+index+'" name="pro_id_'+index+'" value=""/> </td>';
+			template+='<td style="white-space: nowrap;"><label id="lb_cu_qty_'+index+'"></label><input type="hidden" id="current_qty_'+index+'"  name="current_qty_'+index+'" value="" class="form-control"><input type="hidden" name="measure_'+index+'" id="measure_'+index+'" value=""/></td>'; 
+			template+='<td><input type="text" id="qty_unit_'+index+'" onKeyup="TotalQty('+index+')" name="qty_unit_'+index+'"  value="1" class="form-control"><input type="hidden" name="unit_label_'+index+'" id="unit_label_'+index+'" value=""/></td>'; 
+			template+='<input type="hidden" id="qty_per_unit_'+index+'" onKeyup="TotalQty('+index+')" name="qty_per_unit_'+index+'"  value="0" class="form-control"><input type="hidden" id="qty_measure_'+index+'" name="qty_measure_'+index+'" onKeyup="" value="" class="form-control">';
+			template+='<td style="white-space: nowrap;"><label id="lb_remain_'+index+'"></label><input type="hidden" id="remain_qty_'+index+'" name="remain_qty_'+index+'" class="form-control"><input type="hidden" name="qty_'+index+'" id="qty_'+index+'" value="0"/><input type="hidden" name="cost_'+index+'" id="cost_'+index+'" value=""/></td>';
+			template+='<input type="hidden" id="re_qty_'+index+'" onKeyup="TotalQty('+index+')" name="re_qty_'+index+'"  value="" class="form-control">'; 
 			template+='<td><input type="text" id="remark_'+index+'" name="remark_'+index+'" class="form-control"></td>';
 			template+='<td><button type="button" onClick="deleteRecord('+index+',1)" name="save_close" class="btn default"><?php echo $tr->translate("DELETE");?></button></td>';
 			template+='</tr>';
@@ -227,30 +207,27 @@ function OldaddNew(){
 				var identity = $('#identity').val();
 				$('#identity').val(identity+','+index);
 			} else {$('#identity').val(index);}
-			//diferQTY(index);
-			
+
 			$('#pro_id_'+index).val('<?php echo $rs['pro_id']?>');
 			$('#pro_name_'+index).text('<?php echo $rs['item_name']?>');
 			$('#current_qty_'+index).val('<?php echo $rs['curr_qty']?>');
-
-			$('#qty_unit_'+index).val('<?php echo $rs['request_qty']?>');
-			$('#qty_per_unit_'+index).val('<?php echo $rs['qty_per_unit']?>');
-			
-			$('#qty_measure_'+index).val('<?php echo $rs['qty_perunit']?>');
-			$('#remain_qty_'+index).val('<?php echo $rs['defer_qty']?>');
-			$('#qty_'+index).val('<?php echo $rs['total_qty']?>');
-
-			$('#re_qty_'+index).val('<?php echo $rs['receive_qty']?>');
 			$('#cost_'+index).val('<?php echo $rs['cost']?>');
 			$('#remark_'+index).val('<?php echo $rs['note']?>');
-			
 			$('#measure_'+index).val('<?php echo $rs['measure']?>');
-			$('#unit_label_'+index).val('<?php echo $rs['unit_label']?>');
+			$('#qty_unit_'+index).val('<?php echo $rs['qty']?>');
+			
+		//	$('#qty_per_unit_'+index).val('<?php //echo $rs['qty_per_unit']?>');
+		//	$('#qty_measure_'+index).val('<?php echo $rs['qty_perunit']?>');
+		//	$('#remain_qty_'+index).val('<?php //echo $rs['defer_qty']?>');
+		//	$('#qty_'+index).val('<?php //echo $rs['total_qty']?>');
+		//	$('#re_qty_'+index).val('<?php //echo $rs['receive_qty']?>');
+		//	$('#unit_label_'+index).val('<?php //echo $rs['unit_label']?>');
 			TotalQty(index);
 			qty = $('#current_qty_'+index).val();
 			cur_qty = fullMeanQty(index,qty);
 			document.getElementById("lb_cu_qty_"+index).innerHTML = cur_qty;
-       <?php }?>
+			
+      <?php }?>
 }
 	
 function fullMeanQty(index,qty){
@@ -454,5 +431,19 @@ function addNewLocation(){
             $("#result").html('There is error while submit');
         }
     });
+}
+
+function checkBranch(){
+	if($("#from_loc").val()== $("#branch").val()){
+		$("#from_loc").val('');
+		$('#from_loc').select2('open');
+	}
+}
+
+function checklocation(){
+	if( $("#from_loc").val()== $("#branch").val()){
+		$("#branch").val('');
+		$('#branch').select2('open');
+	}
 }
 </script>

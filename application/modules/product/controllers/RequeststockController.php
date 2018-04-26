@@ -73,9 +73,9 @@ public function init()
 			$post['id']=$id;
 			$db_result = $db_request->updateRequest($post);
 			if(isset($post["saveclose"])){
-				Application_Form_FrmMessage::Sucessfull("INSERT_SUCCESS", '/product/requeststock/');
+				Application_Form_FrmMessage::Sucessfull("UPDATE_SUCCESS", '/product/requeststock/');
 			}else{
-				Application_Form_FrmMessage::Sucessfull("INSERT_SUCCESS", '/product/requeststock/add');
+				Application_Form_FrmMessage::Sucessfull("UPDATE_SUCCESS", '/product/requeststock/');
 			}
 		}
 		$row=$db_request->getStaffRequestById($id);
