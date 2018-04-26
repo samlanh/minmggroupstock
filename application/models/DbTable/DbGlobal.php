@@ -847,6 +847,20 @@ class Application_Model_DbTable_DbGlobal extends Zend_Db_Table_Abstract
    	}
    	return $pre.$new_acc_no;
    }
+   
+   public function getTransferStockNo(){
+   	$this->_name='rms_transferstock';
+   	$db = $this->getAdapter();
+   	$sql=" SELECT id FROM $this->_name ORDER BY id DESC LIMIT 1 ";
+   	$acc_no = $db->fetchOne($sql);
+   	$new_acc_no= (int)$acc_no+1;
+   	$acc_no= strlen((int)$acc_no+1);
+   	$pre ='T';
+   	for($i = $acc_no;$i<4;$i++){
+   		$pre.='0';
+   	}
+   	return $pre.$new_acc_no;
+   }
    	
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-class Product_RequeststockController extends Zend_Controller_Action
+class Product_TransferstockController extends Zend_Controller_Action
 {
 	const REDIRECT_URL_ADD ='/product/damagredstock/add';
 	const REDIRECT_URL_ADD_CLOSE ='/product/damagredstock/';
@@ -20,7 +20,7 @@ public function init()
    	{
    		$data = $this->getRequest()->getPost();
    		$list = new Application_Form_Frmlist();
-   		$db = new Product_Model_DbTable_DbRequestStock();
+   		$db = new Product_Model_DbTable_DbTransferStock();
 		$date =new Zend_Date();
    		if($this->getRequest()->isPost()){   
     		$data = $this->getRequest()->getPost();
@@ -42,7 +42,7 @@ public function init()
    				'module'=>'product','controller'=>'requeststock','action'=>'edit',
    		);
    		$this->view->list=$list->getCheckList(0, $columns, $rows,array('location_name'=>$link,'reques_no'=>$link,'staff_name'=>$link));
-   		$frm = new Product_Form_FrmRequestStock();
+   		$frm = new Product_Form_FrmTransferStock();
     	Application_Model_Decorator::removeAllDecorator($frm);
     	$this->view->formFilter = $frm->filter();
    	}
@@ -51,15 +51,15 @@ public function init()
     {   
     	if($this->getRequest()->isPost()){   
     		$post=$this->getRequest()->getPost();
-    		$db_request= new Product_Model_DbTable_DbRequestStock();
-    		$db_result = $db_request->addRequest($post);
+    		$db_request= new Product_Model_DbTable_DbTransferStock();
+    		$db_result = $db_request->addTransferStock($post);
     		if(isset($post["saveclose"])){
-    			Application_Form_FrmMessage::Sucessfull("INSERT_SUCCESS", '/product/requeststock/');
+    			Application_Form_FrmMessage::Sucessfull("INSERT_SUCCESS", '/product/transferstock/');
     		}else{
-				Application_Form_FrmMessage::Sucessfull("INSERT_SUCCESS", '/product/requeststock/add');
+				Application_Form_FrmMessage::Sucessfull("INSERT_SUCCESS", '/product/transferstock/add');
 			}
     	}
-    	$frm = new Product_Form_FrmRequestStock();
+    	$frm = new Product_Form_FrmTransferStock();
     	Application_Model_Decorator::removeAllDecorator($frm);
     	$this->view->formFilter = $frm->add();
 	}
@@ -67,7 +67,7 @@ public function init()
 	public function editAction()
 	{
 		$id=$this->getRequest()->getParam('id');
-		$db_request= new Product_Model_DbTable_DbRequestStock();
+		$db_request= new Product_Model_DbTable_DbTransferStock();
 		if($this->getRequest()->isPost()){
 			$post=$this->getRequest()->getPost();
 			$post['id']=$id;
@@ -80,7 +80,7 @@ public function init()
 		}
 		$row=$db_request->getStaffRequestById($id);
 		$this->view->rows=$db_request->getStaffRequestItemsbyId($id);
-		$frm = new Product_Form_FrmRequestStock();
+		$frm = new Product_Form_FrmTransferStock();
 		Application_Model_Decorator::removeAllDecorator($frm);
 		$this->view->formFilter = $frm->add($row);
 	}
@@ -98,7 +98,7 @@ public function init()
  
 	public function getStaffinfoAction(){
 		if($this->getRequest()->isPost()) {
-			$db = new Product_Model_DbTable_DbRequestStock();
+			$db = new Product_Model_DbTable_DbTransferStock();
 			$data = $this->getRequest()->getPost();
 			$rs = $db->getAllStafInfo($data["staff_id"]);
 			echo Zend_Json::encode($rs);

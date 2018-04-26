@@ -1,6 +1,6 @@
 <?php
 
-class Product_Model_DbTable_DbRequestStock extends Zend_Db_Table_Abstract
+class Product_Model_DbTable_DbTransferStock extends Zend_Db_Table_Abstract
 {
 	protected $_name = "tb_product";
 	public function setName($name)
@@ -44,7 +44,8 @@ class Product_Model_DbTable_DbRequestStock extends Zend_Db_Table_Abstract
 			
 	}
 	
-	public function addRequest($data){
+	public function addTransferStock($data){
+		print_r($data);exit();
 		$db = $this->getAdapter();
 		$db->beginTransaction();
 		try{
@@ -63,14 +64,14 @@ class Product_Model_DbTable_DbRequestStock extends Zend_Db_Table_Abstract
 					'status'		=>	$data["status"],
 					'user_id'		=>	$user_id,
 			);
-			$this->_name="tb_staff_request";
-			$reques_id=$this->insert($request);
+			$this->_name="rms_transferstock";
+			$transfer_id=$this->insert($request);
 			if(!empty($data['identity'])){
 				$identitys = explode(',',$data['identity']);
 				foreach($identitys as $i)
 				{
 					$arr = array(
-							'staff_request_id'=>$reques_id,
+							'staff_request_id'=>$transfer_id,
 							'pro_id'		=>	$data["pro_id_".$i],
 							'curr_qty'		=>	$data["current_qty_".$i],
 							'request_qty'	=>	$data["qty_unit_".$i],
@@ -84,29 +85,29 @@ class Product_Model_DbTable_DbRequestStock extends Zend_Db_Table_Abstract
 							'user_id'		=>	$user_id,
 							'status'		=>	$data["status"],
 					);
-					$this->_name="tb_staff_request_detail";
+					$this->_name="rms_transferstock_detail";
 					$this->insert($arr);
-					$rs = $this->getProductQtyById($data["pro_id_".$i],$data["from_loc"]);
-					if(!empty($rs)){
-						$arr_p = array(
-							'qty'=>($rs['qty'])-($data["qty_".$i]),
-						);
-						$this->_name="tb_prolocation";
-						$where = array('pro_id=?'=>$data["pro_id_".$i],"location_id=?"=>$data["from_loc"]);
-						$this->update($arr_p, $where);
-					}else{
-						$arr_p = array(
-								'pro_id'			=>	$data["pro_id_".$i],
-								'location_id'		=>	$data["from_loc"],
-								'qty'				=>	$data["qty_".$i],
-								'damaged_qty'		=>	0,
-								'qty_warning'		=>	0,
-								'last_mod_userid'	=>	$user_id,
-								'last_mod_date'		=>	date('Y-m-d'),
-						);
-						$this->_name="tb_prolocation";
-						$this->insert($arr_p);
-					}
+				/*			$rs = $this->getProductQtyById($data["pro_id_".$i],$data["from_loc"]);
+							if(!empty($rs)){
+								$arr_p = array(
+									'qty'=>($rs['qty'])-($data["qty_".$i]),
+								);
+								$this->_name="tb_prolocation";
+								$where = array('pro_id=?'=>$data["pro_id_".$i],"location_id=?"=>$data["from_loc"]);
+								$this->update($arr_p, $where);
+							}else{
+								$arr_p = array(
+										'pro_id'			=>	$data["pro_id_".$i],
+										'location_id'		=>	$data["from_loc"],
+										'qty'				=>	$data["qty_".$i],
+										'damaged_qty'		=>	0,
+										'qty_warning'		=>	0,
+										'last_mod_userid'	=>	$user_id,
+										'last_mod_date'		=>	date('Y-m-d'),
+								);
+								$this->_name="tb_prolocation";
+								$this->insert($arr_p);
+							}*/
 				}
 			}
 			$db->commit();

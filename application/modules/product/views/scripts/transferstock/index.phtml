@@ -1,16 +1,16 @@
 <?php 
 $tr = Application_Form_FrmLanguages::getCurrentlanguage();
 ?>
-<title><?php echo $tr->translate("REQUEST_STOCK");?></title>
+<title><?php echo $tr->translate("TRANSFER_STOCK");?></title>
 <?php 
-	$url_new = $this->url(array('module'=>'product','controller'=>'requeststock','action'=>'add',));
+	$url_new = $this->url(array('module'=>'product','controller'=>'transferstock','action'=>'add',));
 	//$url_delete = $this->url(array('module'=>'product','controller'=>'index','action'=>'delete-product',));
 	$formFilter = $this->formFilter;
 ?>
 <div class="portlet box blue">
 			<div class="portlet-title">
 				<div class="caption">
-					<i class="fa fa-globe"></i><?php echo $tr->translate("REQUEST_STOCK");?>
+					<i class="fa fa-globe"></i><?php echo $tr->translate("TRANSFER_STOCK");?>
 				</div>
 				<div class="caption pull-right">
 					<a href="<?php echo $url_new;?>" class="btn btn-bg blue  ">

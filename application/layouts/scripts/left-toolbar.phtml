@@ -10,6 +10,7 @@
 	$url_pro_list =  array($this->url(array('module'=>'product','controller'=>'index','action'=>'index'),null, true), "PRODUCT_LIST");
 	
 	$url_request_stocks =  array($this->url(array('module'=>'product','controller'=>'requeststock','action'=>'index'),null, true), "REQUEST_STOCK");
+	$url_transfer_stocks =  array($this->url(array('module'=>'product','controller'=>'transferstock','action'=>'index'),null, true), "TRANSFER_STOCK");
 	
 	$url_category =  array($this->url(array('module'=>'product','controller'=>'category','action'=>'index'),null, true), "PRODUCT_CATEGORY");
 	$url_brand = array($this->url(array('module'=>'product','controller'=>'brand','action'=>'index'),null, true), "BRAND_NAME");
@@ -115,6 +116,11 @@
 						<li>
 							<a href="<?php echo $url_request_stocks[0]; ?>">
 							<i class="icon-bulb"></i><?php echo $tr->translate($url_request_stocks[1])?></a>
+						</li>
+						
+						<li>
+							<a href="<?php echo $url_transfer_stocks[0]; ?>">
+							<i class="icon-bulb"></i><?php echo $tr->translate($url_transfer_stocks[1])?></a>
 						</li>
 						
 						<li>

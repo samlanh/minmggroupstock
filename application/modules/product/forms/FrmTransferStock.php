@@ -1,5 +1,5 @@
 <?php 
-class Product_Form_FrmRequestStock extends Zend_Form
+class Product_Form_FrmTransferStock extends Zend_Form
 {
 	public function init()
     {
@@ -28,20 +28,6 @@ class Product_Form_FrmRequestStock extends Zend_Form
 		}
 		$pro_name->setMultiOptions($opt);
 		
-		$staff_id =new Zend_Form_Element_Select("staff_id");
-		$staff_id->setAttribs(array(
-				'class'=>'form-control select2me',
-				'onChange'=>'setStaffInfo();'
-		));
-		$opt= array(''=>$tr->translate("SELECT_REQUEST_NAME"));
-		$row_staff= $db->getAllStaffName();
-		if(!empty($row_staff)){
-			foreach ($row_staff as $rs){
-				$opt[$rs["id"]] = $rs["name"];
-			}
-		}
-		$staff_id->setMultiOptions($opt);
-		
 		$status =new Zend_Form_Element_Select("status");
 		$status->setAttribs(array(
 				'class'=>'form-control select2me',
@@ -61,7 +47,6 @@ class Product_Form_FrmRequestStock extends Zend_Form
     	$from_loc->setAttribs(array(
     			'class'=>'form-control select2me',
     	));
-		
 		$opt = array(''=>$tr->translate("SELECT BRANCH"));
 		if(!empty($rs_from_loc)){
     		foreach ($rs_from_loc as $rs){
@@ -71,31 +56,18 @@ class Product_Form_FrmRequestStock extends Zend_Form
     	$from_loc->setMultiOptions($opt);
 		$from_loc->setValue($result["branch_id"]);
 		
-		$request_staff_no =new Zend_Form_Element_Text("request_staff_no");
-		$request_staff_no->setAttribs(array(
-				'class'=>'form-control',
-				'readonly'=>true
-		));
-		
-		$position_text =new Zend_Form_Element_Text("positiont_text");
-		$position_text->setAttribs(array(
-				'class'=>'form-control',
-				'readonly'=>true
-		));
-		
-		$position =new Zend_Form_Element_Select("position");
-		$position->setAttribs(array(
+		$branch = new Zend_Form_Element_Select("branch");
+		$branch->setAttribs(array(
 				'class'=>'form-control select2me',
-				'readOnly'=>true
 		));
-		$opt=  array(''=>$tr->translate("SELECT_POSIONT"));
-		$row_pos= $db_global->getVewOptoinTypeByTypes(16);
-		if(!empty($row_pos)){
-			foreach ($row_pos as $rs){
+		$opt = array(''=>$tr->translate("SELECT BRANCH"));
+		if(!empty($rs_from_loc)){
+			foreach ($rs_from_loc as $rs){
 				$opt[$rs["id"]] = $rs["name"];
 			}
 		}
-		$position->setMultiOptions($opt);
+		$branch->setMultiOptions($opt);
+		//$branch->setValue($result["branch_id"]);
 		
 		$purpose = new Zend_Form_Element_Textarea('purpose');
 		$purpose->setAttribs(array("class"=>'form-control',"rows"=>2));
@@ -118,7 +90,7 @@ class Product_Form_FrmRequestStock extends Zend_Form
 		$this->addElement($receive_date);
 		
 		$request_no = New Zend_Form_Element_Text("request_no");
-		$re_cod=$db_global->getRequestNo();
+		$re_cod=$db_global->getTransferStockNo();
 		$request_no->setAttribs(array(
 				'class'=>'form-control',
 				'readonly'=>true
@@ -127,18 +99,17 @@ class Product_Form_FrmRequestStock extends Zend_Form
 		
 		if($data != null) {
 			 
-			$from_loc	->setValue($data["branch_id"]);
-			$request_no	->setValue($data["reques_no"]);
-			$staff_id	->setValue($data["staff_id"]);
-			$reques_date->setValue($data["date_request"]);
-			$receive_date->setValue($data["receive_date"]);
-			$purpose	->setValue($data["purpose"]);
-			$note	->setValue($data["note"]);
-			$status	->setValue($data["status"]);
+// 			$from_loc	->setValue($data["branch_id"]);
+// 			$request_no	->setValue($data["reques_no"]);
+// 			$reques_date->setValue($data["date_request"]);
+// 			$receive_date->setValue($data["receive_date"]);
+// 			$purpose	->setValue($data["purpose"]);
+// 			$note	->setValue($data["note"]);
+// 			$status	->setValue($data["status"]);
 		}
 		
-		$this->addElements(array($position_text,$request_staff_no,$request_no,$position,
-				$purpose,$staff_id,$position,$request_no,$pro_name,$from_loc,$status));
+		$this->addElements(array($request_no,$branch,
+				$purpose,$request_no,$pro_name,$from_loc,$status));
 		return $this;
 	}
 	

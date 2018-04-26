@@ -5,6 +5,8 @@ $url_cancel =  $this->url(array('module'=>'product','controller'=>'requeststock'
 $url_getcurrentitem =  $this->url(array('module'=>'product','controller'=>'adjust-stock','action'=>'get-current-quantity'));
 $url_getProduct =  $this->url(array('module'=>'product','controller'=>'damagedstock','action'=>'get-product'),null,true);
 $formFilter = $this->formFilter;
+$rows=$this->rows;
+ 
 ?>
 <title><?php echo $tr->translate("REQUEST_STOCK");?></title>
 <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>-->
@@ -112,11 +114,9 @@ $formFilter = $this->formFilter;
 							</div>
 							
 							<div class="form-group">
-								<div  class="col-md-12 col-md-offset-4 col-md-8">
+								<div  class="col-md-12 col-md-offset-5 col-md-8">
 									<a href="<?php echo $this->baseUrl();?>/product/requeststock"><button type="button" class="btn red"><i class="fa fa-times"></i> <?php echo $tr->translate("EXIT")?></button></a>
 									<button type="submit" name="saveclose" value="saveclose" class="btn btn-primary" ><i class="glyphicon glyphicon-log-in"></i> <?php echo $tr->translate("SAVE_CLOSE")?></button>
-									<button type="submit" name="btnsavenew" class="btn btn-primary"><i class="fa fa-save"></i> <?php echo $tr->translate("SAVE_NEW")?> </button>
-									
 								</div>
 							</div>
 					</div>
@@ -149,11 +149,12 @@ $('#frm_request').submit(function() {
 
 jQuery(document).ready(function(){
 	//addRow();
+	setStaffInfo();
+	OldaddNew();
 });
 var index=0;
 url_get_qty = '<?php echo $this->url(array('module'=>'product','controller'=>'requeststock','action'=>'getproduct'))?>';
 function addNew(){
-	
 	id = $("#pro_name").val();
 	location_ids = $("#from_loc").val();
 	//alert('<?php echo $url_getProduct;?>');
@@ -204,6 +205,52 @@ function addNew(){
             //$("#result").html('There is error while submit');
         }
     });
+}
+
+function OldaddNew(){
+	<?php if(!empty($rows)) foreach ($rows As $rs){?> 
+	    index++;
+	 
+			template='<tr id="row_location_'+index+'">';
+			template+='<td>'+index+'</td>';
+			template+='<td style="white-space: nowrap;"> <label id="pro_name_'+index+'"></label><input type="hidden"  id="pro_id_'+index+'" name="pro_id_'+index+'" value=" " </td>';
+			template+='<td style="white-space: nowrap;"><label id="lb_cu_qty_'+index+'"></label><input type="hidden" id="current_qty_'+index+'"  name="current_qty_'+index+'" value=" " class="form-control"><input type="hidden" name="measure_'+index+'" id="measure_'+index+'" value=" "/></td>'; 
+			template+='<td><input type="text" id="qty_unit_'+index+'" onKeyup="TotalQty('+index+')" name="qty_unit_'+index+'"  value="1" class="form-control"><input type="hidden" name="unit_label_'+index+'" id="unit_label_'+index+'" value=" "/></td>'; 
+			template+='<td><input type="text" id="qty_per_unit_'+index+'" onKeyup="TotalQty('+index+')" name="qty_per_unit_'+index+'"  value="0" class="form-control"><input type="hidden" id="qty_measure_'+index+'" name="qty_measure_'+index+'" onKeyup="" value=" " class="form-control"></td>';
+			template+='<td style="white-space: nowrap;"><label id="lb_remain_'+index+'"></label><input type="hidden" id="remain_qty_'+index+'" name="remain_qty_'+index+'" class="form-control"><input type="hidden" name="qty_'+index+'" id="qty_'+index+'" value="0"/></td>';
+			template+='<td><input type="text" id="re_qty_'+index+'" onKeyup="TotalQty('+index+')" name="re_qty_'+index+'"  value="" class="form-control"><input type="hidden" name="cost_'+index+'" id="cost_'+index+'" value=" "/></td>'; 
+			template+='<td><input type="text" id="remark_'+index+'" name="remark_'+index+'" class="form-control"></td>';
+			template+='<td><button type="button" onClick="deleteRecord('+index+',1)" name="save_close" class="btn default"><?php echo $tr->translate("DELETE");?></button></td>';
+			template+='</tr>';
+			$('#tr_location').append(template);
+			if($('#identity').val()!="") {
+				var identity = $('#identity').val();
+				$('#identity').val(identity+','+index);
+			} else {$('#identity').val(index);}
+			//diferQTY(index);
+			
+			$('#pro_id_'+index).val('<?php echo $rs['pro_id']?>');
+			$('#pro_name_'+index).text('<?php echo $rs['item_name']?>');
+			$('#current_qty_'+index).val('<?php echo $rs['curr_qty']?>');
+
+			$('#qty_unit_'+index).val('<?php echo $rs['request_qty']?>');
+			$('#qty_per_unit_'+index).val('<?php echo $rs['qty_per_unit']?>');
+			
+			$('#qty_measure_'+index).val('<?php echo $rs['qty_perunit']?>');
+			$('#remain_qty_'+index).val('<?php echo $rs['defer_qty']?>');
+			$('#qty_'+index).val('<?php echo $rs['total_qty']?>');
+
+			$('#re_qty_'+index).val('<?php echo $rs['receive_qty']?>');
+			$('#cost_'+index).val('<?php echo $rs['cost']?>');
+			$('#remark_'+index).val('<?php echo $rs['note']?>');
+			
+			$('#measure_'+index).val('<?php echo $rs['measure']?>');
+			$('#unit_label_'+index).val('<?php echo $rs['unit_label']?>');
+			TotalQty(index);
+			qty = $('#current_qty_'+index).val();
+			cur_qty = fullMeanQty(index,qty);
+			document.getElementById("lb_cu_qty_"+index).innerHTML = cur_qty;
+       <?php }?>
 }
 	
 function fullMeanQty(index,qty){
