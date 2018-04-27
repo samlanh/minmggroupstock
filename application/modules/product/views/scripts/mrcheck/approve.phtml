@@ -1,0 +1,213 @@
+﻿<?php 
+$tr=Application_Form_FrmLanguages::getCurrentlanguage();
+$row=$this->row_tran;
+
+?>
+<title><?php echo $tr->translate("CHECK_APPROVE");?></title>
+<div class="row">
+<div class="col-md-12">
+		<div class="portlet box blue">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-globe"></i><?php echo $tr->translate("CHECK_APPROVE");?>
+				</div>
+			</div>
+            <div class="portlet-body form frmfilter">
+					<div style="clear:both;"></div>	
+	<div style=" min-height:25cm; margin:0 auto; border: 1px dotted #ccc; padding:0px 0.2cm">
+	 <?php $url_submit = $this->url(array('module'=>'purchase','controller'=>'auditapprove','action'=>'approved'));?>
+	<form id="frm" action=" " class="form-horizontal" enctype="multipart/form-data" method="post">		   
+	<div id="divPrint" style="width: 100%;">
+	<style>
+		.style{
+			line-height: 20px;font-size: 9px !important;
+			font-family: 'Khmer OS Battambang';
+		}
+		ul{margin: 0;padding:0;}
+		table tr td ul li{text-align: center;list-style: none;line-height: 25px;}
+		th{padding: 5px;}
+		ul.pur_info li{line-height:18px; 
+				font-weight: normal !important;}
+		ul.pur_info li strong{font-weight: bold;}
+       .hover:hover{background: #ccc;}
+	</style>
+		<table style="font-family: 'Khmer OS Content'; width:100%;">
+			<tbody>
+			<tr>
+		    	<td align="center">
+		        	<table width="100%" style="font-family: 'Khmer OS Battambang';" cellpadding="0" cellpadding="0">
+		            	<tbody>
+						<tr>
+								<td width="20%" valign="middle"><img src="<?php echo $this->baseUrl();?>/images/logo/<?php echo $this->title_reprot["logo"]?>"></td>
+								<td width="60%" valign="top" style="line-height:30px">
+									<ul>
+										<li style="text-align:center; font-size:20px; font-family:'Khmer OS Muol Light'"><?php echo $this->title_reprot["title_report_kh"]?></li>
+										<li style="text-align:center; font-size:18px; font-family:serif,header-font; font-weight:600;"><?php echo $this->title_reprot["title_report_en"]?></li>
+										<li style="text-align:center; font-size:18px; margin-top:25px; font-family:'Khmer OS Muol Light'"><?php echo $tr->translate("MR_CHECK");?></li>
+									</ul>
+								</td>
+								<td width="20%"></td>
+							</tr> 
+		                <tr>
+		                	<td colspan="3" valign="top">
+		                		<table width="100%" cellpadding="0" cellspacing="0" >
+		                			<tbody>
+		                			<tr>
+		                				<td style="font-size: 11px;">
+		                				    <span style="white-space: nowrap;"><?php //echo $tr->translate("ADDRESS_COMPANY");?></span>
+		                					<br><?php //echo $tr->translate("TEL_COMPANY");?> 
+		                				</td>
+		                				<td ></td>
+		                				<td width="65%"></td>
+		                			</tr>
+		                			<tr>
+								<td width="20%" valign="top">
+									<table width="100%" style="font-size: 12px; !important">
+										<tr>
+											<td style="text-align: left; white-space:nowrap;"><?php echo $tr->translate("FROM_LOCATION");?> </td>
+											<td style="text-align: right; white-space:nowrap;">:</td>
+											<td style="text-align: right;white-space:nowrap;"><?php echo $row['location_name']?></td>
+										</tr>
+										<tr>
+											<td style="text-align: left; white-space:nowrap;"><?php echo $tr->translate("TRANSFER_NO");?> </td>
+											<td style="text-align: right; white-space:nowrap;">:</td>
+											<td style="text-align: right;white-space:nowrap;"><?php echo $row['transfer_no'];?></td>
+										</tr>
+										
+										<tr>
+											<td style="text-align: left;white-space:nowrap;"><?php echo $tr->translate("TRANSFER_DATE");?> </td>
+											<td style="text-align: right; white-space:nowrap;">:</td>
+											<td style="text-align: right;white-space:nowrap;"><?php echo date("d-M-Y",strtotime( $row['transfer_date']));?></td>
+										</tr>
+									</table>
+								</td>
+								<td width="60%" valign="top">
+									
+								</td>
+								<td width="20%" style="text-align: right;font-size: 12px;">
+									<table width="100%" style="font-size: 12px; !important">
+										<tr>
+											<td style="text-align: right; white-space:nowrap;"><?php echo $tr->translate("TO_LOCATION");?> :</td>
+											<td style="text-align: right;white-space:nowrap;"><?php echo $row['to_location_name'];?></td>
+										</tr>
+										<tr>
+											<td style="text-align: right; white-space:nowrap;"><?php echo $tr->translate("TRANSFER_NO");?> :</td>
+											<td style="text-align: right;white-space:nowrap;"><?php echo $row['transfer_no'];?></td>
+										</tr>
+										<tr>
+											<td style="text-align: right;white-space:nowrap;"><?php echo $tr->translate("TRANSFER_DATE");?> :</td>
+											<td style="text-align: right;white-space:nowrap;"><?php echo date("d-M-Y",strtotime( $row['transfer_date']));?></td>
+										</tr>
+									</table>
+								</td>
+							</tr> 
+				                </tbody></table>
+				              </td>
+				           </tr>   
+		            </tbody></table>
+		        </td>
+		    </tr>
+		    <tr>
+		    	<td id="exportExcel"><br />
+		            <table  border="1" class="collape tablesorter" style="border-collapse:collapse;border:1px solid #000; font-size:12px;" width="100%" cellspacing="0" border="1">
+		                 <tbody>
+		                 <tr bgcolor="#ccc" class="style" align="center" style="font-weight:bold; line-height: 20px; font-size:13px !important; padding:1px 0px; white-space: nowrap; ">
+		                    <th class="tdheader" width="5%"><?php echo $tr->translate("NUM");?></th>
+							<th class="tdheader" width="15%"><?php echo $tr->translate("ITEM_CODE");?></th>
+							<th class="tdheader" width="15%"><?php echo $tr->translate("ITEM_NAME");?></th>
+							<th class="tdheader" width="10%"><?php echo $tr->translate("TYPE");?></th>
+							<th class="tdheader" width="10%"><?php echo $tr->translate("TOTAL_QTY");?></th>
+							<th class="tdheader" width="5%"><?php echo $tr->translate("MEASURE");?></th>
+							<th class="tdheader" width="25%"><?php echo $tr->translate("REMARK");?></th>
+		                </tr>
+		                <?php $num=1; 
+		                if(!empty($this->rows))foreach ($this->rows AS $index => $rs){?>
+						<tr class="odd gradeX" class='row-format<?php echo $num; $num=1-$num;?> hover' style="border:1px solid #000;">
+						   <td align="center">&nbsp;<?php echo $index+1?></td>
+						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["item_code"];?></td>
+						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["item_name"];?></td>
+						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["type"];?></td>
+						   <td style="white-space: nowrap;">&nbsp;<?php echo number_format($rs["qty"],2);?></td>
+						   <td style="white-space: nowrap;" align="center">&nbsp;<?php echo $rs["measure"];?></td>
+						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["note"];?></td>
+						</tr>
+						   <?php 
+                    }?>
+		            </tbody>
+		           </table>
+		              <br>
+		    		</td>
+		    	</tr>
+			</tbody>
+		</table>
+		</div><!-- end print -->
+		<div class="form-group">
+				<label class="control-label col-md-2"><?php echo $tr->translate("REASON");?><span class="required">
+					</span>
+				</label>
+				<div class="col-md-4">
+					<div class="input-icon right">
+						<i class="fa"></i>
+						<textarea name="remark" id="notefrom_accountingk" style="width:100%;height: 50px;" ><?php echo $this->request["reject_check"]?></textarea>
+					</div>
+				</div>
+				
+				<label class="control-label col-md-1"><?php //echo $tr->translate("REJECT_FROM_APPROVE");?><span class="required">
+					</span>
+				</label>
+				<div class="col-md-5">
+					<div class="input-icon right">
+						<i class="fa"></i>
+						<!--<textarea name="reject_approve" id="notefrom_accountingk" style="width:100%;height: 50px;" ><?php echo $this->request["reject_approve"]?></textarea>-->
+						<select name="approve" id="approved_name" class="form-control select2me">
+				        	<option value="1"><?php echo $tr->translate("CHECKED");?></option>
+				        	<option value="0"><?php echo $tr->translate("REJECT");?></option>
+				        </select>
+					</div>
+				</div>
+				</div>
+				<br />
+				<div class="form-group">
+					<div  class="col-md-12 col-md-offset-4 col-md-8">
+						<a href="<?php echo $this->baseUrl();?>/purchase/mrcheck/"><button type="button" class="btn red"><i class="fa fa-times"></i> <?php echo $tr->translate("EXIT")?></button></a>
+						<button type="submit" name="save_close" value="saveclose" class="btn btn-primary" ><i class="glyphicon glyphicon-log-in"></i> <?php echo $tr->translate("SAVE_CLOSE")?></button>
+					</div>
+				</div>
+		</form>	
+	  </div>		
+	</div>
+	 </div>
+   </div>
+</div>
+<iframe name=print_frame width=0 height=0 frameborder=0 src=about:blank></iframe>
+<script>
+$('#frm').submit(function() {
+	var r = confirm("សូមត្រួតពិនិត្យទិន្នន័យ អោយបានត្រឹមត្រូវ !\n តើលោកអ្នកពិតជាចង់រក្សាទុកទិន្នន័យនេះមែនឫទេ?");
+	if (r == true) {
+	    return true;
+	} else {
+	   return false;
+	}
+});	
+$(document).ready(function() { 
+  calculateBalance();
+ }); 
+ 
+function calculateBalance(){
+	deposit= $("#deposit").val();
+	net_total = $('#net_total').val();
+	balance = parseFloat(net_total)-parseFloat(deposit);
+	if(balance<0){
+		balance=0;
+		$("#deposit").val(net_total);
+	}
+	$("#balance").val(balance);
+}
+function doPrint() {
+	var printContents = document.getElementById('divPrint').innerHTML;
+    var originalContents = document.body.innerHTML;
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+}
+</script>

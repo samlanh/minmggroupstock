@@ -99,6 +99,14 @@ class Product_Form_FrmTransferStock extends Zend_Form
 		));
 		$transfer_no->setValue($re_cod);
 		
+		$tran_receive_no = New Zend_Form_Element_Text("transfer_no");
+		$re_cod=$db_global->getTransferStockNo();
+		$tran_receive_no->setAttribs(array(
+				'class'=>'form-control',
+				'readonly'=>true
+		));
+		$tran_receive_no->setValue($re_cod);
+		
 		if($data != null) {
 			$from_loc		->setValue($data["from_location"]);
 			$branch		    ->setValue($data["to_location"]);

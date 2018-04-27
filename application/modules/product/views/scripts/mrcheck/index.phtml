@@ -3,30 +3,19 @@
 	$tr = Application_Form_FrmLanguages::getCurrentlanguage();
 	$formFilter = $this->formFilter;
 	//print_r($this->rs);
-
 ?>
-
-<title><?php echo $tr->translate("TRANSFER_STOCK");?></title>
-<?php 
-	$url_new = $this->url(array('module'=>'product','controller'=>'transferstock','action'=>'add',));
-	//$url_delete = $this->url(array('module'=>'product','controller'=>'index','action'=>'delete-product',));
-	$formFilter = $this->formFilter;
-?>
-
-<title><?php echo $tr->translate("TRANSFER_STOCK");?></title>
+<title><?php echo $tr->translate("MENU_MR_CHECK");?></title>
 <meta charset="utf-8" />
 <div class="row">
 	<div class="col-md-12">
 		<div class="portlet box blue">
 			<div class="portlet-title">
 				<div class="caption">
-					<i class="fa fa-globe"></i><?php echo $tr->translate("TRANSFER_STOCK");?>
+					<i class="fa fa-globe"></i><?php echo $tr->translate("MENU_MR_CHECK");?>
 				</div>
-				<div class="caption pull-right">
-					<a href="<?php echo $url_new;?>" class="btn btn-bg blue  ">
-						<i class="fa fa-plus"></i>&nbsp;<?php echo $tr->translate("ADD_NEW");?>
-					</a>
-				</div>
+				<!--<a href="<?php echo $url_new;?>" class="btn btn-sm green  pull-right">
+					<i class="fa fa-plus"></i>&nbsp;<?php //echo $tr->translate("ADD_NEW");?>
+				</a>-->
 			</div>
 			<div class="portlet-body form frmfilter">
 				<form method="post" action="">
@@ -46,15 +35,14 @@
 							<tr>
 								<th class="tdheader"><?php echo  $tr->translate("NUM");?></th>
 								<th class="tdheader"><?php echo  $tr->translate("TRANSFER_NO");?></th>
-								<th class="tdheader"><?php echo  $tr->translate("TRANSFER_DTE");?></th>
+								<th class="tdheader"><?php echo  $tr->translate("TRANSFER_DATE");?></th>
 								<th class="tdheader"><?php echo  $tr->translate("FROM_LOCATION");?></th>
 								<th class="tdheader"><?php echo  $tr->translate("TO_LOCATION");?></th>
 								<th class="tdheader"><?php echo  $tr->translate("TOTAL_QTY");?></th>
 								<th class="tdheader"><?php echo  $tr->translate("NOTE");?></th>
 								<th class="tdheader"><?php echo  $tr->translate("BY_USER");?></th>
 								<th class="tdheader"><?php echo  $tr->translate("STATUS");?></th>
-								<th class="tdheader" style="width: 6%;"><?php echo  $tr->translate("APPROVE");?></th>
-								<th class="tdheader" ><?php echo  $tr->translate("ACTION");?></th>
+								<th class="tdheader"><?php echo  $tr->translate("ACTION");?></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -111,9 +99,8 @@
 									<td class="items"><?php echo $rs["note"];?></td>
 									<td class="items"><?php echo $rs["user_id"];?></td>
 									<td class="items"><?php echo $rs["status"];?></td>
-									<td class="items"><?php echo $rs["approve"];?></td>
 									<td class="items-no" style="white-space: nowrap;">
-										<a <?php echo $edit_status;?> href="<?php echo $this->baseUrl();?>/product/transferstock/edit/id/<?php echo $rs["id"]?>"><?php echo  $tr->translate("UPDATE");?></a> | 
+										<a <?php echo $edit_status;?> href="<?php echo $this->baseUrl();?>/product/mrcheck/approve/id/<?php echo $rs["id"]?>"><?php echo  $tr->translate("CHECK");?></a> | 
 										<a target="_blank" href="<?php echo $this->baseUrl();?>/product/transferstock/transferstockdetail/id/<?php echo $rs["id"]?>"><?php echo  $tr->translate("PRINT");?></a>
 									</td>
 								</tr>

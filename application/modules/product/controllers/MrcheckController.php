@@ -1,5 +1,5 @@
 <?php
-class Product_TransferstockController extends Zend_Controller_Action
+class Product_MrcheckController extends Zend_Controller_Action
 {
 	const REDIRECT_URL_ADD ='/product/damagredstock/add';
 	const REDIRECT_URL_ADD_CLOSE ='/product/damagredstock/';
@@ -35,7 +35,7 @@ public function init()
 		}
    		$rows=$db->getAllTransferStock($data);
    		$this->view->rs=$rows;
-   		$columns=array("TRANSFER_NO","TRANSFER_DTE","FROM_LOCATION","TO_LOCATION","TOTAL_QTY","NOTE","APPROVE","BY_USER","STATUS");
+   		$columns=array("TRANSFER_NO","TRANSFER_DATE","FROM_LOCATION","TO_LOCATION","TOTAL_QTY","NOTE","APPROVE","BY_USER","STATUS");
    		$link=array(
    				'module'=>'product','controller'=>'transferstock','action'=>'edit',
    		);
@@ -62,21 +62,22 @@ public function init()
     	$this->view->formFilter = $frm->add();
 	}
 	
-	public function editAction()
+	public function approveAction()
 	{
 		$id=$this->getRequest()->getParam('id');
 		$db_request= new Product_Model_DbTable_DbTransferStock();
 		if($this->getRequest()->isPost()){
 			$post=$this->getRequest()->getPost();
 			$post['id']=$id;
-			$db_result = $db_request->updateTransfer($post);
+			$db_result = $db_request->addApproveTransfer($post);
 			if(isset($post["saveclose"])){
-				Application_Form_FrmMessage::Sucessfull("UPDATE_SUCCESS", '/product/transferstock/');
+				Application_Form_FrmMessage::Sucessfull("UPDATE_SUCCESS", '/product/mrcheck/');
 			}else{
-				Application_Form_FrmMessage::Sucessfull("UPDATE_SUCCESS", '/product/transferstock/');
+				Application_Form_FrmMessage::Sucessfull("UPDATE_SUCCESS", '/product/mrcheck/');
 			}
 		}
 		$row=$db_request->getTransferById($id);
+		$this->view->row_tran=$row;
 		if($row['is_approve']==1){
 			Application_Form_FrmMessage::Sucessfull("Can not edit!!!", '/product/transferstock/');
 		}
