@@ -1,0 +1,172 @@
+<?php 
+$tr=Application_Form_FrmLanguages::getCurrentlanguage();
+$brach_name =  $this->branch;
+$formFilter = $this->formFilter;
+?>
+<title>Product List Report</title>
+<div class="row">
+	<div class="col-md-12">
+		<div class="portlet box blue">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-globe"></i><?php echo $tr->translate("RPT_TRANSFER_PRODUCT");?>
+				</div>
+						<div class="btn-group pull-right">
+							 <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true" aria-expanded="false">
+							   Actions <i class="fa fa-angle-down"></i>
+							 </button>
+								<ul class="dropdown-menu" role="menu">
+									<li>
+										<a href="#" onclick="doPrint();">
+											<i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Print
+										</a>
+									</li>
+									<li>
+										<a href="#" onClick="exports()"><i class="fa fa-file-excel-o" aria-hidden="true"></i>&nbsp;&nbsp;Export Excel </a>
+									</li>
+									
+								</ul>
+					</div>
+			</div>
+            <div class="portlet-body form frmfilter">
+				<form method="post" action="<?php //echo $formFilter->getAction(); ?>">
+					<div class="form-body">
+						
+				</div><div style="clear:both;"></div>	
+				</form> 
+	<div style=" min-height:28cm; margin:0 auto; border: 1px dotted #ccc; padding:0px 0.2cm">
+	<div id="divPrint" style="width: 100%;">
+	<style>
+		.style{
+			line-height: 25px;font-size: 12x !important;
+			font-family: 'Khmer OS Battambang';
+		}
+		ul{margin: 0;padding:0;}
+		table tr td ul li{text-align: center;list-style: none;line-height: 25px; font-weight: bold;}
+		th{padding: 5px;}
+		.hover:hover{background: #ccc;}
+		table { page-break-inside:auto }
+		tr{ page-break-inside:avoid; page-break-after:auto; }
+		#header {
+		  display: table-header-group;
+		  page-break-inside:avoid; page-break-after:auto;
+		}
+	</style>
+		<table style="font-family: 'Khmer OS Content'; width:100%;">
+			<tbody>
+			<tr>
+		    	<td align="center">
+		        	<table width="100%" style="font-family: 'Khmer OS Battambang';" cellpadding="0" cellpadding="0">
+		            	<tbody><tr>
+		                	<td width="20%" valign="top"><img src="<?php echo $this->baseUrl();?>/images/logo.jpg" height="55px"></td>
+		                	<td width="60%" valign="top">
+		                		<ul>
+		                			<li style="text-align:center; font-size:18px; font-family:'Khmer MEF2'"><?php echo $tr->translate("COMPANY_CUSTOMER");?></li>
+		                			<li style="text-align:center; font-size:14px; font-family:'Khmer MEF2'"><?php echo $tr->translate("RPT_TRANSFER_PRODUCT");?></li>
+									<li style="text-align:center; font-size:14px; font-family:'Khmer MEF2'"><?php if($this->search!=""){echo $this->search;}else{echo "";}?></li>
+		                			<!-- <li style="text-align:center; font-size:13px;"><?php //echo date("d/m/Y",strtotime($this->rssearch['start_date']));?> ដល់ <?php //echo date("d/m/Y",strtotime($this->rssearch['end_date']));?></li> -->
+		                		</ul>
+		                	</td>
+		                    <td width="20%"></td>
+		                </tr> 
+		                <tr>
+		                	<td colspan="3" valign="top">
+		                		<table width="100%" cellpadding="0" cellspacing="0">
+		                			<tbody><tr>
+		                				<td style="font-size: 11px;">
+		                				    <span style="white-space: nowrap;"><?php echo $tr->translate("ADDRESS_COMPANY");?></span>
+		                					<br><?php echo $tr->translate("TEL_COMPANY");?> 
+		                				</td>
+		                				<td width="65%"></td>
+		                			</tr>
+				                </tbody></table>
+				              </td>
+				           </tr>   
+		            </tbody></table>
+		        </td>
+		    </tr>
+		    <tr>
+		    	<td id="exportExcel">
+		            <table class="table2excel" border="1" style="border-collapse:collapse;border:1px solid #000; font-size:12px;" width="100%" cellspacing="0">
+		                <thead>
+		                 <tr bgcolor="#ccc" class="style" align="center" style="font-weight:bold; line-height: 25px; font-size:12px; padding:1px 0px; white-space: nowrap; ">
+		                    <td>&nbsp;<?php echo $tr->translate("NUM");?></td>
+							<td><?php echo  $tr->translate("TRANSFER_NO");?></ts>
+							<td><?php echo $tr->translate("TRANSFER_DTE");?></td>
+							<td><?php echo $tr->translate("FROM_LOCATION");?></td>
+							<td><?php echo $tr->translate("TO_LOCATION");?></td>
+							<td><?php echo $tr->translate("TOTAL_QTY");?></td>
+							<td><?php echo $tr->translate("NOTE");?></td>
+							<td><?php echo $tr->translate("BY_USER");?></td>
+							<td><?php echo $tr->translate("STATUS");?></td>
+							<td><?php echo $tr->translate("APPROVE");?></td>
+							<td><?php echo $tr->translate("RECEIVE");?></td>
+							 
+		                </tr>
+		                </thead>
+		                 <tbody>
+		                <?php $num=1; 
+		                $r_netotal = 0;$r_paid = 0; $r_balance = 0;
+		                $d_netotal = 0;$d_paid = 0; $d_balance = 0;
+		                $b_netotal = 0;$b_paid = 0; $b_balance = 0;
+						$i=0;
+						$cost_price=0;
+		                if(!empty($this->rs))foreach ($this->rs AS $index => $rs){
+		                	 
+						?>
+							<tr class='row-format<?php echo $num; ?>' id="item_<?php echo $index; ?>">
+								<td align="center" style="white-space: nowrap;">&nbsp;<?php echo $index+1; ?></td>
+								<td style="white-space: nowrap;">&nbsp;<?php echo $rs["transfer_no"];?></td>
+								<td style="">&nbsp;<?php echo date('d-M-Y',strtotime($rs["transfer_date"]));?></td>
+								<td style="width:10% !important" class="center"><?php echo $rs["location_name"];?></td>
+								<td style="width:8% !important" class="center"><?php echo $rs["to_location_name"];?></td>
+								<td style="width:8% !important" class="center"><?php echo $rs["total_qty"];?></td>
+								
+								<td style="width:8% !important" class="center"><?php echo $rs["note"];?></td>
+								<td style="width:8% !important" class="center"><?php echo $rs["user_id"];?></td>
+								<td style="width:8% !important" class="center"><?php echo $rs["status"];?></td>
+								<td style="width:8% !important" class="center"><?php echo $rs["approve"];?></td>
+								<td style="width:8% !important" class="center"><?php echo $rs["receive"];?></td>
+							</tr>
+						  <?php }?> 
+						  
+		                </tbody>
+		           </table>
+		            <br>
+		              <br>
+		              <table align="center" width="100%">
+						   <tbody>
+						   <tr style="font-size: 14px;">
+						        <th style="width:20%;text-align:center;  font-family:'Khmer MEF2'">យល់ព្រមដោយ</th>
+						        <th></th>
+						        <th style="width:20%;text-align:center; font-family:'Khmer MEF2'">ត្រួតពិនិត្យដោយ</th>
+						        <th></th>
+						        <th style="width:20%;text-align:center;font-family:'Khmer MEF2'">រៀបចំដោយ</th>
+						   </tr>
+						   <tr style="font-size: 11px;">
+						        <th style="width:20%;text-align:center;  font-family:'Khmer MEF2'"><input type="hidden" name="id_selected" id="id_selected" dojoType="dijit.form.TextBox" /></th>
+						        <th></th>
+						        <th style="width:20%;text-align:center; font-family:'Khmer MEF2'"></th>
+						        <th></th>
+						        <th style="width:20%;text-align:center;font-family:'Khmer MEF2'"></th>
+						   </tr>
+						</tbody>
+					</table>	
+		    		</td>
+		    	</tr>
+			</tbody>
+		</table>
+		</div>
+		 
+	  </div>		
+	</div>
+	 </div>
+   </div>
+</div>
+<iframe name=print_frame width=0 height=0 frameborder=0 src=about:blank></iframe>
+<script>
+function doPrint() {
+	var divToPrint = document.getElementById('divPrint');var htmlToPrint = '' +'<style type="text/css">' +'</style>';htmlToPrint += divToPrint.outerHTML;window.document.write(htmlToPrint);window.print();window.close();
+}
+
+</script>

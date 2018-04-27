@@ -24,7 +24,7 @@ class Product_Model_DbTable_DbTransferStock extends Zend_Db_Table_Abstract
 			      t.note,(SELECT v.name_en FROM `tb_view` AS v WHERE v.key_code=t.`is_approve` AND v.type=17 LIMIT 1) AS approve,
 			      (SELECT u.fullname FROM `tb_acl_user` AS u WHERE u.user_id=t.user_id LIMIT 1 )AS user_id,
 			      (SELECT v.name_en FROM `tb_view` AS v WHERE v.key_code=t.status LIMIT 1 )AS `status`,
-			      t.`is_approve`
+			      t.`is_approve`,(SELECT v.name_en FROM `tb_view` AS v WHERE v.key_code=t.is_receive  AND v.type=18 LIMIT 1)AS `receive`
 			    FROM `rms_transferstock` AS t  ";
 				$from_date =(empty($data['start_date']))? '1': " t.transfer_date >= '".$data['start_date']." 00:00:00'";
 				$to_date = (empty($data['end_date']))? '1': " t.transfer_date <= '".$data['end_date']." 23:59:59'";

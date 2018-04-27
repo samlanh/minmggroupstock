@@ -155,5 +155,46 @@ class report_ProductController extends Zend_Controller_Action
     
     }
     
+    function rptRequestProductAction(){
+    	$db = new report_Model_DbProduct();
+    	if($this->getRequest()->isPost()){
+    		$data = $this->getRequest()->getPost();
+    	}else{
+    		$data = array(
+    				'ad_search'	=>	'',
+    				'branch'	=>	'',
+    				'brand'		=>	'',
+    				'category'	=>	'',
+    				'model'		=>	'',
+    				'color'		=>	'',
+    				'size'		=>	'',
+    				'status'	=>	1,
+    				'status_qty'=>-1
+    		);
+    	}
+    	$this->view->search = $db->getBranch($data["branch"]);
+    	$this->view->product = $db->getAllProduct($data);
+    	$formFilter = new Product_Form_FrmProduct();
+    	$this->view->formFilter = $formFilter->productFilter();
+    	Application_Model_Decorator::removeAllDecorator($formFilter);
+    }
+    
+    function rptTransferProductAction(){
+    	
+    	$date =new Zend_Date();
+    	if($this->getRequest()->isPost()){
+    		$data = $this->getRequest()->getPost();
+    		$data['start_date']=date("Y-m-d",strtotime($data['start_date']));
+    		$data['end_date']=date("Y-m-d",strtotime($data['end_date']));
+    	}else{
+    		$data = array(
+    				'ad_search'		=>	'',
+    				'start_date'	=>	date("Y-m-d"),
+    				'end_date'		=>	date("Y-m-d"),
+    		);
+    	}
+    	$db = new Product_Model_DbTable_DbTransferStock();
+    	$this->view->rs=$db->getAllTransferStock($data);
+    }
 	
 }
