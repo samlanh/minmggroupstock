@@ -35,7 +35,7 @@ public function init()
 		}
    
    		$rows=$db->getAllRequestStock($data);
-   		$columns=array("LOCATION","REQUEST_NO","REQUEST_NAME","TOTAL_QTY","REQUEST_DATE","RECEIVE_DTE","NOTE","BY_USER","STATUS");
+   		$columns=array("LOCATION","REQUEST_NO","REQUEST_NAME","TOTAL_QTY","TOTAL_RECEIVE","REQUEST_DATE","RECEIVE_DTE","NOTE","BY_USER","STATUS");
    		
    		
    		$link=array(

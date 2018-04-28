@@ -12,11 +12,9 @@ class Product_Model_DbTable_DbTransferStock extends Zend_Db_Table_Abstract
 		return Application_Model_DbTable_DbGlobal::GlobalgetUserId();
 	}
 	
-	function getAllTransferStock($data){
+	function getAllTransferStock($data=null){
 		$db = $this->getAdapter();
 		$db_globle = new Application_Model_DbTable_DbGlobal();
-		$start_date = date("Y-m-d",strtotime($data["start_date"]));
-		$end_date = date("Y-m-d",strtotime($data["end_date"]));
 		$sql ="SELECT t.id,t.transfer_no,DATE_FORMAT(t.transfer_date, '%d-%b-%Y')AS transfer_date,
 			      (SELECT l.name FROM `tb_sublocation` AS l WHERE l.id=t.`from_location` AND l.status=1 LIMIT 1) AS location_name,
 			      (SELECT l.name FROM `tb_sublocation` AS l WHERE l.id=t.`to_location` AND l.status=1 LIMIT 1) AS to_location_name,
@@ -37,6 +35,35 @@ class Product_Model_DbTable_DbTransferStock extends Zend_Db_Table_Abstract
 		 			$where.=' AND ('.implode(' OR ', $s_where).')';
 		 		} 
 // 		$location = $db_globle->getAccessPermission('m.`location_id`');
+		$order=' ORDER BY t.id DESC';
+		//echo $sql;
+		return $db->fetchAll($sql.$where.$order);
+	}
+	
+	function getAllTransferReceiveStock($data=null){
+		$db = $this->getAdapter();
+		$db_globle = new Application_Model_DbTable_DbGlobal();
+		$sql ="SELECT t.id,(SELECT tr.transfer_no FROM `rms_transferstock` AS tr WHERE tr.id=t.`transfer_id` LIMIT 1) AS transfer_no,
+         t.`transfer_re_no`,t.transfer_re_date, 
+		(SELECT l.name FROM `tb_sublocation` AS l WHERE l.id=t.`from_location` AND l.status=1 LIMIT 1) AS location_name,
+		(SELECT l.name FROM `tb_sublocation` AS l WHERE l.id=t.`to_location` AND l.status=1 LIMIT 1) AS to_location_name,
+		(SELECT SUM(qty) FROM `rms_transfer_received_detail` AS td WHERE t.id=td.transfer_re_id  ) AS total_qty,
+		t.note,(SELECT v.name_en FROM `tb_view` AS v WHERE v.key_code=t.`is_approve` AND v.type=17 LIMIT 1) AS approve,
+		(SELECT u.fullname FROM `tb_acl_user` AS u WHERE u.user_id=t.user_id LIMIT 1 )AS user_id,
+		(SELECT v.name_en FROM `tb_view` AS v WHERE v.key_code=t.status LIMIT 1 )AS `status`,
+		t.`is_approve`,(SELECT v.name_en FROM `tb_view` AS v WHERE v.key_code=t.is_receive  AND v.type=18 LIMIT 1)AS `receive`
+		FROM `rms_transfer_receive` AS t  ";
+		$from_date =(empty($data['start_date']))? '1': " t.transfer_re_date >= '".$data['start_date']." 00:00:00'";
+		$to_date = (empty($data['end_date']))? '1': " t.transfer_re_date <= '".$data['end_date']." 23:59:59'";
+		$where = " where ".$from_date." AND ".$to_date;
+		if($data["ad_search"]!=""){
+			$s_where=array();
+			$s_search=addslashes(trim($data['ad_search']));
+			$s_search = str_replace(' ', '', $s_search);
+			$s_where[]="REPLACE(t.transfer_no,' ','')   LIKE '%{$s_search}%'";
+			$where.=' AND ('.implode(' OR ', $s_where).')';
+		}
+		// 		$location = $db_globle->getAccessPermission('m.`location_id`');
 		$order=' ORDER BY t.id DESC';
 		//echo $sql;
 		return $db->fetchAll($sql.$where.$order);
@@ -489,7 +516,8 @@ class Product_Model_DbTable_DbTransferStock extends Zend_Db_Table_Abstract
 		$db = $this->getAdapter();
 		$sql = " SELECT t.* ,
 				(SELECT l.name FROM `tb_sublocation` AS l WHERE l.id=t.`from_location` AND l.status=1 LIMIT 1) AS location_name,
-				(SELECT l.name FROM `tb_sublocation` AS l WHERE l.id=t.`to_location` AND l.status=1 LIMIT 1) AS to_location_name
+				(SELECT l.name FROM `tb_sublocation` AS l WHERE l.id=t.`to_location` AND l.status=1 LIMIT 1) AS to_location_name,
+				(SELECT v.name_en FROM `tb_view` AS v WHERE v.key_code=t.is_receive  AND v.type=18 LIMIT 1)AS `receive`
 			     FROM `rms_transferstock` AS t
 			     WHERE id=$id";
 	  	return $db->fetchRow($sql);
@@ -507,6 +535,32 @@ class Product_Model_DbTable_DbTransferStock extends Zend_Db_Table_Abstract
 				FROM `rms_transferstock_detail` AS td,`tb_product` AS p
 				WHERE td.`pro_id`=p.`id`
 				AND td.`transferid`=$id";	
+		return $db->fetchAll($sql);
+	}
+	
+	function getTransferReceiveById($id){
+		$db = $this->getAdapter();
+		$sql = " SELECT t.* ,(SELECT tr.transfer_no FROM `rms_transferstock` AS tr WHERE tr.id=t.`transfer_id` LIMIT 1) AS transfer_no,
+		(SELECT l.name FROM `tb_sublocation` AS l WHERE l.id=t.`from_location` AND l.status=1 LIMIT 1) AS location_name,
+		(SELECT l.name FROM `tb_sublocation` AS l WHERE l.id=t.`to_location` AND l.status=1 LIMIT 1) AS to_location_name,
+		(SELECT v.name_en FROM `tb_view` AS v WHERE v.key_code=t.is_receive  AND v.type=18 LIMIT 1)AS `receive`
+		FROM `rms_transfer_receive` AS t
+		WHERE id=$id";
+		return $db->fetchRow($sql);
+	}
+	
+	function getReceiveItemsbyId($id){
+		$db = $this->getAdapter();
+		$sql = "SELECT  td.*,(SELECT m.`name` FROM `tb_measure` AS m WHERE m.id=p.`measure_id` LIMIT 1) AS measure,
+		(SELECT c.`name` FROM `tb_category` AS c WHERE c.id=p.`cate_id` LIMIT 1) AS TYPE,
+		p.`item_name` ,
+		p.`qty_perunit` ,
+		p.`item_code`,
+		p.`unit_label`
+			
+		FROM `rms_transfer_received_detail` AS td,`tb_product` AS p
+		WHERE td.`pro_id`=p.`id`
+		AND td.`transfer_re_id`=$id";
 		return $db->fetchAll($sql);
 	}
 	

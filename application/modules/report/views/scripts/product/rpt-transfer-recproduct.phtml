@@ -3,13 +3,13 @@ $tr=Application_Form_FrmLanguages::getCurrentlanguage();
 $brach_name =  $this->branch;
 $formFilter = $this->formFilter;
 ?>
-<title><?php echo $tr->translate("RPT_TRANSFER_PRODUCT");?></title>
+<title><?php echo $tr->translate("RPT_TRANSFER_RECEIVE_PRODUCT");?></title>
 <div class="row">
 	<div class="col-md-12">
 		<div class="portlet box blue">
 			<div class="portlet-title">
 				<div class="caption">
-					<i class="fa fa-globe"></i><?php echo $tr->translate("RPT_TRANSFER_PRODUCT");?>
+					<i class="fa fa-globe"></i><?php echo $tr->translate("RPT_TRANSFER_RECEIVE_PRODUCT");?>
 				</div>
 					<div class="btn-group pull-right">
 							 <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true" aria-expanded="false">
@@ -61,7 +61,7 @@ $formFilter = $this->formFilter;
 		                	<td width="60%" valign="top">
 		                		<ul>
 		                			<li style="text-align:center; font-size:16px; font-family:'Khmer MEF2'"><?php echo $tr->translate("COMPANY_CUSTOMER");?></li>
-		                			<li style="text-align:center; font-size:14px; font-family:'Khmer MEF2'"><?php echo $tr->translate("RPT_TRANSFER_PRODUCT");?></li>
+		                			<li style="text-align:center; font-size:14px; font-family:'Khmer MEF2'"><?php echo $tr->translate("RPT_TRANSFER_RECEIVE_PRODUCT");?></li>
 		                			<li style="text-align:center; font-size:14px;"><?php echo date("d/m/Y",strtotime($this->rssearch['start_date']));?> ដល់ <?php echo date("d/m/Y",strtotime($this->rssearch['end_date']));?></li>
 		                		</ul>
 		                	</td>
@@ -90,12 +90,12 @@ $formFilter = $this->formFilter;
 		                 <tr bgcolor="#ccc" class="style" align="center" style="font-weight:bold; line-height: 25px; font-size:12px; padding:1px 0px; white-space: nowrap; ">
 		                    <td >&nbsp;<?php echo $tr->translate("NUM");?></td>
 							<td >&nbsp;<?php echo  $tr->translate("TRANSFER_NO");?></ts>
-							<td >&nbsp;<?php echo $tr->translate("TRANSFER_DTE");?></td>
+							<td >&nbsp;<?php echo  $tr->translate("TRANSFER_RE_NO");?></ts>
+							<td >&nbsp;<?php echo $tr->translate("RECEIVE_DTE");?></td>
 							<td>&nbsp;<?php echo $tr->translate("FROM_LOCATION");?></td>
 							<td>&nbsp;<?php echo $tr->translate("TO_LOCATION");?></td>
 							<td>&nbsp;<?php echo $tr->translate("TOTAL_QTY");?></td>
 							<td>&nbsp;<?php echo $tr->translate("NOTE");?></td>
-							<td>&nbsp;<?php echo $tr->translate("APPROVE");?></td>
 							<td>&nbsp;<?php echo $tr->translate("ACTION");?></td>
 							<td>&nbsp;<?php echo $tr->translate("BY_USER");?></td>
 							<td>&nbsp;<?php echo $tr->translate("STATUS");?></td>
@@ -107,14 +107,13 @@ $formFilter = $this->formFilter;
 		                if(!empty($this->rs))foreach ($this->rs AS $index => $rs){?>
 						<tr class='row-format<?php echo $num; $num=1-$num;?> hover' style="border:1px solid #000;">
 						   <td align="center" style="white-space: nowrap;">&nbsp;<?php echo $index+1?></td>
-						   
-						   <td style="white-space: nowrap;"><a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/product/rpt-transfer-productdetail/id/".$rs["id"];?>">&nbsp;<?php echo $rs["transfer_no"];?></a></td>
-						   <td style="white-space: nowrap;"><a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/product/rpt-transfer-productdetail/id/".$rs["id"];?>">&nbsp;<?php echo date("d-M-Y",strtotime($rs["transfer_date"]));?></a></td>
-						   <td style="white-space: nowrap;"><a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/product/rpt-transfer-productdetail/id/".$rs["id"];?>">&nbsp;<?php echo $rs["location_name"];?></a></td>
+						   <td style="white-space: nowrap;"><a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/product/rpt-transfer-receivedetail/id/".$rs["id"];?>">&nbsp;<?php echo $rs["transfer_no"];?></a></td>
+						   <td style="white-space: nowrap;"><a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/product/rpt-transfer-receivedetail/id/".$rs["id"];?>">&nbsp;<?php echo $rs["transfer_re_no"];?></a></td>
+						   <td style="white-space: nowrap;"><a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/product/rpt-transfer-receivedetail/id/".$rs["id"];?>">&nbsp;<?php echo date("d-M-Y",strtotime($rs["transfer_re_date"]));?></a></td>
+						   <td style="white-space: nowrap;"><a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/product/rpt-transfer-receivedetail/id/".$rs["id"];?>">&nbsp;<?php echo $rs["location_name"];?></a></td>
 						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["to_location_name"];?></td>
 						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["total_qty"];?></td>
 						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["note"];?></td>
-						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["approve"];?></td>
 						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["receive"];?></td>
 						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["user_id"];?></td>
 						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["status"];?></td>

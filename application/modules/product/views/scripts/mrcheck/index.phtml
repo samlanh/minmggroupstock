@@ -101,7 +101,7 @@
 									<td class="items"><?php echo $rs["status"];?></td>
 									<td class="items-no" style="white-space: nowrap;">
 										<a <?php echo $edit_status;?> href="<?php echo $this->baseUrl();?>/product/mrcheck/approve/id/<?php echo $rs["id"]?>"><?php echo  $tr->translate("CHECK");?></a> | 
-										<a target="_blank" href="<?php echo $this->baseUrl();?>/product/transferstock/transferstockdetail/id/<?php echo $rs["id"]?>"><?php echo  $tr->translate("PRINT");?></a>
+										<a target="_blank" href="<?php echo $this->baseUrl();?>/report/product/rpt-transfer-productdetail/id/<?php echo $rs["id"]?>"><?php echo  $tr->translate("PRINT");?></a>
 									</td>
 								</tr>
 							<?php $counter='<strong style="float:right;padding:5px">Number of record(s): '.count($this->rs).'</strong>'; 

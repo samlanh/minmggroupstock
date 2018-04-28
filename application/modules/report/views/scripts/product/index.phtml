@@ -5,6 +5,8 @@
   $rpt_ajust=$this->url(array('module'=>'report','controller'=>'product','action'=>'rptadjuststock'), null, true);
   $rpt_transfer=$this->url(array('module'=>'report','controller'=>'product','action'=>'rpttransfer'), null, true);
   
+  $rpt_transfer_product=$this->url(array('module'=>'report','controller'=>'product','action'=>'rpt-transfer-product'), null, true);
+  $rpt_rec_product=$this->url(array('module'=>'report','controller'=>'product','action'=>'rpt-transfer-recproduct'), null, true);
   
   $user_info = new Application_Model_DbTable_DbGetUserInfo();
 	$result = $user_info->getUserInfo();
@@ -115,5 +117,46 @@
 					</div>
 				</div> -->
 				
+				 <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+					<div class="dashboard-stat purple-plum">
+						<a class="more" href="<?php echo $rpt_transfer_product;?>">
+						<div class="visual">
+							<i class="fa fa-globe"></i>
+						</div>
+						<div class="details">
+							<div class="number">
+								 
+							</div>
+							<div class="desc">
+								 Transfer Product Report
+							</div>
+						</div>
+						</a>
+						<a class="more" href="javascript:;">
+						View more <i class="m-icon-swapright m-icon-white"></i>
+						</a>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+					<div class="dashboard-stat purple-plum">
+						<a class="more" href="<?php echo $rpt_rec_product;?>">
+						<div class="visual">
+							<i class="fa fa-globe"></i>
+						</div>
+						<div class="details">
+							<div class="number">
+								 
+							</div>
+							<div class="desc">
+								 Transfer Receive Product Report
+							</div>
+						</div>
+						</a>
+						<a class="more" href="javascript:;">
+						View more <i class="m-icon-swapright m-icon-white"></i>
+						</a>
+					</div>
+				</div>
 				<?php }?>
 			</div>
+			

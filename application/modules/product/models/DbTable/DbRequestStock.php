@@ -20,6 +20,7 @@ class Product_Model_DbTable_DbRequestStock extends Zend_Db_Table_Abstract
 		$sql ="SELECT sr.id,(SELECT l.name FROM `tb_sublocation` AS l WHERE l.id=sr.`branch_id` AND l.status=1 LIMIT 1) AS location_name,
 		        	sr.reques_no,(SELECT s.staff_name FROM `tb_staff` AS s WHERE s.id=sr.`staff_id` LIMIT 1) AS staff_name,
 		        	(SELECT SUM(sd.`total_qty`) FROM `tb_staff_request_detail` AS sd WHERE sd.staff_request_id=sr.id AND sr.`status`=1 LIMIT 1)AS qty,
+		        	(SELECT SUM(sd.`request_qty`) FROM `tb_staff_request_detail` AS sd WHERE sd.staff_request_id=sr.id AND sr.`status`=1 LIMIT 1)AS qty_receive,
 		            sr.date_request,sr.receive_date,sr.note,
 			        (SELECT u.fullname FROM `tb_acl_user` AS u WHERE u.user_id=sr.user_id LIMIT 1 )AS user_id,
 			        (SELECT v.name_en FROM `tb_view` AS v WHERE v.key_code=sr.status LIMIT 1 )AS `status`
@@ -40,7 +41,7 @@ class Product_Model_DbTable_DbRequestStock extends Zend_Db_Table_Abstract
 		$location = $db_globle->getAccessPermission('m.`location_id`');
 		$order=' ORDER BY sr.id DESC';
 		//echo $sql;
-		return $db->fetchAll($sql.$where.$order);
+		return $db->fetchAll($sql.$where.$order.$location);
 			
 	}
 	
@@ -89,7 +90,7 @@ class Product_Model_DbTable_DbRequestStock extends Zend_Db_Table_Abstract
 					$rs = $this->getProductQtyById($data["pro_id_".$i],$data["from_loc"]);
 					if(!empty($rs)){
 						$arr_p = array(
-							'qty'=>($rs['qty'])-($data["qty_".$i]),
+							'qty'=>($rs['qty'])-($data["re_qty_".$i]),
 						);
 						$this->_name="tb_prolocation";
 						$where = array('pro_id=?'=>$data["pro_id_".$i],"location_id=?"=>$data["from_loc"]);
@@ -98,7 +99,7 @@ class Product_Model_DbTable_DbRequestStock extends Zend_Db_Table_Abstract
 						$arr_p = array(
 								'pro_id'			=>	$data["pro_id_".$i],
 								'location_id'		=>	$data["from_loc"],
-								'qty'				=>	$data["qty_".$i],
+								'qty'				=>	$data["re_qty_".$i],
 								'damaged_qty'		=>	0,
 								'qty_warning'		=>	0,
 								'last_mod_userid'	=>	$user_id,
@@ -132,7 +133,7 @@ class Product_Model_DbTable_DbRequestStock extends Zend_Db_Table_Abstract
 				    //print_r($rs);exit();
 					if(!empty($rs)){
 						$arr_qty = array(
-								'qty'=>($rs['qty'])+($row["total_qty"]),
+								'qty'=>($rs['qty'])+($row["request_qty"]),
 						);
 						$this->_name="tb_prolocation";
 						$where = array('pro_id=?'=>$rs["pro_id"],"location_id=?"=>$rs["location_id"]);
@@ -184,7 +185,7 @@ class Product_Model_DbTable_DbRequestStock extends Zend_Db_Table_Abstract
 					$rs = $this->getProductQtyById($data["pro_id_".$i],$data["from_loc"]);
 					if(!empty($rs)){
 						$arr_p = array(
-								'qty'=>($rs['qty'])-($data["qty_".$i]),
+								'qty'=>($rs['qty'])-($data["re_qty_".$i]),
 						);
 						$this->_name="tb_prolocation";
 						$where = array('pro_id=?'=>$data["pro_id_".$i],"location_id=?"=>$data["from_loc"]);
@@ -193,7 +194,7 @@ class Product_Model_DbTable_DbRequestStock extends Zend_Db_Table_Abstract
 						$arr_p = array(
 								'pro_id'			=>	$data["pro_id_".$i],
 								'location_id'		=>	$data["from_loc"],
-								'qty'				=>	$data["qty_".$i],
+								'qty'				=>	$data["re_qty_".$i],
 								'damaged_qty'		=>	0,
 								'qty_warning'		=>	0,
 								'last_mod_userid'	=>	$user_id,

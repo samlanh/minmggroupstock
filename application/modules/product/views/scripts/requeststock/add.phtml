@@ -267,8 +267,18 @@ function TotalQty(index){
 			doRemainQty(index);
 			return false;
 		}
+		if(total_qty < $("#re_qty_"+index).val() ){
+			alert("Receive Qty can't bigger then transfer Qty!!!");
+			$('#qty_unit_'+index).val(qty);
+			$('#qty_per_unit_'+index).val(0);
+			$("#qty_"+index).val(qty);
+			$("#re_qty_"+index).val(qty);
+			//fullMeanQty(index,qty);
+			doRemainQty(index);
+			return false;
+		}
 		$("#qty_"+index).val(total_qty.toFixed(3));
-		$("#re_qty_"+index).val(total_qty.toFixed(3));
+		//$("#re_qty_"+index).val(total_qty.toFixed(3));
 		doRemainQty(index);
 	}
 function doRemainQty(index){
