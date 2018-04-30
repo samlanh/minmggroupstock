@@ -98,7 +98,15 @@ class Product_Form_FrmSearchInfomation extends Zend_Form
 		}
 		$staff_id->setMultiOptions($opt);
 		
-		$this->addElements(array($staff_id,$category,$branch,$pro_name,$end_date,$start_date));
+		$opt = array('1'=>$tr->translate("ACTIVE"),'0'=>$tr->translate("DEACTIVE"),''=>$tr->translate("SELECT_ALL"));
+		$status = new Zend_Form_Element_Select("status");
+		$status->setAttribs(array(
+				'class'=>'form-control select2me',
+		));
+		$status->setMultiOptions($opt);
+		$status->setValue($request->getParam("status"));
+		
+		$this->addElements(array($status,$staff_id,$category,$branch,$pro_name,$end_date,$start_date));
 		return $this;
 	}
 	
