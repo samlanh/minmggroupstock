@@ -40,7 +40,65 @@ class Product_Form_FrmSearchInfomation extends Zend_Form
 			$end_date ->setValue($date->get('MM/d/Y'));
 		}
 		
-		$this->addElements(array($pro_name,$end_date,$start_date));
+		$db_pro = new Product_Model_DbTable_DbProduct();
+		$branch = new Zend_Form_Element_Select("branch");
+		$opt = array(''=>$tr->translate("SELECT_BRANCH"));
+		$row_branch = $db_pro->getBranch();
+		if(!empty($row_branch)){
+			foreach ($row_branch as $rs){
+				$opt[$rs["id"]] = $rs["name"];
+			}
+		}
+		$branch->setAttribs(array(
+				'class'=>'form-control select2me',
+		));
+		$branch->setMultiOptions($opt);
+		$branch->setValue($request->getParam("branch"));
+		
+		$sub_location = new Zend_Form_Element_Select("sub_location");
+		$opt = array(''=>$tr->translate("SELECT_BRANCH"));
+		$row_branch = $db_pro->getBranch();
+		if(!empty($row_branch)){
+			foreach ($row_branch as $rs){
+				$opt[$rs["id"]] = $rs["name"];
+			}
+		}
+		$sub_location->setAttribs(array(
+				'class'=>'form-control select2me',
+		));
+		$sub_location->setMultiOptions($opt);
+		$sub_location->setValue($request->getParam("sub_location"));
+		
+		$opt = array(''=>$tr->translate("SELECT_CATEGORY"));
+		$category = new Zend_Form_Element_Select("category");
+		$category->setAttribs(array(
+				'class'=>'form-control select2me',
+		));
+		$row_cat = $db_pro->getCategory();
+		if(!empty($row_cat)){
+			foreach ($row_cat as $rs){
+				$opt[$rs["id"]] = $rs["name"];
+			}
+		}
+		$category->setMultiOptions($opt);
+		$category->setValue($request->getParam("category"));
+		
+		$db = new Product_Model_DbTable_DbRequestStock();
+		$staff_id =new Zend_Form_Element_Select("staff_id");
+		$staff_id->setAttribs(array(
+				'class'=>'form-control select2me',
+				'onChange'=>'setStaffInfo();'
+		));
+		$opt= array(''=>$tr->translate("SELECT_REQUEST_NAME"));
+		$row_staff= $db->getAllStaffName();
+		if(!empty($row_staff)){
+			foreach ($row_staff as $rs){
+				$opt[$rs["id"]] = $rs["name"];
+			}
+		}
+		$staff_id->setMultiOptions($opt);
+		
+		$this->addElements(array($staff_id,$category,$branch,$pro_name,$end_date,$start_date));
 		return $this;
 	}
 	

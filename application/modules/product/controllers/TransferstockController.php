@@ -29,7 +29,7 @@ public function init()
     	}else{
 			$data = array(
     			'ad_search'		=>	'',
-    			'start_date'	=>	date("Y-m-d"),
+    			'start_date'	=>	date("Y-m-01"),
 				'end_date'		=>	date("Y-m-d"),
     		);
 		}

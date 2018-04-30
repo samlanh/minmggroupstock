@@ -34,9 +34,13 @@ class Product_Model_DbTable_DbTransferStock extends Zend_Db_Table_Abstract
 		 			$s_where[]="REPLACE(t.transfer_no,' ','')   LIKE '%{$s_search}%'";
 		 			$where.=' AND ('.implode(' OR ', $s_where).')';
 		 		} 
+		 		if(!empty($data["branch"])){
+		 			$where.=' AND t.`from_location`='.$data["branch"];
+		 			$where.=' OR t.`to_location`='.$data["branch"];
+		 		}
 // 		$location = $db_globle->getAccessPermission('m.`location_id`');
 		$order=' ORDER BY t.id DESC';
-		//echo $sql;
+		//echo $sql.$where;
 		return $db->fetchAll($sql.$where.$order);
 	}
 	
@@ -60,12 +64,18 @@ class Product_Model_DbTable_DbTransferStock extends Zend_Db_Table_Abstract
 			$s_where=array();
 			$s_search=addslashes(trim($data['ad_search']));
 			$s_search = str_replace(' ', '', $s_search);
-			$s_where[]="REPLACE(t.transfer_no,' ','')   LIKE '%{$s_search}%'";
+			$s_where[]="REPLACE(t.transfer_re_no,' ','')   LIKE '%{$s_search}%'";
+			$s_where[]="REPLACE(t.note,' ','')   LIKE '%{$s_search}%'";
+			$s_where[]="REPLACE((SELECT tr.transfer_no FROM `rms_transferstock` AS tr WHERE tr.id=t.`transfer_id`),' ','')   LIKE '%{$s_search}%'";
 			$where.=' AND ('.implode(' OR ', $s_where).')';
+		}
+		if(!empty($data["branch"])){
+			$where.=' AND t.`from_location`='.$data["branch"];
+			$where.=' OR t.`to_location`='.$data["branch"];
 		}
 		// 		$location = $db_globle->getAccessPermission('m.`location_id`');
 		$order=' ORDER BY t.id DESC';
-		//echo $sql;
+		//echo $sql.$where;
 		return $db->fetchAll($sql.$where.$order);
 	}
 	

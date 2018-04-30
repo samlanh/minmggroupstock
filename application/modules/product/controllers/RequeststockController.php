@@ -29,20 +29,21 @@ public function init()
     	}else{
 			$data = array(
     			'ad_search'		=>	'',
-    			'start_date'	=>	date("Y-m-d"),
+    			'start_date'	=>	date("Y-m-01"),
 				'end_date'		=>	date("Y-m-d"),
     		);
 		}
    
    		$rows=$db->getAllRequestStock($data);
-   		$columns=array("LOCATION","REQUEST_NO","REQUEST_NAME","TOTAL_QTY","TOTAL_RECEIVE","REQUEST_DATE","RECEIVE_DTE","NOTE","BY_USER","STATUS");
-   		
-   		
+   		$columns=array("LOCATION","REQUEST_NO","REQUEST_NAME","REQUEST_QTY","RECEIVE_QTY","REQUEST_DATE","RECEIVE_DATE","NOTE","BY_USER","STATUS","ACTION");
+   		$print=array(
+   				'module'=>'report','controller'=>'product','action'=>'rpt-request-productdetail',
+   		);
    		$link=array(
    				'module'=>'product','controller'=>'requeststock','action'=>'edit',
    		);
-   		$this->view->list=$list->getCheckList(0, $columns, $rows,array('location_name'=>$link,'reques_no'=>$link,'staff_name'=>$link));
-   		$frm = new Product_Form_FrmRequestStock();
+   		$this->view->list=$list->getCheckList(0, $columns, $rows,array('location_name'=>$link,'reques_no'=>$link,'staff_name'=>$link,'បោះពុម្ព'=>$print));
+   		$frm = new Product_Form_FrmSearchInfomation();
     	Application_Model_Decorator::removeAllDecorator($frm);
     	$this->view->formFilter = $frm->filter();
    	}

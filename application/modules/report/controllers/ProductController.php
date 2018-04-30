@@ -192,6 +192,7 @@ class report_ProductController extends Zend_Controller_Action
     				'end_date'		=>	date("Y-m-d"),
     		);
     	}
+    	$this->view->rssearch=$data;
     	$db = new Product_Model_DbTable_DbTransferStock();
     	$this->view->rs=$db->getAllTransferStock($data);
     	$frm = new Product_Form_FrmSearchInfomation();
@@ -234,6 +235,7 @@ class report_ProductController extends Zend_Controller_Action
     				'end_date'		=>	date("Y-m-d"),
     		);
     	}
+    	$this->view->rssearch=$data;
     	$db = new Product_Model_DbTable_DbTransferStock();
     	$this->view->rs=$db->getAllTransferReceiveStock($data);
     	$frm = new Product_Form_FrmSearchInfomation();
@@ -261,6 +263,53 @@ class report_ProductController extends Zend_Controller_Action
     	if(empty($rs)){
     		Application_Form_FrmMessage::Sucessfull("Transfer don't have approve!!!", '/product/mrcheck/');
     	}
+    	$frm = new Product_Form_FrmSearchInfomation();
+    	Application_Model_Decorator::removeAllDecorator($frm);
+    	$this->view->formFilter = $frm->filter();
+    }
+    
+    function rptRequestproductsAction(){
+    	$data = $this->getRequest()->getPost();
+   		$list = new Application_Form_Frmlist();
+   		$db = new Product_Model_DbTable_DbRequestStock();
+		$date =new Zend_Date();
+   		if($this->getRequest()->isPost()){   
+    		$data = $this->getRequest()->getPost();
+    		$data['start_date']=date("Y-m-d",strtotime($data['start_date']));
+    		$data['end_date']=date("Y-m-d",strtotime($data['end_date']));
+    	}else{
+			$data = array(
+    			'ad_search'		=>	'',
+    			'start_date'	=>	date("Y-m-01"),
+				'end_date'		=>	date("Y-m-d"),
+    		);
+		}
+		$this->view->rssearch=$data;
+   
+   		$rows=$db->getAllRequestStock($data);
+   		$this->view->rs=$rows;
+    	$frm = new Product_Form_FrmSearchInfomation();
+    	Application_Model_Decorator::removeAllDecorator($frm);
+    	$this->view->formFilter = $frm->filter();
+    }
+    
+    function rptRequestProductdetailAction(){
+    	$id=$this->getRequest()->getParam('id');
+    	$date =new Zend_Date();
+    	if($this->getRequest()->isPost()){
+    		$data = $this->getRequest()->getPost();
+    		$data['start_date']=date("Y-m-d",strtotime($data['start_date']));
+    		$data['end_date']=date("Y-m-d",strtotime($data['end_date']));
+    	}else{
+    		$data = array(
+    				'ad_search'		=>	'',
+    				'start_date'	=>	date("Y-m-01"),
+    				'end_date'		=>	date("Y-m-d"),
+    		);
+    	}
+    	$db = new Product_Model_DbTable_DbRequestStock();
+    	$this->view->row=$db->getRequestStockByids($id);
+    	$this->view->rs=$db->getStaffRequestItemsbyId($id);
     	$frm = new Product_Form_FrmSearchInfomation();
     	Application_Model_Decorator::removeAllDecorator($frm);
     	$this->view->formFilter = $frm->filter();

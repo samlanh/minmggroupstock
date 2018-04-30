@@ -29,16 +29,29 @@
 				</div>
 			</div>
 			<div class="portlet-body form frmfilter">
-				<form method="post" action="">
-					<div class="form-group" style="padding-top: 6px;">
-						<label class="control-label col-md-2"><?php echo $formFilter->getElement('ad_search');?></label>
-						<label class="control-label col-md-2"><?php echo $formFilter->getElement('start_date');?></label>
-						<label class="control-label col-md-2"><?php echo $formFilter->getElement('end_date');?></label>
-						<label class="control-label col-md-2">
-						<button class="btn btn-primary col-md-12" value="" ><i class="fa fa-save"></i>&nbsp;<?php echo $tr->translate("REFRESH");?></button>
-						</label>
-					</div>			
-				</form> 
+				<form class="form-horizontal" method="post" action="" >
+				<div class="form-body">
+							<div class="form-group">
+								<div class="col-md-3">
+									<?php echo $formFilter->getElement('ad_search');?>
+								</div>
+								<div class="col-md-3">
+									<?php echo $formFilter->getElement('branch');?>
+								</div>
+								<div class="col-md-3">
+									<?php echo $formFilter->getElement('start_date');?>
+								</div>
+								<div class="col-md-3">
+									<?php echo $formFilter->getElement('end_date');?>
+								</div>
+							</div>		
+							<div class="form-group">
+								<div class="col-md-3">
+									<button class="btn btn-primary col-md-12" value="" ><i class="fa fa-save"></i>&nbsp;<?php echo $tr->translate("REFRESH");?></button>
+								</div>
+							</div>		
+					</div>
+				</form>
 				<div class="contain_form" style="clear: both;">
 					<form name="list"><div style="overflow:scroll; max-height: 450px; overflow-x:hidden;" >
 					<table class="collape tablesorter" id="table" width="100%">

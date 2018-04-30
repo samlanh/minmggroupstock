@@ -19,11 +19,12 @@ class Product_Model_DbTable_DbRequestStock extends Zend_Db_Table_Abstract
 		$end_date = date("Y-m-d",strtotime($data["end_date"]));
 		$sql ="SELECT sr.id,(SELECT l.name FROM `tb_sublocation` AS l WHERE l.id=sr.`branch_id` AND l.status=1 LIMIT 1) AS location_name,
 		        	sr.reques_no,(SELECT s.staff_name FROM `tb_staff` AS s WHERE s.id=sr.`staff_id` LIMIT 1) AS staff_name,
-		        	(SELECT SUM(sd.`total_qty`) FROM `tb_staff_request_detail` AS sd WHERE sd.staff_request_id=sr.id AND sr.`status`=1 LIMIT 1)AS qty,
-		        	(SELECT SUM(sd.`request_qty`) FROM `tb_staff_request_detail` AS sd WHERE sd.staff_request_id=sr.id AND sr.`status`=1 LIMIT 1)AS qty_receive,
+		        	(SELECT SUM(sd.`request_qty`) FROM `tb_staff_request_detail` AS sd WHERE sd.staff_request_id=sr.id AND sr.`status`=1 LIMIT 1)AS qty,
+		        	(SELECT SUM(sd.`receive_qty`) FROM `tb_staff_request_detail` AS sd WHERE sd.staff_request_id=sr.id AND sr.`status`=1 LIMIT 1)AS qty_receive,
 		            sr.date_request,sr.receive_date,sr.note,
 			        (SELECT u.fullname FROM `tb_acl_user` AS u WHERE u.user_id=sr.user_id LIMIT 1 )AS user_id,
-			        (SELECT v.name_en FROM `tb_view` AS v WHERE v.key_code=sr.status LIMIT 1 )AS `status`
+			        (SELECT v.name_en FROM `tb_view` AS v WHERE v.key_code=sr.status LIMIT 1 )AS `status`,
+			        'បោះពុម្ព'
 			     FROM `tb_staff_request` AS sr ";
 				$from_date =(empty($data['start_date']))? '1': " sr.date_request >= '".$data['start_date']." 00:00:00'";
 				$to_date = (empty($data['end_date']))? '1': " sr.date_request <= '".$data['end_date']." 23:59:59'";
@@ -38,11 +39,35 @@ class Product_Model_DbTable_DbRequestStock extends Zend_Db_Table_Abstract
 		 			
 		 			$where.=' AND ('.implode(' OR ', $s_where).')';
 		 		} 
+		 		if(!empty($data["branch"])){
+		 			$where.=' AND sr.`branch_id`='.$data["branch"];
+		 		}
+		 		if(!empty($data["staff_id"])){
+		 			$where.=' AND sr.`staff_id`='.$data["staff_id"];
+		 		}
 		$location = $db_globle->getAccessPermission('m.`location_id`');
 		$order=' ORDER BY sr.id DESC';
 		//echo $sql;
 		return $db->fetchAll($sql.$where.$order.$location);
 			
+	}
+	
+	function getRequestStockByids($reques_id){
+		$db = $this->getAdapter();
+		$db_globle = new Application_Model_DbTable_DbGlobal();
+		$sql ="SELECT sr.id,(SELECT l.name FROM `tb_sublocation` AS l WHERE l.id=sr.`branch_id` AND l.status=1 LIMIT 1) AS location_name,
+		sr.reques_no,(SELECT s.staff_name FROM `tb_staff` AS s WHERE s.id=sr.`staff_id` LIMIT 1) AS staff_name,
+		(SELECT SUM(sd.`total_qty`) FROM `tb_staff_request_detail` AS sd WHERE sd.staff_request_id=sr.id AND sr.`status`=1 LIMIT 1)AS qty,
+		(SELECT SUM(sd.`request_qty`) FROM `tb_staff_request_detail` AS sd WHERE sd.staff_request_id=sr.id AND sr.`status`=1 LIMIT 1)AS qty_receive,
+		sr.date_request,sr.receive_date,sr.note,
+		(SELECT u.fullname FROM `tb_acl_user` AS u WHERE u.user_id=sr.user_id LIMIT 1 )AS user_id,
+		(SELECT v.name_en FROM `tb_view` AS v WHERE v.key_code=sr.status LIMIT 1 )AS `status`,
+		(SELECT s.staff_name FROM `tb_staff` AS s WHERE s.id=sr.`staff_id` LIMIT 1) AS staff_name,
+		(SELECT s.staff_no FROM `tb_staff` AS s WHERE s.id=sr.`staff_id` LIMIT 1) AS staff_no,
+		(SELECT v.name_en FROM `tb_view` AS v WHERE v.key_code=(SELECT s.position_id FROM `tb_staff` AS s WHERE s.id=sr.`staff_id`) AND v.type=16 ) AS staff_position
+		
+		FROM `tb_staff_request` AS sr where sr.id=$reques_id";
+		return $db->fetchRow($sql);
 	}
 	
 	public function addRequest($data){
