@@ -11,6 +11,11 @@ $row=$this->row_tran;
 				<div class="caption">
 					<i class="fa fa-globe"></i><?php echo $tr->translate("CHECK_APPROVE");?>
 				</div>
+				<div class="caption pull-right">
+				    <a href="<?php echo $this->baseUrl();?>/product/mrcheck"  class="btn btn-bg blue">
+						<i class="fa fa-undo"></i>&nbsp;<?php echo $tr->translate("GO_BACK");?>
+					</a>
+				</div>
 			</div>
             <div class="portlet-body form frmfilter">
 					<div style="clear:both;"></div>	
@@ -43,7 +48,7 @@ $row=$this->row_tran;
 									<ul>
 										<li style="text-align:center; font-size:20px; font-family:'Khmer OS Muol Light'"><?php echo $this->title_reprot["title_report_kh"]?></li>
 										<li style="text-align:center; font-size:18px; font-family:serif,header-font; font-weight:600;"><?php echo $this->title_reprot["title_report_en"]?></li>
-										<li style="text-align:center; font-size:18px; margin-top:25px; font-family:'Khmer OS Muol Light'"><?php echo $tr->translate("MR_CHECK");?></li>
+										<li style="text-align:center; font-size:18px; margin-top:25px; font-family:'Khmer OS Muol Light'"><?php echo $tr->translate("CHECK_APPROVE");?></li>
 									</ul>
 								</td>
 								<td width="20%"></td>

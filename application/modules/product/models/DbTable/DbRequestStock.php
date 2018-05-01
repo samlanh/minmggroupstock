@@ -372,4 +372,28 @@ class Product_Model_DbTable_DbRequestStock extends Zend_Db_Table_Abstract
 		return $db->fetchAll($sql);
 	}
 	
+	public function addNewStaff($post){
+		$session_user=new Zend_Session_Namespace('auth');
+		$userName=$session_user->user_name;
+		$GetUserId= $session_user->user_id;
+		$db=$this->getAdapter();
+		$db_g=new Application_Model_DbTable_DbGlobal();
+		$staff_no=$db_g->getStaffIdNo();
+		$data=array(
+ 				'staff_name'		=> $post['staff_name'],
+				'staff_no'			=> $staff_no,
+				'sex'				=> $post['txt_sex'],
+				'phone'				=> $post['phone'],//test
+				'position_id'		=> $post['staff_position'],//test
+				'car_number'		=>	$post['car_number'],
+				'pob'				=> $post['pob'],
+				'note'				=> $post['note'],
+				'create_date'		=> date("Y-m-d H:i:sa"),
+				'modify_date'		=> date("Y-m-d H:i:sa"),
+ 				'status'			=>	$post["status"],
+				'user_id'			=> $GetUserId,
+		);
+		$this->_name="tb_staff";
+		return $this->insert($data);
+	}
 }

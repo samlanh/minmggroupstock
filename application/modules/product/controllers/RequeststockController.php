@@ -63,6 +63,9 @@ public function init()
     	$frm = new Product_Form_FrmRequestStock();
     	Application_Model_Decorator::removeAllDecorator($frm);
     	$this->view->formFilter = $frm->add();
+    	
+    	$db_g=new Application_Model_DbTable_DbGlobal();
+    	$this->view->staff_pos=$db_g->getVewOptoinTypeByTypes(16);
 	}
 	
 	public function editAction()
@@ -104,6 +107,23 @@ public function init()
 			$rs = $db->getAllStafInfo($data["staff_id"]);
 			echo Zend_Json::encode($rs);
 			exit();
+		}
+	}
+	
+	public function addStaffAction(){
+		if($this->getRequest()->isPost()){
+			try {
+				$post=$this->getRequest()->getPost();
+				$db = new Product_Model_DbTable_DbRequestStock();
+				$brand_id =$db->addNewStaff($post);
+				$result = array('staff_id'=>$brand_id);
+				echo Zend_Json::encode($result);
+				exit();
+			}catch (Exception $e){
+				$result = array('err'=>$e->getMessage());
+				echo Zend_Json::encode($result);
+				exit();
+			}
 		}
 	}
 }

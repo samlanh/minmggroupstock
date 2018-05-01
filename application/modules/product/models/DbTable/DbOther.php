@@ -13,7 +13,7 @@ class Product_Model_DbTable_DbOther extends Zend_Db_Table_Abstract
     
     function getAllView($data){
     	$db = $this->getAdapter();
-    	$sql = "SELECT v.`id`,v.`name_en`,v.`status`,v.`key_code`,`type` FROM `tb_view` AS v WHERE v.`type` IN(2,3,4,6)";
+    	$sql = "SELECT v.`id`,v.`name_en`,v.`status`,v.`key_code`,`type` FROM `tb_view` AS v WHERE v.`type` IN(2,3,4,6,16)";
     	$where = '';
     	if($data["adv_search"]!=""){
     		$s_where=array();
@@ -33,6 +33,7 @@ class Product_Model_DbTable_DbOther extends Zend_Db_Table_Abstract
 		$where.=" ORDER BY v.type DESC";
     	return $db->fetchAll($sql.$where);
     }
+    
     function getViewById($id){
     	$db = $this->getAdapter();
     	$sql = "SELECT v.`id`,v.`name_en`,v.`status`,v.`key_code`,`type` FROM `tb_view` AS v WHERE v.`id`=$id";
@@ -45,6 +46,7 @@ class Product_Model_DbTable_DbOther extends Zend_Db_Table_Abstract
 		//echo $key_code;exit();
     	$arr = array(
     		'name_en'	=>	$data["title_en"],
+    		'name_kh'	=>	$data["title_en"],
     		'key_code'	=>	$key_code,
     		'type'		=>	$data["type"],
     		'status'	=>	$data["status"],
@@ -52,18 +54,22 @@ class Product_Model_DbTable_DbOther extends Zend_Db_Table_Abstract
     	$this->_name = "tb_view";
     	$this->insert($arr);
     }
+    
     function edit($data){
     	$db = $this->getAdapter();
+    	$sql = "DELETE FROM tb_view WHERE id=".$data["id"];
+    	$db->query($sql);
     	$key_code = $this->getLastKeycodeByType($data['type']);
     	$arr = array(
     			'name_en'	=>	$data["title_en"],
-    			//'key_code'	=>	$key_code,
+    			'name_kh'	=>	$data["title_en"],
+    			'key_code'	=>	$key_code,
     			'type'		=>	$data["type"],
     			'status'	=>	$data["status"],
     	);
     	$this->_name = "tb_view";
-    	$where = $db->quoteInto("id=?", $data["id"]);
-    	$this->update($arr, $where);
+    	$this->insert($arr);
+    	
     }
     //Insert Popup=====================================================================
 	
@@ -81,7 +87,7 @@ class Product_Model_DbTable_DbOther extends Zend_Db_Table_Abstract
 		return $key_code;
     }
     function getLastKeycodeByType($type){
-    	$sql = "SELECT COUNT(key_code) FROM `tb_view` WHERE type=$type ORDER BY key_code DESC LIMIT 1 ";
+    	$sql = "SELECT COUNT(key_code) FROM `tb_view` WHERE TYPE=$type AND STATUS=1 ORDER BY key_code DESC LIMIT 1  ";
     	$db =$this->getAdapter();
     	$number = $db->fetchOne($sql);
 		//echo (int)$number+1;exit;

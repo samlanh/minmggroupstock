@@ -15,7 +15,8 @@ class Product_StaffController extends Zend_Controller_Action
 // 			$search['end_date']=date("Y-m-d",strtotime($search['end_date']));
 		}else{
 			$search =array(
-					'text_search'=>'',
+					'ad_search'=>'',
+					'status'=>1,
 // 					'start_date'=>date("Y-m-d"),
 // 					'end_date'=>date("Y-m-d"),
 			);
@@ -24,7 +25,7 @@ class Product_StaffController extends Zend_Controller_Action
 		$rows = $db->getAllStaff($search);
 		$list = new Application_Form_Frmlist();
 		
-		$columns=array("STAFF_NO","EMPLOYEE_NAME","PHONE","SEX","CAR_NUMBER","STAFF_POSITIO","NOTE","STATUS");
+		$columns=array("STAFF_NO","EMPLOYEE_NAME","PHONE","SEX","CAR_NUMBER","STAFF_POSITION","NOTE","STATUS");
 		$link=array(
 				'module'=>'product','controller'=>'staff','action'=>'edit',
 		);
@@ -62,17 +63,19 @@ class Product_StaffController extends Zend_Controller_Action
 	
 	}	
 	public function editAction() {
+		$db = new Product_Model_DbTable_DbStaff();
+		$id=$this->getRequest()->getParam('id');
 		if($this->getRequest()->isPost())
 		{
 			$post = $this->getRequest()->getPost();
+			$post['id']=$id;
 			try{
-				$db = new Product_Model_DbTable_DbStaff();
-				$db->addCustomer($post);
+				$db->updateStaff($post);
 				if(!empty($post['saveclose']))
 				{
  					Application_Form_FrmMessage::Sucessfull('INSERT_SUCCESS','/product/staff/index');
 				}else{
-					Application_Form_FrmMessage::Sucessfull('INSERT_SUCCESS','/product/staff/add');
+					Application_Form_FrmMessage::Sucessfull('INSERT_SUCCESS','/product/staff/index');
 				}
 			}catch(Exception $e){
 				Application_Form_FrmMessage::message('INSERT_FAIL');
@@ -81,6 +84,7 @@ class Product_StaffController extends Zend_Controller_Action
 			}
 		}
 		
+		$this->view->row=$db->getStaffByid($id);
 		$db_g=new Application_Model_DbTable_DbGlobal();
 		$this->view->staff_no=$db_g->getStaffIdNo();
 		$this->view->staff_pos=$db_g->getVewOptoinTypeByTypes(16);

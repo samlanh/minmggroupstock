@@ -11,7 +11,7 @@
 	
 	$url_request_stocks =  array($this->url(array('module'=>'product','controller'=>'requeststock','action'=>'index'),null, true), "REQUEST_STOCK");
 	$url_transfer_stocks =  array($this->url(array('module'=>'product','controller'=>'transferstock','action'=>'index'),null, true), "TRANSFER_STOCK");
-	$url_mr_check =  array($this->url(array('module'=>'product','controller'=>'mrcheck','action'=>'index'),null, true), "MR_CHECK");
+	$url_mr_check =  array($this->url(array('module'=>'product','controller'=>'mrcheck','action'=>'index'),null, true), "CHECK_APPROVE");
 	
 	$url_category =  array($this->url(array('module'=>'product','controller'=>'category','action'=>'index'),null, true), "PRODUCT_CATEGORY");
 	$url_brand = array($this->url(array('module'=>'product','controller'=>'brand','action'=>'index'),null, true), "BRAND_NAME");
@@ -107,31 +107,31 @@
 					<ul class="sub-menu">
 						<li>
 							<a href="<?php echo $url_pro_add[0]; ?>">
-							<i class="icon-bar-chart"></i><?php echo $tr->translate($url_pro_add[1])?></a>
+							<i class="icon-list"></i><?php echo $tr->translate($url_pro_add[1])?></a>
 						</li>
 						<li>
 							<a href="<?php echo $url_pro_list[0]; ?>">
-							<i class="icon-bulb"></i><?php echo $tr->translate($url_pro_list[1])?></a>
+							<i class="icon-arrow-right"></i><?php echo $tr->translate($url_pro_list[1])?></a>
 						</li>
 						
 						<li>
 							<a href="<?php echo $url_transfer_stocks[0]; ?>">
-							<i class="icon-bulb"></i><?php echo $tr->translate($url_transfer_stocks[1])?></a>
+							<i class="icon-share-alt"></i><?php echo $tr->translate($url_transfer_stocks[1])?></a>
 						</li>
 						
 						<li>
 							<a href="<?php echo $url_mr_check[0]; ?>">
-							<i class="icon-bulb"></i><?php echo $tr->translate($url_mr_check[1])?></a>
+							<i class="icon-arrow-right"></i> <?php echo $tr->translate($url_mr_check[1])?></a>
 						</li>
 						
 						<li>
 							<a href="<?php echo $url_request_stocks[0]; ?>">
-							<i class="icon-bulb"></i><?php echo $tr->translate($url_request_stocks[1])?></a>
+							<i class="icon-arrow-right"></i><?php echo $tr->translate($url_request_stocks[1])?></a>
 						</li>
 						
 						<li>
 							<a href="<?php echo $url_damagedstock[0]; ?>">
-							<i class="icon-bulb"></i><?php echo $tr->translate($url_damagedstock[1])?></a>
+							<i class="icon-arrow-right"></i><?php echo $tr->translate($url_damagedstock[1])?></a>
 						</li>
 						<!-- <li>
 							<a href="<?php //echo $url_curr[0]; ?>">
@@ -150,36 +150,36 @@
 	            		</li>-->
 	            		<li>
 	            			<a href="<?php echo $url_adj[0]; ?>">
-							    <i class="icon-bulb"></i><?php echo $tr->translate($url_adj[1])?>
+							    <i class="icon-arrow-right"></i><?php echo $tr->translate($url_adj[1])?>
 		            		</a>
 	            		</li>
 						
 	            		<li>
 	            			<a href="<?php echo $url_category[0]; ?>">
-							      <i class="icon-bulb"></i><?php echo $tr->translate($url_category[1]);?>
+							      <i class="icon-arrow-right"></i><?php echo $tr->translate($url_category[1]);?>
 		            		</a>
 	            		</li>
 	            		<li>
 	            			<a href="<?php echo $url_brand[0]; ?>">
-							   <i class="icon-bulb"></i> <?php echo $tr->translate($url_brand[1]);?>
+							   <i class="icon-arrow-right"></i> <?php echo $tr->translate($url_brand[1]);?>
 		            		</a>
 	            		</li>
 	            		 <li>
 	            			<a href="<?php echo $url_pricelevel[0]; ?>">
-							    <i class="icon-bulb"></i><?php echo $tr->translate($url_pricelevel[1]);?></a>
+							    <i class="icon-arrow-right"></i><?php echo $tr->translate($url_pricelevel[1]);?></a>
 	            		<li> 
 	            		<li>
 	            			<a href="<?php echo $url_other[0]; ?>">
-							    <i class="icon-bulb"></i> <?php echo $tr->translate($url_other[1]);?>
+							    <i class="icon-arrow-right"></i> <?php echo $tr->translate($url_other[1]);?>
 		            		</a>
 	            		</li>
             			<li>
 	            			<a href="<?php echo $url_measure[0]; ?>">
-							 <i class="icon-bulb"></i><?php echo $tr->translate($url_measure[1])?></a>
+							 <i class="icon-arrow-right"></i><?php echo $tr->translate($url_measure[1])?></a>
 	            		<li>
 	            		<li>
 	            			<a href="<?php echo $url_staff[0]; ?>">
-							 <i class="icon-bulb"></i><?php echo $tr->translate($url_staff[1])?></a>
+							 <i class="icon-user"></i><?php echo $tr->translate($url_staff[1])?></a>
 	            		<li>
 					</ul>
 				</li>
@@ -330,17 +330,17 @@
 					<ul class="sub-menu">
 						<li>
 	            			<a href="<?php echo $url_user_list[0]; ?>">
-		            			<i class="icon-arrow-right"></i><?php echo $tr->translate($url_user_list[1]);?>
+		            			<i class="icon-user"></i><?php echo $tr->translate($url_user_list[1]);?>
 		            		</a>
 	            		</li> 
             		    <li>
 	            			<a href="<?php echo $url_location[0]; ?>">
-							    <i class="icon-bulb"></i> <?php echo $tr->translate($url_location[1]);?>
+							    <i class="icon-arrow-right"></i> <?php echo $tr->translate($url_location[1]);?>
 		            		</a>
 	            		</li>
 	            		<li>
 	            			<a href="<?php echo $url_user_add[0]; ?>">
-		            			<i class="icon-arrow-right"></i><?php echo $tr->translate($url_user_add[1]);?>
+		            			<i class="icon-user"></i><?php echo $tr->translate($url_user_add[1]);?>
 		            		</a>
 	            		</li> 
 	            		<li>

@@ -35,7 +35,7 @@ public function init()
 		}
    		$rows=$db->getAllTransferStock($data);
    		$this->view->rs=$rows;
-   		$columns=array("TRANSFER_NO","TRANSFER_DTE","FROM_LOCATION","TO_LOCATION","TOTAL_QTY","NOTE","APPROVE","BY_USER","STATUS");
+   		$columns=array("TRANSFER_NO","TRANSFER_DATE","FROM_LOCATION","TO_LOCATION","TOTAL_QTY","NOTE","APPROVE","BY_USER","STATUS");
    		$link=array(
    				'module'=>'product','controller'=>'transferstock','action'=>'edit',
    		);

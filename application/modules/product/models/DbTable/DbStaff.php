@@ -20,8 +20,8 @@ class Product_Model_DbTable_DbStaff extends Zend_Db_Table_Abstract
 // 		$to_date = (empty($search['end_date']))? '1': " s.create_date <= '".$search['end_date']." 23:59:59'";
 // 		$where = " AND ".$from_date." AND ".$to_date;
 		$where=' WHERE  1 ';
-		if(!empty($search['text_search'])){
-		    $s_search=addslashes(trim($search['text_search']));
+		if($search['ad_search']!=""){
+		    $s_search=addslashes(trim($search['ad_search']));
 			$s_search = str_replace(' ', '', $s_search);
 			$s_where[]="REPLACE(s.`staff_no`,' ','')   LIKE '%{$s_search}%'";
 			$s_where[]="REPLACE(s.`staff_name`,' ','')   LIKE '%{$s_search}%'";
@@ -29,8 +29,11 @@ class Product_Model_DbTable_DbStaff extends Zend_Db_Table_Abstract
 			$s_where[]="REPLACE(s.`car_number`,' ','')   LIKE '%{$s_search}%'";
 			$where .=' AND ('.implode(' OR ',$s_where).')';
 		}
+		if(!empty($search["status"])){
+			$where.=' AND s.`status`='.$search["status"];
+		}
 		$order=" ORDER BY s.id DESC ";
-		echo $sql.$where.$order;
+		//echo $sql.$where.$order;
 		return $db->fetchAll($sql.$where.$order);
  	}
  	
@@ -81,7 +84,7 @@ class Product_Model_DbTable_DbStaff extends Zend_Db_Table_Abstract
 	}
 	function getStaffByid($id){
     	$db = $this->getAdapter();
-    	$sql = "SELECT id,staff_name,staff_no,sex,phone,position_id,car_number,pob,note FROM tb_staff WHERE id=$id";
+    	$sql = "SELECT * FROM tb_staff WHERE id=$id";
     	return $db->fetchRow($sql);
     }
 }

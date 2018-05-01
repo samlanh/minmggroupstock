@@ -21,7 +21,7 @@ public function init()
     		else{
     			$search = array(
     					'adv_search' => '',
-    					'status_search' => '',
+    					'status_search' => 1,
     					'type' => ''
     			);
     		}
@@ -45,12 +45,12 @@ public function init()
     		try {
     			$db->add($data);
     			if(isset($data['save_new'])){
-    				
     				Application_Form_FrmMessage::message('ការ​បញ្ចូល​​ជោគ​ជ័យ');
+    				Application_Form_FrmMessage::Sucessfull("INSERT_SUCCESS", '/product/other/add');
     			}
     			if(isset($data['save_close'])){
     				Application_Form_FrmMessage::message('ការ​បញ្ចូល​​ជោគ​ជ័យ');
-    				Application_Form_FrmMessage::redirectUrl('/other/loantype');
+    				Application_Form_FrmMessage::Sucessfull("INSERT_SUCCESS", '/product/other/');
     			}
     		} catch (Exception $e) {
     			Application_Form_FrmMessage::message("INSERT_FAIL");
@@ -72,14 +72,11 @@ public function init()
     		$data["id"] = $id;
     		try {
     			$db->edit($data);
-    			//if(isset($data['save_new'])){
-    
-    				Application_Form_FrmMessage::message('ការ​បញ្ចូល​​ជោគ​ជ័យ');
-    			//}
-    			//if(isset($data['save_close'])){
+    			if(isset($post["save_close"])){
+    			    Application_Form_FrmMessage::Sucessfull('ការ​បញ្ចូល​​ជោគ​ជ័យ',"/product/other");
+    			}else{
     				Application_Form_FrmMessage::Sucessfull('ការ​បញ្ចូល​​ជោគ​ជ័យ',"/product/other");
-    				//Application_Form_FrmMessage::redirectUrl('/other/loantype');
-    			//}
+    			}
     		} catch (Exception $e) {
     			Application_Form_FrmMessage::message("INSERT_FAIL");
     			$err = $e->getMessage();

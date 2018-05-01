@@ -28,8 +28,7 @@ class Product_Form_FrmOther extends Zend_Form
 		
 		$name_en = new Zend_Form_Element_Text('title_en');
 		$name_en->setAttribs(array(
-				'class'=>'form-control',
-				'required'=>'required'
+				'class'=>'validate[required] form-control'
 		));
 		
 		$name_kh = new Zend_Form_Element_Text('title_kh');
@@ -49,11 +48,11 @@ class Product_Form_FrmOther extends Zend_Form
 				'class'=>'form-control',
 				'required'=>'required'));
 		
-		$opt = array(''=>$tr->translate("SELECT_TYPE"),2=>$tr->translate("MODEL"),3=>$tr->translate("SIZE"),4=>$tr->translate("COLOR"),6=>$tr->translate("Customer Type"));
+		$opt = array(''=>$tr->translate("SELECT_TYPE"),16=>$tr->translate("STAFF_POSITION"),2=>$tr->translate("MODEL"),3=>$tr->translate("SIZE"),4=>$tr->translate("COLOR"),6=>$tr->translate("Customer Type"));
 		$type = new Zend_Form_Element_Select("type");
 		$type->setAttribs(array(
-				'class'=>'form-control',
-				'required'=>'required'));
+				'class'=>'validate[required] form-control'
+				 ));
 		$type->setMultiOptions($opt);
 		
 		
@@ -91,13 +90,13 @@ class Product_Form_FrmOther extends Zend_Form
 		$status_search->setAttribs(array(
 				'class'=>'form-control',));
 		$_status_opt = array(
-				''=>$tr->translate("ALL"),
 				1=>$tr->translate("ACTIVE"),
-				0=>$tr->translate("DACTIVE"));
+				0=>$tr->translate("DACTIVE"),
+				''=>$tr->translate("ALL"));
 		$status_search->setMultiOptions($_status_opt);
 		$status_search->setValue($request->getParam("status_search"));
 		
-		$opt = array(''=>$tr->translate("SELECT_TYPE"),2=>$tr->translate("MODEL"),3=>$tr->translate("SIZE"),4=>$tr->translate("COLOR"));
+		$opt = array(''=>$tr->translate("SELECT_TYPE"),16=>$tr->translate("STAFF_POSITION"),2=>$tr->translate("MODEL"),3=>$tr->translate("SIZE"),4=>$tr->translate("COLOR"));
 		$type = new Zend_Form_Element_Select("type");
 		$type->setAttribs(array(
 				'class'=>'form-control',));

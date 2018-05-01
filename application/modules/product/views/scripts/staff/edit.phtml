@@ -3,7 +3,8 @@
 $baseurl = Zend_Controller_Front::getInstance()->getBaseUrl();//new
 $url_new =  $this->url(array('module'=>'product','controller'=>'staff','action'=>'index'));
 $tr = Application_Form_FrmLanguages::getCurrentlanguage();
-//print_r($this->staff_pos);exit();
+$row=$this->row;
+ 
 ?>
 <title><?php echo $tr->translate("ADD_CUSTOMER");?></title>
 <div class="row">
@@ -28,7 +29,7 @@ $tr = Application_Form_FrmLanguages::getCurrentlanguage();
 							<div class="col-md-4">
 								<div class="input-icon right">
 									<i class="fa"></i>
-									<input type="text" name="staff_name" id="staff_name" value="" class="validate[required] form-control" placeholder="Employee Name">
+									<input type="text" name="staff_name" id="staff_name" value="<?php echo $row['staff_name'];?>" class="validate[required] form-control" placeholder="Employee Name">
 								</div>
 							</div>
 							<label class="control-label col-md-2"><?php echo $tr->translate("STAFF_NO");?> <span class="required">
@@ -37,7 +38,7 @@ $tr = Application_Form_FrmLanguages::getCurrentlanguage();
 							<div class="col-md-4">
 								<div class="input-icon right">
 									<i class="fa"></i>
-									<input type="text" name="staff_no" id="staff_no" value="<?php echo $this->staff_no?>" class="form-control" placeholder="ID" readOnly="readonly">	
+									<input type="text" name="staff_no" id="staff_no" value="<?php echo $row['staff_no'];?>" class="form-control" placeholder="ID" readOnly="readonly">	
 								</div>
 							</div>
 						</div>
@@ -50,8 +51,8 @@ $tr = Application_Form_FrmLanguages::getCurrentlanguage();
 								<div class="input-icon right">
 									<i class="fa"></i>
 									<select name="txt_sex" id="txt_sex" OnChange="AddLocation()" class="form-control select2me">
-									    <option value="1"><?php echo $tr->translate("MALE");?></option>
-									    <option value="2"><?php echo $tr->translate("FEMALE");?></option>
+									    <option value="1" <?php if($row['sex']==1) echo 'selected="selected"'?>><?php echo $tr->translate("MALE");?></option>
+									    <option value="2" <?php if($row['sex']==2) echo 'selected="selected"'?>><?php echo $tr->translate("FEMALE");?></option>
 									</select>
 								</div>
 							</div>
@@ -60,7 +61,7 @@ $tr = Application_Form_FrmLanguages::getCurrentlanguage();
 							</label>
 							<div class="col-md-4">
 								<div class="input-icon right">
-									<input type="text" name="car_number" id="car_number" value="" placeholder="Car Charger" class="form-control">
+									<input type="text" name="car_number" id="car_number" value="<?php echo $row['car_number'];?>" placeholder="Car Charger" class="form-control">
 								</div>
 							</div>
 					</div>
@@ -71,7 +72,7 @@ $tr = Application_Form_FrmLanguages::getCurrentlanguage();
 							<div class="col-md-4">
 								<div class="input-icon right">
 									<i class="fa"></i>
-									<input type="text" name="phone" id="phone" value="" placeholder="Phone Number" class="form-control">
+									<input type="text" name="phone" id="phone" value="<?php echo $row['phone'];?>" placeholder="Phone Number" class="form-control">
 								</div>
 							</div>	
 						<label class="control-label col-md-2">
@@ -84,7 +85,7 @@ $tr = Application_Form_FrmLanguages::getCurrentlanguage();
 									<select name="staff_position" id="staff_position"  class="form-control select2me">
 									    <option value=""><?php echo $tr->translate("SELECT_POSITION");?></option>
 									    <?php if(!empty($this->staff_pos)) foreach ($this->staff_pos As $rs){?>
-									    <option value="<?php echo $rs['id'] ?>"><?php echo $rs['name'] ?></option>
+									    <option value="<?php echo $rs['id'] ?>" <?php if($row['position_id']== $rs['id']) echo "selected='selected'";?>><?php echo $rs['name'] ?></option>
 									   <?php }?>
 									</select>
 								</div>	 
@@ -98,7 +99,7 @@ $tr = Application_Form_FrmLanguages::getCurrentlanguage();
 							<div class="col-md-4">
 								<div class="input-icon right">
 									<i class="fa"></i>
-									<textarea name="pob" id="pob" placeholder="Place Of Birth" class="form-control" rows="3" cols="80"></textarea>
+									<textarea name="pob" id="pob" placeholder="Place Of Birth" class="form-control" rows="3" cols="80"><?php echo $row['pob'];?></textarea>
 								</div>
 							</div>
 							
@@ -109,7 +110,7 @@ $tr = Application_Form_FrmLanguages::getCurrentlanguage();
 							<div class="col-md-4">
 									<div class="input-icon right">
 										<i class="fa"></i>
-										<textarea name="note" id="note" placeholder="Notice" class="form-control" rows="3" cols="80"></textarea>
+										<textarea name="note" id="note" placeholder="Notice" class="form-control" rows="3" cols="80"><?php echo $row['note'];?></textarea>
 									</div>
 							</div>
 					</div>
@@ -129,8 +130,8 @@ $tr = Application_Form_FrmLanguages::getCurrentlanguage();
 								<div class="input-icon right">
 									<i class="fa"></i>
 									<select name="status" id="status"  class="form-control select2me">
-									    <option value="1">Active</option>
-									    <option value="2">Deactive</option>
+									    <option value="1" <?php if($row['status']== 1) echo "selected='selected'";?>>Active</option>
+									    <option value="2" <?php if($row['status']== 2) echo "selected='selected'";?>>Deactive</option>
 									</select>
 								</div>	 
 							</div>
@@ -145,9 +146,6 @@ $tr = Application_Form_FrmLanguages::getCurrentlanguage();
 								<div class="input-icon right">
 									<button type="submit" name="saveclose" value="saveclose" class="btn blue btn-block btn-lg" ><i class="fa fa-close"></i> <?php echo $tr->translate("SAVE_CLOSE")?></button>
 								</div>
-							</div>
-							<div class="col-md-2">
-								<button type="submit" name="btnsavenew"  name="btnsavenew" class="btn blue btn-block btn-lg"><i class="fa fa-save"></i> <?php echo $tr->translate("SAVE_NEW")?> </button>
 							</div>
 							<div class="col-md-3"></div>
 						</div>

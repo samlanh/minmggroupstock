@@ -31,9 +31,9 @@ class Product_Form_FrmRequestStock extends Zend_Form
 		$staff_id =new Zend_Form_Element_Select("staff_id");
 		$staff_id->setAttribs(array(
 				'class'=>'form-control select2me',
-				'onChange'=>'setStaffInfo();'
+				'onChange'=>'setStaffInfo();getPopupStaff();'
 		));
-		$opt= array(''=>$tr->translate("SELECT_REQUEST_NAME"));
+		$opt= array(''=>$tr->translate("SELECT_REQUEST_NAME"),'-1'=>$tr->translate("ADD_NEW"));
 		$row_staff= $db->getAllStaffName();
 		if(!empty($row_staff)){
 			foreach ($row_staff as $rs){
@@ -126,12 +126,11 @@ class Product_Form_FrmRequestStock extends Zend_Form
 		$request_no->setValue($re_cod);
 		
 		if($data != null) {
-			 
 			$from_loc	->setValue($data["branch_id"]);
 			$request_no	->setValue($data["reques_no"]);
 			$staff_id	->setValue($data["staff_id"]);
-			$reques_date->setValue($data["date_request"]);
-			$receive_date->setValue($data["receive_date"]);
+			$reques_date->setValue(date("m/d/Y",strtotime($data["date_request"])));
+			$receive_date->setValue(date("m/d/Y",strtotime($data["receive_date"])));
 			$purpose	->setValue($data["purpose"]);
 			$note	->setValue($data["note"]);
 			$status	->setValue($data["status"]);
