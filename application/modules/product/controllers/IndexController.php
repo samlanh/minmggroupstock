@@ -42,7 +42,7 @@ public function init()
 		}else{
 			$rows = $db->getAllProduct($data);
 			$columns=array("BRANCH_NAME","ITEM_CODE","ITEM_NAME",
-					"CATEGORY","MEASURE","QTY","MASTER_PRICE","DEALER_PRICE","USER","STATUS");
+					"PRODUCT_CATEGORY","MEASURE","QTY","SOLD_PRICE","COST_PRICE","USER","STATUS");
 		}
 		$link=array(
 				'module'=>'product','controller'=>'index','action'=>'edit',

@@ -349,6 +349,7 @@ class Application_Model_DbTable_DbGlobal extends Zend_Db_Table_Abstract
     	}
     	else{
     		$sql_string = $this->getAllLocationByUser($result['user_id'],$branch);
+    		 
     		$result = " AND (".$sql_string.")";
     		return $result;
     	} 

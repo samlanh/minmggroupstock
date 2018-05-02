@@ -104,6 +104,9 @@ Class report_Model_DbProduct extends Zend_Db_Table_Abstract{
 				  p.`item_name`,
 				  p.`barcode`,
 				  p.`item_code`,
+				  m.`cur_qty`,
+				  m.`qty_adjust`,
+				  (m.`qty_adjust`-m.`cur_qty`) AS defer_qty,
 				  (SELECT b.`name` FROM `tb_brand` AS b WHERE b.`id` = p.`brand_id`) AS brand ,
 				  (SELECT b.`name` FROM `tb_category` AS b WHERE b.`id` = p.`cate_id`) AS cat ,
 				  (SELECT v.`name_en` FROM `tb_view` AS v WHERE v.id = p.`color_id` AND v.`type`=4) AS color,
@@ -111,26 +114,44 @@ Class report_Model_DbProduct extends Zend_Db_Table_Abstract{
 				  (SELECT v.`name_en` FROM `tb_view` AS v WHERE v.id = p.`color_id` AND v.`type`=3) AS size,
 				  (SELECT m.name FROM `tb_measure` AS m WHERE m.id = p.`measure_id` LIMIT 1) AS measure,
 				  (SELECT s.`name` FROM `tb_sublocation` AS s WHERE s.id=m.`location_id` LIMIT 1) AS location,
-				  (SELECT u.`fullname` FROM `tb_acl_user` AS u WHERE u.`user_id`=m.`user_mod` LIMIT 1) AS `username`,
+				  (SELECT u.`fullname` FROM `tb_acl_user` AS u WHERE u.`user_id`=m.`user_id` LIMIT 1) AS `username`,
 				   m.`date`
 				FROM
-				  `tb_move_history` AS m ,
+				  `tb_product_adjust` AS m ,
 				  `tb_product` AS p
 				WHERE m.`pro_id`=p.`id`";
-		$where = '';
-// 		if($data["ad_search"]!=""){
-// 			$s_where=array();
-// 			$s_search = addslashes(trim($data['ad_search']));
-// 			$s_where[]= " p.item_name LIKE '%{$s_search}%'";
-// 			$s_where[]=" p.barcode LIKE '%{$s_search}%'";
-// 			$s_where[]= " p.item_code LIKE '%{$s_search}%'";
-// 			$s_where[]= " p.serial_number LIKE '%{$s_search}%'";
-// 			//$s_where[]= " cate LIKE '%{$s_search}%'";
-// 			$where.=' AND ('.implode(' OR ', $s_where).')';
-// 		}
-		if($data["pro_id"]!=""){
-			$where.=' AND m.pro_id='.$data["pro_id"];
+	    $where = '';
+		if($data["ad_search"]!=""){
+			$s_where=array();
+			$s_search = addslashes(trim($data['ad_search']));
+			$s_where[]= " p.item_name LIKE '%{$s_search}%'";
+			$s_where[]=" p.barcode LIKE '%{$s_search}%'";
+			$s_where[]= " p.item_code LIKE '%{$s_search}%'";
+			$s_where[]= " p.serial_number LIKE '%{$s_search}%'";
+			$where.=' AND ('.implode(' OR ', $s_where).')';
 		}
+		if($data["branch"]!=""){
+			$where.=' AND m.`location_id`='.$data["branch"];
+		}
+		if($data["brand"]!=""){
+			$where.=' AND p.brand_id='.$data["brand"];
+		}
+		if($data["category"]!=""){
+			$where.=' AND p.cate_id='.$data["category"];
+		}
+		if($data["category"]!=""){
+			$where.=' AND p.cate_id='.$data["category"];
+		}
+		if($data["model"]!=""){
+			$where.=' AND p.model_id='.$data["model"];
+		}
+		if($data["size"]!=""){
+			$where.=' AND p.size_id='.$data["size"];
+		}
+		if($data["color"]!=""){
+			$where.=' AND p.color_id='.$data["color"];
+		}
+// 		 
 		$location = $db_globle->getAccessPermission('m.`location_id`');
 		//echo $location;
 		return $db->fetchAll($sql.$where.$location);

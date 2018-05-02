@@ -43,6 +43,7 @@ class Product_Model_DbTable_DbAdjustStock extends Zend_Db_Table_Abstract
 		return $db->fetchAll($sql);
 			
 	}
+	
 	public function add($data){
 		$db = $this->getAdapter();
 		 

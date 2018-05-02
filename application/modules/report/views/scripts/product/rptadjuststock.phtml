@@ -2,6 +2,7 @@
 $tr=Application_Form_FrmLanguages::getCurrentlanguage();
 $brach_name =  $this->branch;
 $formFilter = $this->formFilter;
+//print_r($this->product);exit();
 ?>
 <title>Adjust Stock Report</title>
 <div class="row">
@@ -29,40 +30,49 @@ $formFilter = $this->formFilter;
 					</div>
 			</div>
             <div class="portlet-body form frmfilter">
-				<form method="post" action="<?php //echo $formFilter->getAction(); ?>">
+				<form method="post" action=" ">
 					<div class="form-body">
 							<div class="form-group">
-								<div class="col-md-3">
+								<label class="control-label col-md-3">
 									<?php echo $formFilter->getElement('ad_search');?>
-								</div>
-								<div class="col-md-3">
+								</label>
+								<label class="control-label col-md-3">
+									<?php echo $formFilter->getElement('branch');?>
+								</label>
+								<label class="control-label col-md-3">
 									<?php echo $formFilter->getElement('brand');?>
-								</div>
-								<div class="col-md-3">
+								</label>
+								<label class="control-label col-md-3">
 									<?php echo $formFilter->getElement('category');?>
-								</div>
-								<div class="col-md-3">
-									<?php echo $formFilter->getElement('model');?>
-								</div>
+								</label>
+								
 							</div>
 							<div class="form-group">
-								<div class="col-md-3">
+								<label class="control-label col-md-3">
+									<?php echo $formFilter->getElement('model');?>
+								</label>
+								<label class="control-label col-md-3">
 									<?php echo $formFilter->getElement('size');?>
-								</div>
-								<div class="col-md-3">
+								</label>
+								<label class="control-label col-md-3">
 									<?php echo $formFilter->getElement('color');?>
-								</div>
-								<div class="col-md-3">
-									<?php echo $formFilter->getElement('status');?>
-								</div>
-								<div class="col-md-3">
-									<button type="submit" class="btn green"><?php echo $tr->translate("SEARCH");?></button>
-								</div>
-							</div>		
+								</label>
+								<label class="control-label col-md-3">
+									<?php echo $formFilter->getElement('status_qty');?>
+								</label>
+							</div>	
+							<div class="form-group">
+								<label class="control-label col-md-9">
+									<?php //echo $formFilter->getElement('model');?>
+								</label>
+								<label class="control-label col-md-3">
+									<button type="submit" class="btn btn-primary col-md-12"><?php echo $tr->translate("SEARCH");?></button>
+								</label>
+							</div>
 							
 						
 				</div><div style="clear:both;"></div>	
-				</form> 
+				</form>
 	<div style=" min-height:28cm; margin:0 auto; border: 1px dotted #ccc; padding:0px 0.2cm">
 	<div id="divPrint" style="width: 100%;">
 	<style>
@@ -133,9 +143,9 @@ $formFilter = $this->formFilter;
 									<td><?php echo $row["item_name"]."(".$row["cat"]." ".$row["brand"]." ".$row["model"]." ".$row["size"]." ".$row["color"].")"?></td>
 									<td><?php echo $row["barcode"]?></td>
 									<td class="center"><?php echo $row["measure"]?></td>
-									<td class="center"><?php echo $row["before_qty"]?></td>
-									<td class="center"><?php echo $row["qty_after"]?></td>
-									<td class="center"><?php echo $row["differ_qty"]?></td>
+									<td class="center"><?php echo $row["cur_qty"]?></td>
+									<td class="center"><?php echo $row["qty_adjust"]?></td>
+									<td class="center"><?php echo $row["defer_qty"]?></td>
 									<td class="center"><?php echo $row["username"]?></td>
 									<td class="center"><?php echo $row["date"]?></td>
 									<!-- <td class="center">
