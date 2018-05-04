@@ -13,6 +13,11 @@ class Sales_IndexController extends Zend_Controller_Action
     }
    	public function indexAction()
 	{
+		$user_info = new Application_Model_DbTable_DbGetUserInfo();
+		$db_globle = new Application_Model_DbTable_DbGlobal();
+		$result = $user_info->getUserInfo();
+		$level = $result["level"];
+		
 		if($this->getRequest()->isPost()){
 			$search = $this->getRequest()->getPost();
 			$search['start_date']=date("Y-m-d",strtotime($search['start_date']));
@@ -31,16 +36,20 @@ class Sales_IndexController extends Zend_Controller_Action
 		$rows = $db->getAllSaleOrder($search);
 		$columns=array("BRANCH_NAME","Com.Name","CON_NAME","INVOICE_NO","SALE_DATE",
 				"SUB_TOTAL","DISCOUNT","TRANSPORT_FEE","TOTAL_AMOUNT","PAID","BALANCE","PRINT","លុបវិក្កយបត្រ","BY_USER");
-		$link=array(
-				'module'=>'sales','controller'=>'possale','action'=>'edit',
-		);
-		$invoice=array(
-				'module'=>'sales','controller'=>'possale','action'=>'invoice',);
+		if($level==1){
+			$link=array(
+					'module'=>'sales','controller'=>'possale','action'=>'edit',
+			);
+		}else{
+			$link= array('module'=>'sales','controller'=>'index','action'=>'index',);
+		}
+		$invoice=array('module'=>'sales','controller'=>'possale','action'=>'invoice',);
 		$delete=array(
 				'module'=>'sales','controller'=>'possale','action'=>'delete',);
 		
 		$list = new Application_Form_Frmlist();
-		$this->view->list=$list->getCheckList(0, $columns, $rows, array('លុបវិក្កយបត្រ'=>$delete,'វិក្កយបត្រ'=>$invoice,'contact_name'=>$link,'branch_name'=>$link,'customer_name'=>$link,
+		$this->view->list=$list->getCheckList(0, $columns, $rows, array('លុបវិក្កយបត្រ'=>$delete,'វិក្កយបត្រ'=>$invoice,
+				'contact_name'=>$link,'branch_name'=>$link,'customer_name'=>$link,
 				'sale_no'=>$link));
 		
 		$formFilter = new Sales_Form_FrmSearch();

@@ -46,7 +46,7 @@ class Product_Form_FrmTransferStock extends Zend_Form
 		$from_loc = new Zend_Form_Element_Select("from_loc");
     	$from_loc->setAttribs(array(
     			'class'=>'form-control select2me',
-    			'onChange'=>'checkBranch()',
+    			'onChange'=>'addNew();checkBranch();',
     	));
 		$opt = array(''=>$tr->translate("SELECT BRANCH"));
 		if(!empty($rs_from_loc)){

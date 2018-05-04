@@ -147,7 +147,7 @@ $formFilter = $this->formFilter;
 									<td class="center"><?php echo $row["qty_adjust"]?></td>
 									<td class="center"><?php echo $row["defer_qty"]?></td>
 									<td class="center"><?php echo $row["username"]?></td>
-									<td class="center"><?php echo $row["date"]?></td>
+									<td class="center"><?php echo date("d-m-Y",strtotime($row["date"]));?></td>
 									<!-- <td class="center">
 										<?php //if($row["status"] == 1){?>
 										<span class="label label-sm label-success"><?php //echo $tr->translate("ACTIVE");?> </span>

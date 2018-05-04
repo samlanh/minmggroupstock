@@ -574,7 +574,9 @@ $( document ).ready(function() {
 				var identity_price = $('#identity_price').val();
 				$('#identity_price').val(identity_price+','+inx_price);
 			} else {$('#identity_price').val(inx_price);}
-		<?php }}?>
+		<?php }}else{
+			echo 'addNewPriceType()';
+		}?>
 	}
 	
 	indexs=0;

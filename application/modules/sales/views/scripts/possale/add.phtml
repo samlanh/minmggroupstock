@@ -27,6 +27,11 @@ white-space: nowrap;font-size: 14px;line-height:33px;}
 <form id='office_receipt' action="" dojoType="dijit.form.Form" method="post" enctype="application/x-www-form-urlencoded">
 <script type="dojo/method" event="onSubmit">   
    if(this.validate()) {
+    if($("#identity").val()==""){
+         alert("មិនមាន ទំនិញ ក្នុងកន្រ្តក");
+ 		 dijit.byId("product_id").focus();
+		 return false;
+ 	}
     return true;
    }else {
     return false;
@@ -91,11 +96,24 @@ white-space: nowrap;font-size: 14px;line-height:33px;}
 													</div>
 												</label>
 	                                        </div>
+	                                        <div class="form-group">
+												<div class="col-md-3"></div>
+												<div class="col-md-2">
+													<a href="<?php echo $this->baseUrl();?>/sales/"><button type="button" class="btn red btn-block btn-lg"><i class="fa fa-times"></i> <?php echo $tr->translate("GO_BACK")?></button></a>
+												</div>
+												<div class="col-md-2">
+													<div class="input-icon right">
+														<button type="submit"  name="btnsaveclose"  name="btnsaveclose" class="btn blue btn-block btn-lg" ><i class="fa fa-close"></i> <?php echo $tr->translate("SAVE_CLOSE")?></button>
+													</div>
+												</div>
+												<div class="col-md-2">
+													<button type="submit" name="btnsavenew"  id="btnsavenew" class="btn blue btn-block btn-lg"><i class="fa fa-save"></i> <?php echo $tr->translate("SAVE_NEW")?> </button>
+												</div>
+												<div class="col-md-3"></div>
+											</div>
 	                                    </div>
 	                                     <div style="clear:both;"></div>
 	                                </div>
-	                                <div style="clear:both;"></div>
-	                               
 							</label>
 							<label class="control-label col-md-3" style="background: #eee;">
 							<div class="portlet box blue">
@@ -215,7 +233,7 @@ white-space: nowrap;font-size: 14px;line-height:33px;}
 	                                        </div>
 	                                       
 	                                    </div>
-	                                     <div style="clear:both;"></div>
+	                                     <div style="clear:both;"> </div>
 	                                </div>
 										<!--  <lable class="col-md-13">
 											<lable class="col-md-6">
@@ -225,7 +243,11 @@ white-space: nowrap;font-size: 14px;line-height:33px;}
 		                                 		<button type="button" name="btnsavenew" class="btn red btn-block btn-lg"><i class="fa fa-print"></i> ផ្អាក</button>
 											</lable>
 										</lable>-->
+										
+										
 	                               </label>
+	                               
+	                               
 					</form> 
 			   </div>
 		</div>

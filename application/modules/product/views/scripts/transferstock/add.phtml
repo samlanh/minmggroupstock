@@ -394,6 +394,8 @@ function addNewLocation(){
 }
 
 function checkBranch(){
+	$('#tr_location').html("");
+	$('#identity').val("");
 	if($("#from_loc").val()== $("#branch").val()){
 		$("#from_loc").val('');
 		$('#from_loc').select2('open');
@@ -401,6 +403,8 @@ function checkBranch(){
 }
 
 function checklocation(){
+	$('#tr_location').html("");
+	$('#identity').val("");
 	if( $("#from_loc").val()== $("#branch").val()){
 		$("#branch").val('');
 		$('#branch').select2('open');

@@ -54,6 +54,10 @@ class Sales_PossaleController extends Zend_Controller_Action
 					$db->addSaleOrder($data);
 				}
 				Application_Form_FrmMessage::message("INSERT_SUCESS");
+				if(!empty($data['btnsavenew'])){
+					Application_Form_FrmMessage::redirectUrl("/sales/add");
+				}
+				Application_Form_FrmMessage::redirectUrl("/sales/index");
 			}catch (Exception $e){
 				Application_Form_FrmMessage::message('INSERT_FAIL');
 				$err =$e->getMessage();
@@ -93,6 +97,10 @@ class Sales_PossaleController extends Zend_Controller_Action
 					$db->editSale($data);
 				}
 				Application_Form_FrmMessage::message("UPDATE_SUCESS");
+				if(!empty($data['btnsavenew'])){
+					//Application_Form_FrmMessage::redirectUrl("/sales/add");
+				}
+				//Application_Form_FrmMessage::redirectUrl("/sales/index");
 			}catch (Exception $e){
 				Application_Form_FrmMessage::message('INSERT_FAIL');
 				$err =$e->getMessage();
@@ -128,7 +136,7 @@ class Sales_PossaleController extends Zend_Controller_Action
 		$db = new Sales_Model_DbTable_Dbpos();
 		echo "<script language='javascript'>
 		var txt;
-		var r = confirm('áž�áž¾áž›áŸ„áž€áž¢áŸ’áž“áž€áž–áž·áž�áž…áž„áŸ‹áž›áž»áž”ážœáž·áž€áŸ’áž€áž™áž”áž�áŸ’ážšáž“áŸ�áŸ‡áž«!');
+		var r = confirm('តើលោកអ្នកពិតចង់លុបវិក្កយបត្រនេះឫ!');
 		if (r == true) {";
 			//$db->deleteSale($id);
 			echo "window.location ='".Zend_Controller_Front::getInstance()->getBaseUrl()."/sales/possale/deleteitem/id/".$id."'";
