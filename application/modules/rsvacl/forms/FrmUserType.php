@@ -9,7 +9,8 @@ class Rsvacl_Form_FrmUserType extends Zend_Form
     	$user_type->setAttribs(array(
     		'id'=>'user_type',
     		'required'=>true,
-    		'class'=>'validate[required] form-control',
+    		'class'=>'form-control',
+    		'required'=>true
     	));
     	$this->addElement($user_type);
     	
@@ -22,7 +23,7 @@ class Rsvacl_Form_FrmUserType extends Zend_Form
     	$user_type_id->setMultiOptions($options);
     	$user_type_id->setAttribs(array(
     		'id'=>'parent_id',
-    		'class'=>'validate[required] form-control',
+    		'class'=>'form-control',
     	));
     	$this->addElement($user_type_id);
     }

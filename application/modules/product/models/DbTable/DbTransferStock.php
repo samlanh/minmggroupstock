@@ -293,10 +293,11 @@ class Product_Model_DbTable_DbTransferStock extends Zend_Db_Table_Abstract
 					}
 				 }
 				}else{
-					if($data["approve"]==0){
+					if($data["approve"]==2){
+						
 						$request = array(
 								'modify_date'		=>	date("Y-m-d H:i:s"),
-								'is_approve'		=>	0,
+								'is_approve'		=>	$data["approve"],
 								'is_receive'		=>	$data["approve"],
 								'user_id'			=>	$user_id,
 						);
@@ -305,6 +306,118 @@ class Product_Model_DbTable_DbTransferStock extends Zend_Db_Table_Abstract
 						$this->update($request, $where);
 					}
 				}
+			}
+			$db->commit();
+		}catch (Exception $e){
+			$db->rollBack();
+			Application_Model_DbTable_DbUserLog::writeMessageError($e);
+			echo $e->getMessage();exit();
+		}
+	}
+	
+	public function returntProductTransfer($data){
+		$db = $this->getAdapter();
+		$db->beginTransaction();
+		try{
+			$user_info = new Application_Model_DbTable_DbGetUserInfo();
+			$user_id = $this->getUserId();
+			$date =new Zend_Date();
+			$db_global = new Application_Model_DbTable_DbGlobal();
+			$receive_no=$db_global->getTransferReceiveNo();
+			//print_r($receive_no);exit();
+			$tran_row=$this->getTransferById($data['id']);
+			if (!empty($tran_row)){
+				$receive = array(
+						'transfer_re_no'	=>	$receive_no,
+						'transfer_id'		=>	$tran_row['id'],
+						'transfer_re_date'	=>	date("Y-m-d"),
+						'modify_date'		=>	date("Y-m-d H:i:s"),
+						'from_location'		=>	$tran_row['from_location'],
+						'to_location'		=>	$tran_row['to_location'],
+						'is_receive'		=>	$data["approve"],
+						'note'				=>	$data["remark"],
+						'status'			=>	1,
+						'user_id'			=>	$user_id,
+				);
+				$this->_name="rms_transfer_receive";
+				$where="transfer_id=".$data['id'];
+				$receive_id=$this->getTransferRecieveByid($data['id']);
+				$sql = "DELETE FROM rms_transfer_received_detail WHERE transfer_re_id=".$receive_id["id"];
+				$db->query($sql);
+				
+				if ($data["approve"]==2){
+					$this->update($receive, $where);
+					$transfer = array(
+							'modify_date'		=>	date("Y-m-d H:i:s"),
+							'is_approve'		=>	$data["approve"],
+							'is_receive'		=>	$data["approve"],
+							'user_id'			=>	$user_id,
+					);
+					$this->_name="rms_transferstock";
+					$where=" id=".$tran_row['id'];
+					$this->update($transfer, $where);
+	
+					$row_detail=$this->getStaffRequestDetail($tran_row['id']);
+					foreach($row_detail as $row)
+					{
+						$arr = array(
+								'transfer_re_id'=>  $receive_id,
+								'pro_id'		=>	$row["pro_id"],
+								'curr_qty'		=>	$row["curr_qty"],
+								'qty'			=>	$row["qty"],
+								'cost'			=>	$row["cost"],
+								'note'			=>	$row["note"],
+						);
+						$this->_name="rms_transfer_received_detail";
+						$this->insert($arr);
+						//form_location
+						$rs = $this->getProductQtyById($row["pro_id"],$tran_row['from_location']);
+						if(!empty($rs)){
+							$qty=($rs['qty'])+($row["qty"]);
+							$arr = array(
+									'qty'=>$qty,
+							);
+							$this->_name="tb_prolocation";
+							$where = array('pro_id=?'=>$row["pro_id"],"location_id=?"=>$tran_row['from_location']);
+							$this->update($arr, $where);
+						}else{
+							$arr = array(
+									'pro_id'			=>	$row["pro_id"],
+									'location_id'		=>	$tran_row['from_location'],
+									'qty'				=>	$row["qty"],
+									'damaged_qty'		=>	0,
+									'qty_warning'		=>	0,
+									'last_mod_userid'	=>	$user_id,
+									'last_mod_date'		=>	date('Y-m-d'),
+							);
+							$this->_name="tb_prolocation";
+							$this->insert($arr);
+						}
+						//to_location
+						$rs_to = $this->getProductQtyById($row["pro_id"],$tran_row['to_location']);
+						if(!empty($rs_to)){
+							$qty_to=($rs_to['qty'])-($row["qty"]);
+							$arr= array(
+									'qty'=>$qty_to,
+							);
+							$this->_name="tb_prolocation";
+							$where_to = array('pro_id=?'=>$row["pro_id"],"location_id=?"=>$tran_row['to_location']);
+							$this->update($arr, $where_to);
+						}else{
+							$arr = array(
+									'pro_id'			=>	$row["pro_id"],
+									'location_id'		=>	$tran_row['to_location'],
+									'qty'				=>	$row["qty"],
+									'damaged_qty'		=>	0,
+									'qty_warning'		=>	0,
+									'last_mod_userid'	=>	$user_id,
+									'last_mod_date'		=>	date("Y-m-d H:i:s"),
+							);
+							$this->_name="tb_prolocation";
+							$this->insert($arr);
+						}
+					}
+				}else{ }
 			}
 			$db->commit();
 		}catch (Exception $e){
@@ -531,6 +644,14 @@ class Product_Model_DbTable_DbTransferStock extends Zend_Db_Table_Abstract
 			     FROM `rms_transferstock` AS t
 			     WHERE id=$id";
 	  	return $db->fetchRow($sql);
+	}
+	
+	function getTransferRecieveByid($id){
+		$db = $this->getAdapter();
+		$sql = " SELECT t.* 
+		FROM `rms_transfer_receive` AS t
+		WHERE t.transfer_id=$id";
+		return $db->fetchRow($sql);
 	}
 	
 	function getTransferItemsbyId($id){

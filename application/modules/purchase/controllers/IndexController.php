@@ -84,6 +84,7 @@ class Purchase_indexController extends Zend_Controller_Action
 // 		Application_Model_Decorator::removeAllDecorator($formAdd);
 // 		$this->view->form_branch = $formAdd;	
 	}
+	
 	public function editAction(){
 		$db = new Application_Model_DbTable_DbGlobal();
 		if($this->getRequest()->isPost()) {

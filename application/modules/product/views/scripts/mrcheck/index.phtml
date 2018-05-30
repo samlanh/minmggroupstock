@@ -98,8 +98,12 @@
 							if(!empty($this->rs)){
 								foreach ($this->rs as $key=>$rs){
 									$edit_status = '';
+									$return_status= '';
 									if($rs["is_approve"]==1){ //$rs["pedding_stat"]>3
 										$edit_status = "style='pointer-events: none;cursor: default;color: #ccc;'";
+									}
+									if($rs["is_approve"]==2){ //$rs["pedding_stat"]>3
+										$return_status = "style='pointer-events: none;cursor: default;color: #ccc;'";
 									}
 							?>
 								<tr class="normal">
@@ -114,6 +118,7 @@
 									<td class="items"><?php echo $rs["status"];?></td>
 									<td class="items-no" style="white-space: nowrap;">
 										<a <?php echo $edit_status;?> href="<?php echo $this->baseUrl();?>/product/mrcheck/approve/id/<?php echo $rs["id"]?>"><?php echo  $tr->translate("CHECK");?></a> | 
+										<a <?php echo $return_status;?> href="<?php echo $this->baseUrl();?>/product/mrcheck/return/id/<?php echo $rs["id"]?>"><?php echo  $tr->translate("RETURN");?></a> | 
 										<a target="_blank" href="<?php echo $this->baseUrl();?>/report/product/rpt-transfer-productdetail/id/<?php echo $rs["id"]?>"><?php echo  $tr->translate("PRINT");?></a>
 									</td>
 								</tr>

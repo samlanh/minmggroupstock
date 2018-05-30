@@ -13,6 +13,11 @@ class RsvAcl_Model_DbTable_DbUser extends Zend_Db_Table_Abstract
 		if(!$row) return NULL;
 		return $row->toArray();
 	}
+	function deleteUser($id){
+		$db = $this->getAdapter();
+		$sql = "DELETE FROM tb_acl_user WHERE user_id in($id)";
+		$db->query($sql);
+	}
 	//get user name
 	public function getUserName($user_id)
 	{
@@ -33,6 +38,12 @@ class RsvAcl_Model_DbTable_DbUser extends Zend_Db_Table_Abstract
 	//is valid password
 	public function isValidCurrentPassword($user_id,$current_password)
 	{
+		$user_info = new Application_Model_DbTable_DbGetUserInfo();
+		$result = $user_info->getUserInfo();
+		$level = $result["level"];
+		if($level==1){
+			return true;
+		}else{
 		$select=$this->select();
 		$select->from($this,'password')
 			->where("user_id=?",$user_id);
@@ -40,9 +51,11 @@ class RsvAcl_Model_DbTable_DbUser extends Zend_Db_Table_Abstract
 		if($row){
 			$current_password=md5($current_password);
 			$password=$row['password'];			 
-			if($password==$current_password) return true;
+			if($password==$current_password)
+				return true;
 		}
 		return false;
+		}
 	}
 	//get infomation of user
 	public function getUserInfo($sql)
@@ -51,6 +64,7 @@ class RsvAcl_Model_DbTable_DbUser extends Zend_Db_Table_Abstract
   		$stm=$db->query($sql);
   		$row=$stm->fetchAll();
   		if(!$row) return NULL;
+  		//print_r($row.''.$fiel);exit();
   		return $row;
 	}
 	function getUserById($user_id){
@@ -92,7 +106,8 @@ class RsvAcl_Model_DbTable_DbUser extends Zend_Db_Table_Abstract
 	public function ifUserExist($username)
 	{
 		$db=$this->getAdapter();
-		$sql = "SELECT user_id FROM tb_acl_user WHERE username = '".$username."' LIMIT 1";
+		$names=str_replace(' ','',$username);
+		$sql = "SELECT user_id FROM tb_acl_user WHERE REPLACE(`username`,' ','')= '".$names."' LIMIT 1";
 		$row = $db->fetchRow($sql);
 		if(!$row) return false;
 		return true;
@@ -110,48 +125,127 @@ class RsvAcl_Model_DbTable_DbUser extends Zend_Db_Table_Abstract
 	//add user
 	public function insertUser($arr)
 	{ 
-		$arr['password']=md5($arr['password']);
-     	$db = $this->getAdapter();
-     	$array_data = array(
-     			"title"			=>	$arr["title"],
-     			"fullname"		=>	$arr["fullname"],
-     			"username"		=>	$arr["username"],
-     			"password"		=>	$arr['password'],
-     			"email"			=>	$arr["email"],
-     			"user_type_id"	=>	$arr["user_type_id"],
-     			"LocationId"	=>	$arr["LocationId"],
-     			"status"		=>	$arr["status"],
-     			"created_date"	=>	date("Y-m-d H:i:s")
-     			);
-     	$id=$this->insert($array_data);
-     	$ids = explode(",", $arr["identity"]);
-		if($arr["identity"]!=""){
-			foreach ($ids as $i){
-				$exist=$this->getUserBranchExist($id, $arr["location_id_".$i]);
-				if($exist=="" AND $arr["LocationId"]!==$arr["location_id_".$i]){
-					$_arrdata = array(
-							"user_id"=>$id,
-							"location_id"=>$arr["location_id_".$i]
-					);
-					$db->insert("tb_acl_ubranch", $_arrdata);
-				}
-			}
+		$photoname = str_replace(" ", "_", $arr['username']).rand(). '.jpg';
+		$upload = new Zend_File_Transfer();
+		$upload->addFilter('Rename',
+				array('target' => PUBLIC_PATH . '/images/'. $photoname, 'overwrite' => true) ,'signature');
+		$receive = $upload->receive();
+		if($receive)
+		{
+			$arr['photo'] = $photoname;
 		}
-     	$_arrdata = array(
-     			"user_id"=>$id,
-     			"location_id"=>$arr["LocationId"]
-     	);
-     	$db->insert("tb_acl_ubranch", $_arrdata);
-     	
+		else{
+			$arr['photo']="";
+		}
+		
+		try{
+			$db=$this->getAdapter();
+			$db->beginTransaction();
+			$arr['password']=md5($arr['password']);
+			$arr['confirm_password']=md5($arr['confirm_password']);
+	     	$array_data = array(
+	     			"title"			=>	$arr["title"],
+	     			"fullname"		=>	$arr["fullname"],
+	     			"username"		=>	$arr["username"],
+	     			"password"		=>	$arr['password'],
+	     			//"confirm_pass"	=>	$arr['confirm_password'],
+	     			"photo"			=>	$arr['photo'],
+	     			
+	     			"email"			=>	$arr["email"],
+	     			"user_type_id"	=>	$arr["user_type_id"],
+	     			"LocationId"	=>	$arr["LocationId"],
+	     			"status"		=>	$arr["status"],
+	     			"created_date"	=>	date("Y-m-d H:i:s")
+	     			);
+	     	$id=$this->insert($array_data);
+	     	$ids = explode(",", $arr["identity"]);
+	     	foreach ($ids as $i){
+	     		$exist=$this->getUserBranchExist($id, $arr["location_id_".$i]);
+	     		if($exist=="" AND $arr["LocationId"]!==$arr["location_id_".$i]){
+	     			$_arrdata = array(
+	     					"user_id"=>$id,
+	     					"location_id"=>$arr["location_id_".$i]
+	     			);
+	     			$db->insert("tb_acl_ubranch", $_arrdata);
+	     		}
+	     	}
+	     	$_arrdata = array(
+	     			"user_id"=>$id,
+	     			"location_id"=>$arr["LocationId"]
+	     	);
+	     	$db->insert("tb_acl_ubranch", $_arrdata);
+	     	
+	     	///inset to tb_acl_user_detail
+	     	$data = array(
+	     			"user_id"		=>	$id,
+	     			"department"	=>	$arr["department"],
+	     			"code"			=>	$arr["code"],
+	     			"name"	=>	$arr["name"],
+	     			"phone"			=>	$arr["phone"],
+	     			"pob"			=>	$arr['pob'],
+	     			"dob"			=>	$arr["dob"],
+	     			"address"			=>	$arr["address"],
+	     			"email"			=>	$arr["email_detail"],
+	     			"position"			=>	$arr["job_title"],
+	     			"decription"			=>	$arr["description"],
+	     	);
+	     	$this->_name="tb_acl_user_detail";
+	     	$id=$this->insert($data);
+	     	$db->commit();
+     	}catch (Exception $e){
+     		$db->rollBack();
+     		$err = $e->getMessage();
+     		Application_Model_DbTable_DbUserLog::writeMessageError($err);
+     	}
 	}
+	
 	public function getUserBranchExist($user_id, $location_id){
 		$db=$this->getAdapter();
 		$sql="SELECT user_loca FROM tb_acl_ubranch WHERE user_id = $user_id AND location_id = $location_id LIMIT 1";
 		$row=$db->fetchRow($sql);
 		return $row;
 	}
+	function checkPassword($data){
+		$db=$this->getAdapter();
+		$password = str_replace(' ','',$data);
+		$password = md5($password);
+		//print_r($password);exit();
+		$sql="SELECT `password` FROM tb_acl_user WHERE REPLACE(`password`,' ','')='$password' LIMIT 1 ";
+		$row=$db->fetchRow($sql);
+		if(empty($row)){
+			return 0;
+		}else{
+			return 1;
+		}
+	}
 	public function updateUser($arr,$user_id)
 	{
+		//check update password
+		if(!empty($arr['current_password']) && !empty($arr['password']) && !empty($arr['confirm_password'])){
+			$arr['password']=md5($arr['password']);
+			$arr['confirm_password']=md5($arr['confirm_password']);
+				$arr=array(
+						"password"			=>	$arr["password"],
+						"confirm_pass"		=>	$arr["confirm_password"],
+						);
+				$where="user_id=".$user_id;
+				$this->_name="tb_acl_user";
+				$this->update($arr, $where);
+		}
+		
+		$photoname = str_replace(" ", "_", $arr['username']).rand(). '.jpg';
+		$upload = new Zend_File_Transfer();
+		$upload->addFilter('Rename',
+				array('target' => PUBLIC_PATH . '/images/'. $photoname, 'overwrite' => true) ,'signature');
+		$receive = $upload->receive();
+		if($receive)
+		{
+			$arr['photo'] = $photoname;
+		}
+		else{
+			$arr['photo']=$arr['old_pic'];
+		}
+		
 		try{
 			$db=$this->getAdapter();
 			$db->beginTransaction();
@@ -159,7 +253,7 @@ class RsvAcl_Model_DbTable_DbUser extends Zend_Db_Table_Abstract
 					"title"			=>	$arr["title"],
 					"fullname"		=>	$arr["fullname"],
 					"username"		=>	$arr["username"],
-					//"password"		=>	$arr['password'],
+					"photo"			=>	$arr['photo'],
 					"email"			=>	$arr["email"],
 					"user_type_id"	=>	$arr["user_type_id"],
 					"LocationId"	=>	$arr["LocationId"],
@@ -170,18 +264,16 @@ class RsvAcl_Model_DbTable_DbUser extends Zend_Db_Table_Abstract
 			$id=$this->update($data, $where);
 			$ids = explode(",", $arr["identity"]);
 			$db->query("DELETE FROM tb_acl_ubranch WHERE user_id = $user_id");
-			if($arr["identity"]!=""){
-				foreach ($ids as $i){
-					$exist=$this->getUserBranchExist($user_id, $arr["location_id_".$i]);
-					if($exist=="" AND $arr["LocationId"]!==$arr["location_id_".$i]){
-						$_arrdata = array(
-								"user_id"=>$user_id,
-								"location_id"=>$arr["location_id_".$i]
-						);
-						$db->insert("tb_acl_ubranch", $_arrdata);
-					}
-						
+			foreach ($ids as $i){
+				$exist=$this->getUserBranchExist($user_id, $arr["location_id_".$i]);
+				if($exist=="" AND $arr["LocationId"]!==$arr["location_id_".$i]){
+					$_arrdata = array(
+							"user_id"=>$user_id,
+							"location_id"=>$arr["location_id_".$i]
+					);
+					$db->insert("tb_acl_ubranch", $_arrdata);
 				}
+					
 			}
 			$_arrdata = array(
 					"user_id"=>$user_id,
@@ -189,6 +281,23 @@ class RsvAcl_Model_DbTable_DbUser extends Zend_Db_Table_Abstract
 			);
 			$db->insert("tb_acl_ubranch", $_arrdata);
 			
+			///inset to tb_acl_user_detail
+			$data = array(
+					"user_id"		=>	$user_id,
+					"department"	=>	$arr["department"],
+					"code"			=>	$arr["code"],
+					"name"	=>	$arr["name"],
+					"phone"			=>	$arr["phone"],
+					"pob"			=>	$arr['pob'],
+					"dob"			=>	$arr["dob"],
+					"address"			=>	$arr["address"],
+					"email"			=>	$arr["email_detail"],
+					"position"			=>	$arr["job_title"],
+					"decription"			=>	$arr["description"],
+			);
+			$this->_name="tb_acl_user_detail";
+			$where="user_id=".$user_id;
+			$this->update($data,$where);
 			$db->commit();
 		}
 		catch (Exception $e){
@@ -198,6 +307,12 @@ class RsvAcl_Model_DbTable_DbUser extends Zend_Db_Table_Abstract
 		}
 		
 		
+	}
+	
+	function getUserDetailById($id){
+		$db=$this->getAdapter();
+		$sql="SELECT * FROM tb_acl_user_detail WHERE user_id=$id LIMIT 1";
+		return $db->fetchRow($sql);
 	}
 	
 	//function dupdate field status user to force use become inaction
@@ -234,5 +349,6 @@ class RsvAcl_Model_DbTable_DbUser extends Zend_Db_Table_Abstract
 	              }
 		}catch(Zend_Exception $ex){}
 	}
+  
 }
 

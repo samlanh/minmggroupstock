@@ -1,0 +1,248 @@
+<title>Edit User Type </title>
+<script type="text/javascript">
+$(document).ready(function() { 
+		jQuery('#frm').validationEngine('attach', {promptPosition : "centerRight"});		
+});
+</script>
+<?php $form=$this->form;?>
+<style>
+fieldset.fifthy {	
+	border-right: 0px;
+	width: 50%;
+}
+table.user td{
+	vertical-align: top;  
+}
+</style> 
+<?php 
+$cancel_url=$this->url(array(
+		'module'=>'rsvacl',
+		'controller'=>'usertype',
+		'action'=>'index',
+	));
+$tr = Application_Form_FrmLanguages::getCurrentlanguage();
+$url_cancel = $this->url(array('module'=>'rsvacl','controller'=>'usertype','action'=>'index'));
+$db=new Rsvacl_Model_DbTable_DbUserType();	
+
+$rs_acl = $this->acl_user_type;
+//echo $rs_acl;
+// $value='';
+// if(!empty($rs_acl)){
+	// foreach($rs_acl as $key=>$row){$index =$key+1;
+		// if($index==1){
+			// $value = $rs_acl[0]["acl_id"];
+		// }else{
+			// $value = $value.",".$row["acl_id"];
+		// }
+	// }
+// }
+//echo $value;
+?>
+<div class="row">
+	<div class="col-md-12">
+		<div class="portlet box blue">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="icon-home"></i><?php echo $tr->translate("ADD_USER")?>
+				</div>
+				<div class="tools" >
+					<a href="<?php echo $url_cancel;?>" class="btn btn-sm pull-right" style="color:white;">
+					<i class="fa fa-undo"></i>	&nbsp;<?php echo $tr->translate("GO_BACK");?>
+					</a>
+				</div>
+			</div>
+			<div class="portlet-body form">
+				<!-- BEGIN FORM-->
+				<form id="frm" action="<?php //echo $url_submit; ?>" class="form-horizontal" enctype="multipart/form-data" method="post">
+					<div class="form-body">
+						<div class="form-group" style="margin: 0 auto;">
+							<label class="control-label col-md-2"><?php echo $tr->translate('USER_TYPE');?><span class="required">
+								</span>
+							</label>
+							<div class="col-md-4">
+								<div class="input-icon right">
+									<i class="fa"></i>
+									<?php echo $form->getElement('user_type');?>
+								</div>
+							</div>
+							<label class="control-label col-md-2"><?php echo $tr->translate('PARENT_TYPE');?><span class="required">
+								</span>
+							</label>
+							<div class="col-md-4">
+								<div class="input-icon right">
+									<i class="fa"></i>
+									<?php echo $form->getElement('parent_id');?>
+								</div>
+							</div>
+						</div>
+						<!--<div class="form-group" style="margin: 0 auto;">
+							<fieldset>
+								<legend>User Permision</legend>
+							<?php if(!empty($this->acl_parent)){ foreach ($this->acl_parent as $key=>$rs){ $parent_label = $rs["lable"]; $index = $key+1;?>
+							<div class="col-md-4" style="text-align:left;line-height: 30px !important; ">
+							
+								<label class="control-label col-md-12" style="text-align:left;font-size:24px;line-height: 40px !important;border-bottom: 3px solid #ee0909;margin-bottom: 13px;"><?php echo $tr->translate($parent_label);?><span class="required"></span></label>
+								
+								<?php if(!empty($db->getAclByParent($rs["acl_id"]))){ 
+										foreach ($db->getAclByParent($rs["acl_id"]) as $keys=> $row){ 
+												$acl = $db->getAclByUserType($row["acl_id"],$this->user_id); 
+												if(empty($acl)){ 
+													$check="";
+													$click="";
+												}else{
+													$click = "$('#check_'".$index."_".$row["acl_id"].").click();";
+													$check='checked="checked" return="$("#check_").click();"';
+												}
+								?>
+								<div class="col-md-10" style="font-size:16px;line-height: 30px !important;">
+									<?php echo $tr->translate($row["lable"])?>
+								</div>
+								<div class="col-md-1" style="font-size:16px;line-height: 30px !important;">
+									<input type="checkbox" class="check" value="<?php echo $row["acl_id"]?>" name="check_<?php echo $row["acl_id"];?>" <?php echo $check;?> id="check_<?php echo $key+1;?>_<?php echo $row["acl_id"];?>" onClick="checkedRow(<?php echo $key+1;?>,<?php echo $row["acl_id"];?>)"  />
+								</div>
+								<div class="col-md-1" style="font-size:16px;line-height: 30px !important;">
+								&nbsp;
+								</div>
+								<?php }}?>
+							
+							</div>
+							
+							<?php }}?>
+							
+							</fieldset>
+							
+						</div>-->
+						
+	<div class="portlet box blue">
+						<div class="portlet-title">
+							<div class="caption">
+								<i class="fa fa-gift"></i><?php echo $tr->translate("USER_PERMISSION")?>
+							</div>
+							<div class="tools">
+								<a href="javascript:;" class="collapse">
+								</a>
+								<a href="#portlet-config" data-toggle="modal" class="config">
+								</a>
+							</div>
+						</div>
+						<div class="portlet-body">
+							<div class="row" style="margin:0 auto !important;">
+								<div class="col-md-3 col-sm-3 col-xs-3">
+									<ul class="nav nav-tabs tabs-left">
+										<?php if(!empty($this->acl_parent)){ $is_set=0; $active ='active';
+												foreach ($this->acl_parent as $key=>$rs){ 
+													$parent_label = $rs["lable"]; $index = $key+1;
+													if($index==1){
+														$active = 'active';
+														$is_set=1;
+													}else{
+														$active = '';
+													}
+													
+										?>
+											<li class="<?php echo $active;?>" >
+												<a style="font-size:20px;" href="#<?php echo $rs['lable']?>" data-toggle="tab"><?php echo $tr->translate($parent_label);?></a>
+											</li>
+										<?php }}?>
+										
+									</ul>
+								</div>
+								<div class="col-md-9 col-sm-9 col-xs-9">
+									<div class="tab-content">
+										<?php if(!empty($this->acl_parent)){ $is_set=0; $active ='active';
+												foreach ($this->acl_parent as $key=>$rs){ 
+													$parent_label = $rs["lable"]; $index = $key+1;
+													if($index==1){
+														$active = 'active';
+														$is_set=1;
+													}else{
+														$active = '';
+													}
+													
+										?>
+										<div class="tab-pane <?php echo $active;?>" id="<?php echo $rs['lable']?>">
+											<?php if(!empty($db->getAclByParent($rs["acl_id"]))){ 
+													foreach ($db->getAclByParent($rs["acl_id"]) as $keys=> $row){ 
+															$acl = $db->getAclByUserType($row["acl_id"],$this->user_id); 
+															if(empty($acl)){ 
+																$check="";
+																$click="";
+															}else{
+																$click = "$('#check_'".$index."_".$row["acl_id"].").click();";
+																$check='checked="checked" return="$("#check_").click();"';
+															}
+											?>
+											<div class="col-md-10" style="font-size:16px;line-height: 30px !important;">
+												<?php echo $tr->translate($row["lable"])?>
+											</div>
+											<div class="col-md-1" style="font-size:16px;line-height: 30px !important;">
+												<input type="checkbox" class="check" value="<?php echo $row["acl_id"]?>" name="check_<?php echo $row["acl_id"];?>" <?php echo $check;?> id="check_<?php echo $key+1;?>_<?php echo $row["acl_id"];?>" onClick="checkedRow(<?php echo $key+1;?>,<?php echo $row["acl_id"];?>)"  />
+											</div>
+											<div class="col-md-1" style="font-size:16px;line-height: 30px !important;">
+											&nbsp;
+											</div>
+											<?php }}?>
+										</div>
+										<?php }}?>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>		
+
+<div style="opacity:0;">
+							<input type="text" required="required" id="identity" name="identity" />
+							</div>					
+						<div class="form-group">
+							<div class="col-md-4">
+								<div class="input-icon right">
+								</div>
+							</div>
+							<div class="col-md-4">
+								<button type="submit" name="btnsavenew" class="btn blue btn-block btn-lg"><i class="fa fa-save"></i> <?php echo $tr->translate("SAVE_NEW")?> </button>
+							</div>
+							<div class="col-md-4">
+							</div>
+						</div>
+					</div>
+					
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+$(document).ready(function() { 
+   
+  //checkedRow(parent,index);
+ // getChecked();
+ //alert('<?php echo $rs_acl;?>');
+ $('#identity').val('<?php echo $rs_acl;?>');
+ 
+ });
+
+function checkedRow(parent,index){
+	
+	var ids =$('#identity').val();
+		var arrays = ids.split(',');
+		for(var i=0;i<arrays.length;i++) {//calculate record row
+			if(arrays[i] == index) arrays.splice(i,1);
+			if($('#check_'+parent+'_'+index).attr('checked')){
+				
+				//id = $('#check_'+parent+'_'+index).va();
+				var x=$("#check_"+parent+'_'+index).val();
+				//alert(x);
+				if($("#identity").val()!="") {
+					$("#identity").val(ids+','+index);
+				}else { 
+					$("#identity").val(index);
+				}
+				
+			 }else{
+				var strings = arrays.join(',');
+				$('#identity').val(strings);
+			}
+		}
+		
+}
+</script>

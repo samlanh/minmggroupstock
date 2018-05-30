@@ -7,11 +7,199 @@ class Application_Model_DbTable_DbGlobal extends Zend_Db_Table_Abstract
 // 		$this->_name=$name;
 // 	}
 	protected $_name = 'tb_purchase_order';
+	//global $tr = Application_Form_FrmLanguages::getCurrentlanguage();
 	/**
 	 * get selected record of $sql
 	 * @param string $sql
 	 * @return array $row;
 	 */
+	 function getAllProduct(){
+		 $db = $this->getAdapter();
+		 $sql = "SELECT p.`item_code`,p.`item_name` FROM tb_product AS p";
+		 return $db->fetchAll($sql);
+	 }
+	 
+	 function getAllCategory(){
+		$db = $this->getAdapter();
+		$sql = "SELECT c.`name`,c.`start_code`FROM `tb_category` AS c";
+		 return $db->fetchAll($sql);
+	 }
+	 function getAllMeasure(){
+		 $db = $this->getAdapter();
+		 $sql ="SELECT m.`name` FROM `tb_measure` AS m";
+		 return $db->fetchAll($sql);
+	 }
+	function getBranch(){
+		$db = $this->getAdapter();
+		$db_globle = new Application_Model_DbTable_DbGlobal();
+		$sql = "SELECT l.id,l.`name` FROM `tb_sublocation` AS l WHERE l.`status`=1";
+		$location = $db_globle->getAccessPermission('l.`id`');
+		return $db->fetchAll($sql.$location);
+	}
+	
+	function getPurchasePedding(){
+		$db = $this->getAdapter();
+		$db_globle = new Application_Model_DbTable_DbGlobal();
+		$sql = "SELECT v.`key_code` as id,v.`name_en` as name FROM `tb_view` AS v WHERE v.`type`=11 AND v.`status`=1 AND v.`key_code`!=0 ORDER BY v.`key_code`";
+		return $db->fetchAll($sql);
+	}
+	public function getValidUserUrl(){
+		$db=$this->getAdapter();
+		$request=Zend_Controller_Front::getInstance()->getRequest();
+		$action=$request->getActionName();
+		$controller=$request->getControllerName();
+		$module=$request->getModuleName();
+		
+		$user_info = new Application_Model_DbTable_DbGetUserInfo();
+		$result = $user_info->getUserInfo();
+		$level = $result["level"];
+		$sql = "SELECT 
+				  ua.`acl_id` 
+				FROM
+				  `tb_acl_user_access` AS ua,
+				  `tb_acl_acl` AS a 
+				WHERE ua.`acl_id` = a.`acl_id` 
+				  AND ua.`user_type_id` = $level 
+				  AND a.`module` = '".$module."' 
+				  AND a.`controller` = '".$controller."' 
+				  AND a.`action` = '".$action."'";
+		return $db->fetchRow($sql);
+	}
+	
+	public function getAclByUserType($acl_id,$user_type_id){
+		$db = $this->getAdapter();
+		$sql = "SELECT 
+				  ua.`acl_id` 
+				FROM
+				  `tb_acl_user_access` AS ua 
+				WHERE ua.`user_type_id` = '".$user_type_id."' 
+				  AND a.`acl_id` = '".$acl_id."'";
+		return $db->fetchRow($sql);
+	}
+	public function getAllAclParentUserType($id){
+		$db=$this->getAdapter();
+		$sql = "SELECT 
+				  aa.`parent`,
+				  aa.`lable` ,
+				  aa.module,
+				  (SELECT ac.`lable` FROM `tb_acl_acl` AS ac WHERE ac.`acl_id`=aa.`parent` LIMIT 1) AS title,
+				  (SELECT ac.`icon` FROM `tb_acl_acl` AS ac WHERE ac.`acl_id`=aa.`parent` LIMIT 1) AS icon
+				FROM
+				  `tb_acl_user_access` AS a,
+				  `tb_acl_acl` AS aa 
+				WHERE a.`acl_id` = aa.`acl_id` 
+				  AND a.`user_type_id` = $id 
+				  AND a.status = 1  
+				  GROUP BY aa.`parent`";
+  		$row=$db->fetchAll($sql);
+  		return $row;
+	}
+	
+	public function getAllAclSubParentUserType($id,$parent){
+		$db=$this->getAdapter();
+		$sql = "SELECT 
+				  aa.`sub_parent`,
+				  aa.`lable` ,
+				  (SELECT ac.`lable` FROM `tb_acl_acl` AS ac WHERE ac.`acl_id`=aa.`parent` LIMIT 1) AS title,
+				  aa.icon
+				FROM
+				  `tb_acl_user_access` AS a,
+				  `tb_acl_acl` AS aa 
+				WHERE a.`acl_id` = aa.`acl_id` 
+				  AND a.`user_type_id` = $id 
+				  AND aa.parent=$parent
+				  AND aa.status = 1 
+					AND aa.is_sub_parent=1
+				  
+				   ";
+  		$row=$db->fetchAll($sql);
+  		return $row;
+	}
+	public function getAllAclUserTypeAndParent($parent,$id,$sub_parent){
+		$db=$this->getAdapter();
+		$sql = "SELECT 
+				  aa.*
+				FROM
+				  `tb_acl_user_access` AS a,
+				  `tb_acl_acl` AS aa 
+				WHERE a.`acl_id` = aa.`acl_id` 
+				  AND a.`user_type_id` = $id AND aa.`parent`=$parent AND aa.sub_parent=$sub_parent AND aa.`status`=1 AND aa.is_sub_parent=0 ORDER BY aa.rank";
+  		$row=$db->fetchAll($sql);
+  		return $row;
+	}
+	public function getAllAclUserType($parent,$id){
+		$db=$this->getAdapter();
+		$sql = "SELECT 
+				  aa.*
+				FROM
+				  `tb_acl_user_access` AS a,
+				  `tb_acl_acl` AS aa 
+				WHERE a.`acl_id` = aa.`acl_id` 
+				  AND a.`user_type_id` = $id AND aa.`parent`=$parent AND aa.`status`=1 ORDER BY a.id";
+  		$row=$db->fetchAll($sql);
+  		return $row;
+	}
+	public function getAllStaff(){
+		$db=$this->getAdapter();
+		$sql = "SELECT s.id,s.`name` FROM `tb_staff` AS s WHERE s.`status`=1";
+  		$row=$db->fetchAll($sql);
+  		return $row;
+	}
+	public function getAllStaffByID($id){
+		$db=$this->getAdapter();
+		$sql = "SELECT s.`position` FROM `tb_staff` AS s WHERE s.`id`=$id";
+  		$row=$db->fetchOne($sql);
+  		return $row;
+	}
+	public function insertStaff($data){
+		$db = $this->getAdapter();
+		$db->beginTransaction();
+		try{
+			$db_global = new Application_Model_DbTable_DbGlobal();
+			$session_user=new Zend_Session_Namespace('auth');
+			$GetUserId= $session_user->user_id;
+			$info=array(
+					"name"    	  => $data['name'],
+					"position"    => $data['position'],
+					"phone"       => $data['phone'],
+					"email"       => $data['email'],
+					"status"      => $data['status'],
+					"user_id"     => $GetUserId,
+					"date"        => date("Y-m-d"),
+			);
+			$this->_name="tb_staff";
+			$id = $this->insert($info);
+			$db->commit();
+			return $id;
+		}catch(Exception $e){
+			$db->rollBack();
+			Application_Form_FrmMessage::message('INSERT_FAIL');
+			$err =$e->getMessage();
+			Application_Model_DbTable_DbUserLog::writeMessageError($err);
+		}
+	}
+	
+	function getAllWorkPlanByID($id,$opt=null){
+		$db=$this->getAdapter();
+		$tr = Application_Form_FrmLanguages::getCurrentlanguage();
+		$sql="SELECT p.`id`,p.`name` FROM `tb_work_plan` AS p WHERE p.`plan_id`=$id";
+		///echo $sql;
+		$row = $db->fetchAll($sql);
+		if($opt==null){
+			return $row;
+		}else{
+			$options='<option value="">'.$tr->translate("SELECT").'</option>';
+			$options.='<option value="-1">'.$tr->translate("បន្ថែមថ្មី").'</option>';
+			//$options=array(0=>  $tr->translate("SELECT"));
+			if(!empty($row)){ foreach($row as $key=> $rs){
+				$options .= '<option value="'.$rs['id'].'" >'.($key+1)." - ".htmlspecialchars($rs['name'], ENT_QUOTES)
+    					.'</option>';
+			}}
+			return $options;
+		}
+		
+		//echo $options;
+    }
 	public function getGlobalDb($sql)
   	{
   		$db=$this->getAdapter();
@@ -31,12 +219,134 @@ class Application_Model_DbTable_DbGlobal extends Zend_Db_Table_Abstract
     {
     	$arr=explode('-', $action);
     	return $arr[0];    	
-    }     
+    }    
+function getAllVendor($opt=null){
+   	$db=$this->getAdapter();
+	$tr = Application_Form_FrmLanguages::getCurrentlanguage();
+   	$sql=" SELECT vendor_id, v_name FROM tb_vendor WHERE v_name!='' AND status = 1 ORDER BY vendor_id DESC";
+   	$row =  $db->fetchAll($sql);
+   	if($opt==null){
+   		return $row;
+   	}else{
+   		$options=array(0=>  $tr->translate("SELECT_VENDOR"),-1=>$tr->translate("ADD_NEW_VENDOR"));
+   		if(!empty($row)) foreach($row as $read) $options[$read['vendor_id']]=$read['v_name'];
+   		return $options;
+   	}
+   }
+   function getallDN(){
+	   	$db=$this->getAdapter();
+		$sql = "SELECT d.`id`,d.`deliver_no` FROM `tb_deliverynote` AS d WHERE d.`is_invoice`=0";
+		return $db->fetchAll($sql);
+   }
+   
+ public function getReceiptNumber($branch_id = 1){
+    	$this->_name='tb_receipt';
+    	$db = $this->getAdapter();
+    	$sql=" SELECT COUNT(id)  FROM $this->_name WHERE branch_id=".$branch_id." LIMIT 1 ";
+    	$pre = $this->getPrefixCode($branch_id)."R";
+    	$acc_no = $db->fetchOne($sql);
+    
+    	$new_acc_no= (int)$acc_no+1;
+    	$acc_no= strlen((int)$acc_no+1);
+    	for($i = $acc_no;$i<5;$i++){
+    		$pre.='0';
+    	}
+    	return $pre.$new_acc_no;
+    }
+	
+	function getAllInvoicePaymentPurchase($post_id,$type){
+   	$db= $this->getAdapter();
+   	if($type==1){//by customer
+   		$sql=" SELECT 
+				  i.invoice_id as id,
+				  i.`invoice_no`,
+				  i.`invoice_controlling_date`,
+				  i.`receive_invoice_date`,
+				  i.`invoice_date` ,
+				  i.`grand_total`,
+				  i.grand_total_after,
+				  i.paid,
+				  i.balance,
+				  i.`sub_total`,
+				  i.vat,
+				  i.total_vat,
+				  i.vendor_id
+				FROM
+				  `tb_invoice_controlling` AS i 
+				WHERE i.`vendor_id`=$post_id";
+   		$sql.=" AND is_completed=0";
+   		$sql.=" ORDER BY id DESC ";
+   	}else{//by invoice
+   		$sql=" SELECT 
+				  i.invoice_id as id,
+				  i.`invoice_no`,
+				  i.`invoice_controlling_date`,
+				  i.`receive_invoice_date`,
+				  i.`invoice_date` ,
+				  i.`grand_total`,
+				  i.grand_total_after,
+				  i.paid,
+				   i.`sub_total`,
+				   i.vat,
+				  i.total_vat,
+				  i.balance,
+				  i.vendor_id
+				FROM
+				  `tb_invoice_controlling` AS i 
+				WHERE i.`invoice_id`=$post_id";
+   		$sql.=" AND is_completed=0 LIMIT 1 ";
+   	}
+   	return  $db->fetchAll($sql);
+   }
+function getAllInvoicePO($completed=null,$opt=null){
+   	$db= $this->getAdapter();
+	$tr = Application_Form_FrmLanguages::getCurrentlanguage();
+   	$sql="SELECT i.`id`,i.`invoice_id`,i.`invoice_no`,i.`invoice_controlling_date`,i.`receive_invoice_date`,i.`invoice_date` FROM `tb_invoice_controlling` AS i WHERE 1";
+   	if($completed!=null){
+   		$sql.="  AND i.is_completed=0 ";
+   	}
+   	$sql.=" ORDER BY id DESC ";
+   	$row =  $db->fetchAll($sql);
+   	if($opt==null){
+   		return $row;
+   	}else{
+   		$options=array(-1=>$tr->translate("SELECT_INVOICE"));
+   		if(!empty($row)) foreach($row as $read) $options[$read['invoice_id']]=$read['invoice_no'];
+   		return $options;
+   	}
+   }
+
+function getDnNo($completed=null,$opt=null){
+   	$db= $this->getAdapter();
+	$tr = Application_Form_FrmLanguages::getCurrentlanguage();
+   	$sql="SELECT r.`order_id`,r.`dn_number`,r.`recieve_number` FROM `tb_recieve_order` AS r WHERE 1";
+   	if($completed!=null){
+   		$sql.="  AND r.is_invoice_controlling=0 ";
+   	}
+   	$sql.=" ORDER BY r.order_id DESC ";
+   	$row =  $db->fetchAll($sql);
+   	if($opt==null){
+   		return $row;
+   	}else{
+   		$options=array(-1=>$tr->translate("SELECT_DN"));
+   		if(!empty($row)) foreach($row as $read) $options[$read['order_id']]=$read['dn_number']."(".$read['recieve_number'].")";
+   		return $options;
+   	}
+   }   
     
     /**
      * get CSO options for select box
      * @return array $options
      */
+    public function getOptionCSO(){
+    	$options = array('Please select');
+    	$sql = "SELECT id, name_en FROM fi_cso ORDER BY name_en";
+    	$rows = $this->getGlobalDb($sql);
+    	foreach($rows as $ele){
+    		$options[$ele['id']] = $ele['name_en'];
+    	}
+    	return $options;
+    }
     
     /**
      * boolean true mean record exist already
@@ -52,6 +362,59 @@ class Application_Model_DbTable_DbGlobal extends Zend_Db_Table_Abstract
     	if(!$row) return false;
     	return true;    	
     }
+	function getRejectExist($id,$type){
+		$db=$this->getAdapter();
+		$sql="SELECT p.`re_id`,p.type FROM `tb_purchase_request_remark` AS p WHERE p.re_id=$id AND p.type=$type";
+		$row = $db->fetchRow($sql);
+    	return $row;  
+	}
+	function getPriceCompareRejectExist($id,$type){
+		$db=$this->getAdapter();
+		$sql="SELECT p.`re_id`,p.type FROM `tb_price_compare_remark` AS p WHERE p.re_id=$id AND p.type=$type";
+		$row = $db->fetchRow($sql);
+    	return $row;  
+	}
+	
+	function getSaleRejectExist($id,$type){
+		$db=$this->getAdapter();
+		$sql="SELECT p.`re_id`,p.type FROM `tb_sale_request_remark` AS p WHERE p.re_id=$id AND p.type=$type";
+		$row = $db->fetchRow($sql);
+    	return $row;  
+	}
+	public function getTitleReportNew($id){
+		$db=$this->getAdapter();
+		$sql="SELECT 
+				  s.`name`,
+				  s.`branch_code`,
+				  s.`prefix`,
+				  s.`logo`,
+				  s.`address`,
+				  s.`phone`,
+				  s.`contact`,
+				  s.`email`,
+				  s.`title_report_en`,
+				  s.`title_report_kh`
+				FROM
+				  `tb_sublocation` AS s 
+				WHERE s.id =$id";
+		$row = $db->fetchRow($sql);
+    	return $row;  
+	}
+	
+	public function getTitleReport($id){
+		$db=$this->getAdapter();
+		$sql="SELECT 
+				  s.`name`,
+				  s.`prefix`,
+				  s.`logo`,
+				  s.`title_report_en`,
+				  s.`title_report_kh`
+				FROM
+				  `tb_location` AS s 
+				WHERE s.id =$id";
+		$row = $db->fetchRow($sql);
+    	return $row;  
+	}
     
     public function getDeliverProductExist($id_order_update){
     	$db= $this->getAdapter();
@@ -349,7 +712,6 @@ class Application_Model_DbTable_DbGlobal extends Zend_Db_Table_Abstract
     	}
     	else{
     		$sql_string = $this->getAllLocationByUser($result['user_id'],$branch);
-    		 
     		$result = " AND (".$sql_string.")";
     		return $result;
     	} 
@@ -357,18 +719,15 @@ class Application_Model_DbTable_DbGlobal extends Zend_Db_Table_Abstract
 	 function getAllLocation($opt=null){
    		   		$db=$this->getAdapter();
    		$sql=" SELECT id,`name` FROM `tb_sublocation` WHERE `name`!='' AND status=1  ";
+//    		$sql.=$this->getAccessPermission("id");
    		$result = $this->getUserInfo();
    		$sql.= " AND ".$this->getAllLocationByUser($result['user_id']);
+		//echo $sql;
    		$row =  $db->fetchAll($sql);
    		if($opt==null){
    			return $row;
    		}else{
    			$options=array();
-			$request=Zend_Controller_Front::getInstance()->getRequest();
-   			$module = $request->getModuleName();
-   			if($module=='report'){
-   				$options=array(-1=>"Select Location");
-   			}
    			if(!empty($row)) foreach($row as $read) $options[$read['id']]=$read['name'];
    			return $options;
    		}
@@ -381,10 +740,11 @@ class Application_Model_DbTable_DbGlobal extends Zend_Db_Table_Abstract
     	}
     	$sql=" SELECT * FROM `tb_acl_ubranch` WHERE user_id=$user_id ";
     	
-    	
+    	//echo $sql;exit();
     	$rows = $db->fetchAll($sql);
     	$s_where = array();
     	$where='';
+		//print_r($rows);exit();
     	if(!empty($rows)){
     		foreach ($rows as $rs){
     			$s_where[] = $branch_name." = {$rs['location_id']}";
@@ -393,7 +753,6 @@ class Application_Model_DbTable_DbGlobal extends Zend_Db_Table_Abstract
     	}
     	return $where;
     }
-   
     public function getSetting(){
     	$DB = $this->getAdapter();
     	$sql="SELECT * FROM `tb_setting` ";
@@ -403,7 +762,6 @@ class Application_Model_DbTable_DbGlobal extends Zend_Db_Table_Abstract
     	$session_user=new Zend_Session_Namespace('auth');
     	return $session_user->user_id;
     }
-	
     public static function writeMessageErr($err=null)
     {
     	$request=Zend_Controller_Front::getInstance()->getRequest();
@@ -451,7 +809,7 @@ class Application_Model_DbTable_DbGlobal extends Zend_Db_Table_Abstract
     	$this->_name='tb_quoatation';
     	$db = $this->getAdapter();
     	$sql=" SELECT COUNT(id)  FROM $this->_name WHERE branch_id=".$branch_id." LIMIT 1 ";
-    	$pre = $this->getPrefixCode($branch_id)."Q";
+    	$pre = $this->getPrefixCode($branch_id)."QO-";
     	$acc_no = $db->fetchOne($sql);
     
     	$new_acc_no= (int)$acc_no+1;
@@ -464,8 +822,38 @@ class Application_Model_DbTable_DbGlobal extends Zend_Db_Table_Abstract
     public function getSalesNumber($branch_id = 1){
     	$this->_name='tb_sales_order';
     	$db = $this->getAdapter();
+    	$sql=" SELECT COUNT(id)  FROM $this->_name WHERE branch_id=".$branch_id." AND type=1 LIMIT 1 ";
+    	$pre = $this->getPrefixCode($branch_id)."SO-";
+    	$acc_no = $db->fetchOne($sql);
+    
+    	$new_acc_no= (int)$acc_no+1;
+    	$acc_no= strlen((int)$acc_no+1);
+    	for($i = $acc_no;$i<5;$i++){
+    		$pre.='0';
+    	}
+    	return $pre.$new_acc_no;
+    }
+	
+	public function getRequestNumber($branch_id = 1){
+    	$this->_name='tb_sales_order';
+    	$db = $this->getAdapter();
+    	$sql=" SELECT COUNT(id)  FROM $this->_name WHERE branch_id=".$branch_id." AND type=2 LIMIT 1 ";
+    	$pre = $this->getPrefixCode($branch_id)."RO-";
+    	$acc_no = $db->fetchOne($sql);
+    
+    	$new_acc_no= (int)$acc_no+1;
+    	$acc_no= strlen((int)$acc_no+1);
+    	for($i = $acc_no;$i<5;$i++){
+    		$pre.='0';
+    	}
+    	return $pre.$new_acc_no;
+    }
+	
+	 public function getDeliverNumber($branch_id = 1){
+    	$this->_name='tb_deliverynote';
+    	$db = $this->getAdapter();
     	$sql=" SELECT COUNT(id)  FROM $this->_name WHERE branch_id=".$branch_id." LIMIT 1 ";
-    	$pre = $this->getPrefixCode($branch_id)."IV";
+    	$pre = $this->getPrefixCode($branch_id)."DN-";
     	$acc_no = $db->fetchOne($sql);
     
     	$new_acc_no= (int)$acc_no+1;
@@ -489,20 +877,31 @@ class Application_Model_DbTable_DbGlobal extends Zend_Db_Table_Abstract
     	}
     	return $pre.$new_acc_no;
     }
+	public function getPuInvoiceNumber($branch_id = 1){
+    	$this->_name='tb_purchase_invoice';
+    	$db = $this->getAdapter();
+    	$sql=" SELECT COUNT(id)  FROM $this->_name WHERE branch_id=".$branch_id." LIMIT 1 ";
+    	$pre = $this->getPrefixCode($branch_id)."IV";
+    	$acc_no = $db->fetchOne($sql);
+    
+    	$new_acc_no= (int)$acc_no+1;
+    	$acc_no= strlen((int)$acc_no+1);
+    	for($i = $acc_no;$i<5;$i++){
+    		$pre.='0';
+    	}
+    	return $pre.$new_acc_no;
+    }
     function getPrefixCode($branch_id){
     	$db  = $this->getAdapter();
-    	$sql = " SELECT prefix FROM `tb_sublocation` WHERE id = $branch_id  LIMIT 1";
+    	$sql = " SELECT branch_code FROM `tb_sublocation` WHERE id = $branch_id  LIMIT 1";
     	return $db->fetchOne($sql);
     }
-    function getAllTermCondition($opt=null,$type=null,$defual=null){
+    function getAllTermCondition($opt=null,$type=null){
     	$db = $this->getAdapter();
-    	$sql = " SELECT id,id AS condition_id,con_khmer,con_english,is_default FROM `tb_termcondition` WHERE con_khmer!='' AND status = 1 ";
+    	$sql = " SELECT id,con_khmer,con_english FROM `tb_termcondition` WHERE con_khmer!='' AND status = 1 ";
     	if($type!=null){
     		$sql.=" AND type = $type";
     	}
-		if($defual!=null){
-			$sql.=" AND is_default = 1";
-		}
     	$rows =  $db->fetchAll($sql);
     	if($opt!=null){
     		$option='';
@@ -518,15 +917,13 @@ class Application_Model_DbTable_DbGlobal extends Zend_Db_Table_Abstract
     }
    function getProductPriceBytype($customer_id,$product_id){//BY Customer Level and Product id
    	$db = $this->getAdapter();
-   //	$sql=" SELECT price,pro_id FROM `tb_product_price` WHERE type_id = 
-   	//	(SELECT customer_level FROM `tb_customer` WHERE id=$customer_id limit 1) AND pro_id=$product_id LIMIT 1 ";
-   	$sql=" SELECT price,pro_id FROM `tb_product_price` WHERE pro_id=$product_id AND price>0 AND type_id = 2  LIMIT 1  ";
-	
-	return $db->fetchRow($sql);
+   	$sql=" SELECT price,pro_id FROM `tb_product_price` WHERE type_id = 
+   		(SELECT customer_level FROM `tb_customer` WHERE id=$customer_id limit 1) AND pro_id=$product_id LIMIT 1 ";
+   	return $db->fetchRow($sql);
    }
    function getTermConditionById($term_type,$record_id=null){
    	$db = $this->getAdapter();
-   	$sql=" SELECT t.id AS condition_id,t.con_khmer,t.con_english FROM `tb_termcondition` AS t,`tb_quoatation_termcondition` AS tc 
+   	$sql=" SELECT t.con_khmer,t.con_english FROM `tb_termcondition` AS t,`tb_quoatation_termcondition` AS tc 
    		WHERE t.id=tc.condition_id AND tc.term_type=$term_type ";
 		if($record_id!=null){$sql.=" AND quoation_id=$record_id ";}
    	return $db->fetchAll($sql); 
@@ -538,10 +935,29 @@ class Application_Model_DbTable_DbGlobal extends Zend_Db_Table_Abstract
 		
    	return $db->fetchAll($sql); 
    }
+   
+   function getTermConditionByType($id){
+	    $db = $this->getAdapter();
+	   $session_lang=new Zend_Session_Namespace('lang');
+		$lang = $session_lang->lang_id;
+	  
+	   if($lang==1){
+			$sql = "SELECT t.`con_khmer` AS title FROM `tb_termcondition` AS t WHERE t.`type`=$id";
+	   }else{
+		   $sql = "SELECT t.`con_khmer` AS title FROM `tb_termcondition` AS t WHERE t.`type`=$id";
+	   }
+	   
+	   return $db->fetchAll($sql);
+   }
+   function getWorkType(){
+	    $options=array(''=>"SELECT_WORK",'1'=>'E','2'=>"W",3=>"G",4=>"M",5=>"P",6=>"S",7=>"MT",8=>"K",9=>"OT");
+			
+		return $options;
+   }
    function getAllInvoice($completed=null,$opt=null){
-   		$db= $this->getAdapter();
-   	$sql=" SELECT id,sale_no AS invoice_no FROM `tb_sales_order` WHERE status=1 ";
-   	if($completed!=null){ $sql.="  AND balance>0 ";} 
+   	$db= $this->getAdapter();
+   	$sql=" SELECT id,invoice_no FROM `tb_invoice` WHERE status=1  ";
+   	if($completed!=null){ $sql.="  AND is_fullpaid=0 ";} 
    	$sql.=" ORDER BY id DESC ";
    	$row =  $db->fetchAll($sql);
    	if($opt==null){
@@ -552,107 +968,101 @@ class Application_Model_DbTable_DbGlobal extends Zend_Db_Table_Abstract
    		 return $options;
    	}
    }
- 
    function getAllInvoicePayment($post_id,$type){
    	$db= $this->getAdapter();
-	if($type==1){//by customer
-		$sql=" SELECT s.*,
-			(SELECT SUM(paid) FROM `tb_receipt_detail` WHERE invoice_id=s.id) AS paid
-			FROM tb_sales_order AS s 
-			WHERE s.customer_id = $post_id AND s.status=1  ";
-		$sql.="  AND s.balance>0 ";
-		$sql.=" ORDER BY s.id DESC ";
-   }else{//by invoice
-		$sql=" SELECT s.*,s.id AS invoice_id,
-		s.customer_id,
-		(SELECT SUM(paid) FROM `tb_receipt_detail` WHERE invoice_id=$post_id) AS paid
-		FROM `tb_sales_order` AS s  WHERE s.id=$post_id AND s.status=1  ";
-		$sql.="  AND s.balance>0 LIMIT 1";
+	if($type==1){
+		$sql=" SELECT * FROM `tb_invoice` AS v,tb_sales_order as s WHERE v.sale_id = s.id AND s.customer_id = $post_id AND v.status=1  ";
+		$sql.="  AND v.is_fullpaid=0 ";
+		$sql.=" ORDER BY v.id DESC ";
+   }else{
+		$sql=" SELECT * FROM `tb_invoice` AS v  WHERE v.id=$post_id AND v.status=1  ";
+		$sql.="  AND v.is_fullpaid=0 LIMIT 1";
 	}
+	//return $sql;
+   	return  $db->fetchAll($sql);
+   }
+   
+   function getAllDnNo($post_id,$type){
+   	$db= $this->getAdapter();
+	if($type==1){
+		$sql=" SELECT 
+				  d.id,
+				  d.`deliver_no`,
+				  d.`all_total`,
+				  d.`all_total_after`,
+				  d.`paid`,
+				  d.`paid_after`,
+					d.`deli_date`,
+				  d.`balance`,
+  d.`customer_id`,
+				  d.`balance_after` ,
+  d.`so_id`
+				FROM
+				  `tb_deliverynote` AS d 
+				WHERE d.`customer_id`=$post_id AND d.`is_invoice`=0";
+		//$sql.="  AND v.is_fullpaid=0 ";
+		$sql.=" ORDER BY d.id DESC ";
+   }else{
+		$sql=" SELECT 
+				  d.id,
+				  d.`deliver_no`,
+				  d.`all_total`,
+				  d.`all_total_after`,
+				  d.`paid`,
+				  d.`paid_after`,
+  d.`deli_date`,
+				  d.`balance`,
+  d.`customer_id`,
+				  d.`balance_after` ,
+  d.`so_id`
+				FROM
+				  `tb_deliverynote` AS d 
+				WHERE d.`id` = $post_id  ";
+		//$sql.="  AND v.is_fullpaid=0 LIMIT 1";
+	}
+	//return $sql;
    	return  $db->fetchAll($sql);
    }
    	function getAllCustomer($opt=null){
    		$db=$this->getAdapter();
-   		$sql=" SELECT id, CONCAT(cust_name,',',contact_name) AS cust_name,cu_code FROM tb_customer WHERE 
-   		 status=1 AND (cust_name!='' OR contact_name!='' OR cu_code!='') ORDER BY id DESC ";
+		$tr = Application_Form_FrmLanguages::getCurrentlanguage();
+   		$sql=" SELECT id, CONCAT(cust_name,',',contact_name) AS cust_name FROM tb_customer WHERE cust_name!=''
+   		 AND status=1 ORDER BY id DESC";
    		
    		$row =  $db->fetchAll($sql);
    		if($opt==null){
    			return $row;
    		}else{
-   			//$options=array(0=>"Select Customer",-1=>"Add New Customer");
-   			$options=array(0=>"Select Customer",);
-   			if(!empty($row)) foreach($row as $read) $options[$read['id']]=str_replace("-","",$read['cust_name']).'-'.$read['cu_code'];
+   			$options=array(0=>$tr->translate("Select Customer"),-1=>"Add New Customer");
+   			if(!empty($row)) foreach($row as $read) $options[$read['id']]=str_replace("-","",$read['cust_name']);
    			return $options;
    		}
    }
-   function getAllCustomerPayment($opt=null){
-    	$db=$this->getAdapter();
-    	$sql=" SELECT DISTINCT (c.id) AS id,
-    	CONCAT(c.cust_name,' ',c.contact_name) AS cust_name
-    	FROM `tb_sales_order` AS s,tb_customer AS c
-    	WHERE c.id=s.`customer_id` AND s.balance>0 ";
-    	$row =  $db->fetchAll($sql);
-    	if($opt==null){
-    		return $row;
-    	}else{
-    		//$options=array(0=>"Select Customer",-1=>"Add New Customer");
-    		$options=array(0=>"Select Customer",);
-    		if(!empty($row)) foreach($row as $read) $options[$read['id']]=str_replace("-","",$read['cust_name']);
-    		return $options;
-    	}
-    }
-   	function getAllProvince($opt=null){
-   		$db=$this->getAdapter();
-   		$sql=" SELECT province_id,province_en_name FROM ln_province WHERE province_en_name!='' ";
-   		
-   		$row =  $db->fetchAll($sql);
-   		if($opt==null){
-   			return $row;
-   		}else{
-   			$options=array();
-   			if(!empty($row)) foreach($row as $read) $options[$read['province_id']]=str_replace("-","",$read['province_en_name']);
-   			return $options;
-   		}
+   public function addDepartment($data){
+   	$db = $this->getAdapter();
+   	$db->beginTransaction();
+   	try{
+   		$db_global = new Application_Model_DbTable_DbGlobal();
+   		$session_user=new Zend_Session_Namespace('auth');
+   		$GetUserId= $session_user->user_id;
+   		$info=array(
+   				"name"    	  => $data['name_department'],
+   				"plan_id"    => $data['plan_id'],
+   				"status"     => 1,
+   		);
+   		$this->_name="tb_work_plan";
+   		$id = $this->insert($info);
+   		$db->commit();
+   		return $id;
+   	}catch(Exception $e){
+   		$db->rollBack();
+   		Application_Form_FrmMessage::message('INSERT_FAIL');
+   		$err =$e->getMessage();
+   		Application_Model_DbTable_DbUserLog::writeMessageError($err);
+   	}
    }
    
-   function getAllCurrency($opt=null){
-   	$db=$this->getAdapter();
-   	$sql=" SELECT id, description,symbal FROM tb_currency WHERE status = 1 ";
-   	$row =  $db->fetchAll($sql);
-   	if($opt==null){
-   		return $row;
-   	}else{
-   		$options=array();
-   		if(!empty($row)) foreach($row as $read) $options[$read['id']]=$read['description'].$read['symbal'];
-   		return $options;
-   	}
-   }
-   function getAllVendor($opt=null){
-   	$db=$this->getAdapter();
-   	$sql=" SELECT vendor_id As id,vendor_id,v_name as name, v_name FROM tb_vendor WHERE v_name!='' AND status = 1 ORDER BY vendor_id DESC";
-   	$row =  $db->fetchAll($sql);
-   	if($opt==null){
-   		return $row;
-   	}else{
-   		$options=array(0=>"Select Vendor",-1=>"Add Vendor");
-   		if(!empty($row)) foreach($row as $read) $options[$read['vendor_id']]=$read['v_name'];
-   		return $options;
-   	}
-   }
-   function getAllPaymentmethod($opt=null){
-   	$db=$this->getAdapter();
-   	$sql=" SELECT * FROM tb_paymentmethod ";
-   	$row =  $db->fetchAll($sql);
-   	if($opt==null){
-   		return $row;
-   	}else{
-   		$options=array();
-   		if(!empty($row)) foreach($row as $read) $options[$read['payment_typeId']]=$read['payment_name'];
-   		return $options;
-   	}
-   }
-    function getAllExpense($opt=null){
+   function getAllExpense($opt=null){
    	$db=$this->getAdapter();
    	$sql=" SELECT * FROM tb_expensetitle where status=1 and title!='' ";
    	$row =  $db->fetchAll($sql);
@@ -664,6 +1074,7 @@ class Application_Model_DbTable_DbGlobal extends Zend_Db_Table_Abstract
    		return $options;
    	}
    }
+   
    function getAllExpensePu($opt=null){
    	$db=$this->getAdapter();
    	$sql=" SELECT * FROM tb_expensetitle where status=1 and title!='' ";
@@ -676,133 +1087,17 @@ class Application_Model_DbTable_DbGlobal extends Zend_Db_Table_Abstract
    		return $options;
    	}
    }
-   public function getReceiptNumber($branch_id = 1){
-    	$this->_name='tb_receipt';
-    	$db = $this->getAdapter();
-    	$sql=" SELECT COUNT(id)  FROM $this->_name WHERE branch_id=".$branch_id." LIMIT 1 ";
-    	$pre = $this->getPrefixCode($branch_id)."R";
-    	$acc_no = $db->fetchOne($sql);
-    
-    	$new_acc_no= (int)$acc_no+1;
-    	$acc_no= strlen((int)$acc_no+1);
-    	for($i = $acc_no;$i<5;$i++){
-    		$pre.='0';
-    	}
-    	return $pre.$new_acc_no;
-    }
-	
-	function getSaleAgent($option=null){
-    	$db = $this->getAdapter();
-    	$sql=' SELECT id ,name FROM `tb_sale_agent` WHERE name!="" AND status=1  ';
-    	$result = $this->getUserInfo();
-    	if($result['level']==6){
-    		$sql.=" AND acl_user = ".$result['user_id'];
-    	}
-    	$rows = $db->fetchAll($sql);
-    	if($option!=null){
-    	  $opt=array();  
-    	  if(!empty($rows)) {
-    		foreach($rows as $rs){
-    			$opt[$rs['id']]=$rs['name'];
-    		}
-    	  }
-    	  return $opt;
-    	}else{
-    		return $rows;
-    	}
-    }
-	function getUpdatetermcustomer(){
-    	$db = $this->getAdapter();
-    	$sql=" SELECT v.`credit_limit`,v.`credit_term`,v.key_code FROM `tb_view` AS v WHERE v.`type`=6 ";
-    	$row = $db->fetchAll($sql);
-    	if(!empty($row)){
-    		$this->_name='tb_customer';
-    		foreach ($row as $rs){
-    			$arr = array(
-    					'credit_team'=>$rs['credit_term'],
-						'credit_limit'=>$rs['credit_limit']
-    					); 
-    			$where = " cu_type=".$rs['key_code']." AND credit_team='0.00' ";
-    			$this->update($arr, $where);
-    		}
-    	}
-    }
-	function getAllInvoicePO($completed=null,$opt=null){
-   	$db= $this->getAdapter();
-   	$sql=" SELECT id,invoice_no,(SELECT v_name FROM `tb_vendor` WHERE tb_vendor.vendor_id = p.vendor_id) AS vendor_name FROM `tb_purchase_order` AS p WHERE  p.status=1 and p.balance>0 ";
-   	if($completed!=null){
-   		$sql.="  AND p.is_completed=0 ";
-   	}
-   	$sql.=" ORDER BY id DESC ";
+   
+   function getAllPaymentmethod($opt=null){
+   	$db=$this->getAdapter();
+   	$sql=" SELECT * FROM tb_paymentmethod ";
    	$row =  $db->fetchAll($sql);
    	if($opt==null){
    		return $row;
    	}else{
-   		$options=array(-1=>"Select Invoice");
-   		if(!empty($row)) foreach($row as $read) $options[$read['id']]=$read['invoice_no']."-".$read['vendor_name'];
+   		$options=array();
+   		if(!empty($row)) foreach($row as $read) $options[$read['payment_typeId']]=$read['payment_name'];
    		return $options;
-   	}
-   }
-   function getAllInvoicePaymentPurchase($post_id,$type){
-   	$db= $this->getAdapter();
-   	if($type==1){//by customer
-   		$sql=" SELECT p.*,
-   			(SELECT SUM(paid) FROM `tb_vendorpayment_detail` WHERE tb_vendorpayment_detail.invoice_id=p.id) as paid
-   			FROM tb_purchase_order AS p 
-   			WHERE p.vendor_id= $post_id AND status=1  ";
-	   			$sql.=" AND p.is_completed=0 AND p.balance_after>0 ";
-	   			$sql.=" ORDER BY p.id DESC ";
-   	}else{//by invoice
-   		$sql=" SELECT p.*, 
-   				(SELECT SUM(paid) FROM `tb_vendorpayment_detail` WHERE tb_vendorpayment_detail.invoice_id=p.id) as paid
-   				FROM tb_purchase_order AS p WHERE p.id= $post_id AND p.status=1  ";
-   				$sql.=" AND p.is_completed=0 AND p.balance_after>0 LIMIT 1 ";
-   	}
-   	return  $db->fetchAll($sql);
-   }
-   function getAgreementNo($branch_id=1){
-   		$db = $this->getAdapter();
-   		$sql="SELECT id FROM tb_agreement ORDER BY id DESC";
-   		$acc_no = $db->fetchOne($sql);
-   		$new_acc_no= (int)$acc_no+1;
-   		$acc_no= strlen((int)$acc_no+1);
-   		$pre="";
-   		for($i = $acc_no;$i<5;$i++){
-   			$pre.='0';
-   		}
-   		return $pre.$new_acc_no;
-   }
-   function getAllSaleAgreement($opt=null,$type=null,$defual=null){
-   	$db = $this->getAdapter();
-   	$sql = " SELECT id,
-			(SELECT  cust_name FROM `tb_customer` AS c WHERE c.id=customer_id ) AS customer_name,
-			agreement_no 
-   		FROM `tb_agreement` WHERE status = 1 ";
-   
-   	$rows =  $db->fetchAll($sql);
-   	if($opt!=null){
-   		$option='';
-   		if(!empty($rows)){
-   			foreach ($rows as $key =>$rs){
-   				$option .= '<option value="'.$rs['id'].'" >'.htmlspecialchars($rs['agreement_no'].'-'.$rs['customer_name'], ENT_QUOTES)
-   				.'</option>';
-   			}
-   			return $option;
-   		}
-   	}else{
-   		return $rows;
-   	}
-   }
-   
-   static function getCurrentLang(){
-   	$session_lang=new Zend_Session_Namespace('lang');
-   	if(!empty($session_lang->lang_id)){
-   		if ($session_lang->lang_id>2){
-   			return 2;
-   		}
-   		return $session_lang->lang_id;
-   	}else{
-   		return 2;
    	}
    }
    
@@ -820,76 +1115,197 @@ class Application_Model_DbTable_DbGlobal extends Zend_Db_Table_Abstract
    	$rows = $db->fetchAll($sql);
    	return $rows;
    }
-    
-   public function getRequestNo(){
-   	$this->_name='tb_staff_request';
-   	$db = $this->getAdapter();
-   	$sql=" SELECT id FROM $this->_name ORDER BY id DESC LIMIT 1 ";
-   	$acc_no = $db->fetchOne($sql);
-   	$new_acc_no= (int)$acc_no+1;
-   	$acc_no= strlen((int)$acc_no+1);
-   	$pre ='R';
-   	for($i = $acc_no;$i<4;$i++){
-   		$pre.='0';
+   
+   function getAllCurrency($opt=null){
+   	$db=$this->getAdapter();
+   	$sql=" SELECT id, description,symbal FROM tb_currency WHERE status = 1 ";
+   	$row =  $db->fetchAll($sql);
+   	if($opt==null){
+   		return $row;
+   	}else{
+   		$options=array();
+   		if(!empty($row)) foreach($row as $read) $options[$read['id']]=$read['description'].$read['symbal'];
+   		return $options;
    	}
-   	return $pre.$new_acc_no;
    }
    
-   public function getStaffNo(){
-   	$this->_name='tb_staff';
-   	$db = $this->getAdapter();
-   	$sql=" SELECT id FROM $this->_name ORDER BY id DESC LIMIT 1 ";
-   	$acc_no = $db->fetchOne($sql);
-   	$new_acc_no= (int)$acc_no+1;
-   	$acc_no= strlen((int)$acc_no+1);
-   	$pre ="S";
-   	for($i = $acc_no;$i<4;$i++){
-   		$pre.='0';
-   	}
-   	return $pre.$new_acc_no;
+   	function getAllProvince($opt=null){
+   		$db=$this->getAdapter();
+   		$sql=" SELECT province_id,province_en_name FROM ln_province WHERE province_en_name!='' ";
+   		
+   		$row =  $db->fetchAll($sql);
+   		if($opt==null){
+   			return $row;
+   		}else{
+   			$options=array();
+   			if(!empty($row)) foreach($row as $read) $options[$read['province_id']]=str_replace("-","",$read['province_en_name']);
+   			return $options;
+   		}
    }
-   
-   public function getTransferStockNo(){
-   	$this->_name='rms_transferstock';
-   	$db = $this->getAdapter();
-   	$sql=" SELECT id FROM $this->_name ORDER BY id DESC LIMIT 1 ";
-   	$acc_no = $db->fetchOne($sql);
-   	$new_acc_no= (int)$acc_no+1;
-   	$acc_no= strlen((int)$acc_no+1);
-   	$pre ='T';
-   	for($i = $acc_no;$i<4;$i++){
-   		$pre.='0';
-   	}
-   	return $pre.$new_acc_no;
-   }
-   
-   public function getTransferReceiveNo(){
-   	$this->_name='rms_transfer_receive';
-   	$db = $this->getAdapter();
-   	$sql=" SELECT id FROM $this->_name ORDER BY id DESC LIMIT 1 ";
-   	$acc_no = $db->fetchOne($sql);
-   	$new_acc_no= (int)$acc_no+1;
-   	$acc_no= strlen((int)$acc_no+1);
-   	$pre ='TR';
-   	for($i = $acc_no;$i<4;$i++){
-   		$pre.='0';
-   	}
-   	return $pre.$new_acc_no;
-   }
-   
-   public function getStaffIdNo(){
-   	$this->_name='tb_staff';
-   	$db = $this->getAdapter();
-   	$sql=" SELECT id FROM $this->_name ORDER BY id DESC LIMIT 1 ";
-   	$acc_no = $db->fetchOne($sql);
-   	$new_acc_no= (int)$acc_no+1;
-   	$acc_no= strlen((int)$acc_no+1);
-   	$pre ='S';
-   	for($i = $acc_no;$i<4;$i++){
-   		$pre.='0';
-   	}
-   	return $pre.$new_acc_no;
-   }
-   	
+   /*function getAllLocation($opt=null){
+   		$db=$this->getAdapter();
+   		$sql=" SELECT id,`name` FROM `tb_sublocation` WHERE `name`!='' AND STATUS=1  ";
+   		
+   		$row =  $db->fetchAll($sql);
+   		if($opt==null){
+   			return $row;
+   		}else{
+   			$options=array();
+   			if(!empty($row)) foreach($row as $read) $options[$read['id']]=$read['name'];
+   			return $options;
+   		}
+   }*/
+   	public function getHours($key = ''){
+  $tr = Application_Form_FrmLanguages::getCurrentlanguage();
+  $am = $tr->translate('AM');
+  $pm = $tr->translate('PM');
+  $hours = array(
+    '12:00 '. $pm,'12:30 '. $pm,
+    '01:00 '. $am,'01:30 '. $am,
+    '02:00 '. $am,'02:30 '. $am,
+    '03:00 '. $am,'03:30 '. $am,
+    '04:00 '. $am,'04:30 '. $am,
+    '05:00 '. $am,'05:30 '. $am,
+    '06:00 '. $am,'06:30 '. $am,
+    '07:00 '. $am,'07:30 '. $am,
+    '08:00 '. $am,'08:30 '. $am,
+    '09:00 '. $am,'09:30 '. $am,
+    '10:00 '. $am,'10:30 '. $am,
+    '11:00 '. $am,'11:30 '. $am,
+    '12:00 '. $am,'12:30 '. $am,
+    '01:00 '. $pm,'01:30 '. $pm,
+    '02:00 '. $pm,'02:30 '. $pm,
+    '03:00 '. $pm,'03:30 '. $pm,
+    '04:00 '. $pm,'04:30 '. $pm,
+    '05:00 '. $pm,'05:30 '. $pm,
+    '06:00 '. $pm,'06:30 '. $pm,
+    '07:00 '. $pm,'07:30 '. $pm,
+    '08:00 '. $pm,'08:30 '. $pm,
+    '09:00 '. $pm,'09:30 '. $pm,
+    '10:00 '. $pm,'10:30 '. $pm,
+    '11:00 '. $pm,'11:30 '. $pm
+  );
+  if(empty($key)){
+   return $hours;
+  }
+  return  $hours[$key];
+ }
+ 
+ function getAgreementNo($branch_id=1){
+ 	$db = $this->getAdapter();
+ 	$sql="SELECT id FROM tb_agreement ORDER BY id DESC";
+ 	$acc_no = $db->fetchOne($sql);
+ 	$new_acc_no= (int)$acc_no+1;
+ 	$acc_no= strlen((int)$acc_no+1);
+ 	$pre="";
+ 	for($i = $acc_no;$i<5;$i++){
+ 		$pre.='0';
+ 	}
+ 	return $pre.$new_acc_no;
+ }
+ function getAllSaleAgreement($opt=null,$type=null,$defual=null){
+ 	$db = $this->getAdapter();
+ 	$sql = " SELECT id,
+ 	(SELECT  cust_name FROM `tb_customer` AS c WHERE c.id=customer_id ) AS customer_name,
+ 	agreement_no
+ 	FROM `tb_agreement` WHERE status = 1 ";
+ 	 
+ 	$rows =  $db->fetchAll($sql);
+ 	if($opt!=null){
+ 		$option='';
+ 		if(!empty($rows)){
+ 			foreach ($rows as $key =>$rs){
+ 				$option .= '<option value="'.$rs['id'].'" >'.htmlspecialchars($rs['agreement_no'].'-'.$rs['customer_name'], ENT_QUOTES)
+ 				.'</option>';
+ 			}
+ 			return $option;
+ 		}
+ 	}else{
+ 		return $rows;
+ 	}
+ }
+  
+ static function getCurrentLang(){
+ 	$session_lang=new Zend_Session_Namespace('lang');
+ 	if(!empty($session_lang->lang_id)){
+ 		if ($session_lang->lang_id>2){
+ 			return 2;
+ 		}
+ 		return $session_lang->lang_id;
+ 	}else{
+ 		return 2;
+ 	}
+ }
+  
+ public function getRequestNo(){
+ 	$this->_name='tb_staff_request';
+ 	$db = $this->getAdapter();
+ 	$sql=" SELECT id FROM $this->_name ORDER BY id DESC LIMIT 1 ";
+ 	$acc_no = $db->fetchOne($sql);
+ 	$new_acc_no= (int)$acc_no+1;
+ 	$acc_no= strlen((int)$acc_no+1);
+ 	$pre ='R';
+ 	for($i = $acc_no;$i<4;$i++){
+ 		$pre.='0';
+ 	}
+ 	return $pre.$new_acc_no;
+ }
+  
+ public function getStaffNo(){
+ 	$this->_name='tb_staff';
+ 	$db = $this->getAdapter();
+ 	$sql=" SELECT id FROM $this->_name ORDER BY id DESC LIMIT 1 ";
+ 	$acc_no = $db->fetchOne($sql);
+ 	$new_acc_no= (int)$acc_no+1;
+ 	$acc_no= strlen((int)$acc_no+1);
+ 	$pre ="S";
+ 	for($i = $acc_no;$i<4;$i++){
+ 		$pre.='0';
+ 	}
+ 	return $pre.$new_acc_no;
+ }
+  
+ public function getTransferStockNo(){
+ 	$this->_name='rms_transferstock';
+ 	$db = $this->getAdapter();
+ 	$sql=" SELECT id FROM $this->_name ORDER BY id DESC LIMIT 1 ";
+ 	$acc_no = $db->fetchOne($sql);
+ 	$new_acc_no= (int)$acc_no+1;
+ 	$acc_no= strlen((int)$acc_no+1);
+ 	$pre ='T';
+ 	for($i = $acc_no;$i<4;$i++){
+ 		$pre.='0';
+ 	}
+ 	return $pre.$new_acc_no;
+ }
+  
+ public function getTransferReceiveNo(){
+ 	$this->_name='rms_transfer_receive';
+ 	$db = $this->getAdapter();
+ 	$sql=" SELECT id FROM $this->_name ORDER BY id DESC LIMIT 1 ";
+ 	$acc_no = $db->fetchOne($sql);
+ 	$new_acc_no= (int)$acc_no+1;
+ 	$acc_no= strlen((int)$acc_no+1);
+ 	$pre ='TR';
+ 	for($i = $acc_no;$i<4;$i++){
+ 		$pre.='0';
+ 	}
+ 	return $pre.$new_acc_no;
+ }
+  
+ public function getStaffIdNo(){
+ 	$this->_name='tb_staff';
+ 	$db = $this->getAdapter();
+ 	$sql=" SELECT id FROM $this->_name ORDER BY id DESC LIMIT 1 ";
+ 	$acc_no = $db->fetchOne($sql);
+ 	$new_acc_no= (int)$acc_no+1;
+ 	$acc_no= strlen((int)$acc_no+1);
+ 	$pre ='S';
+ 	for($i = $acc_no;$i<4;$i++){
+ 		$pre.='0';
+ 	}
+ 	return $pre.$new_acc_no;
+ }
+ 
 }
 ?>

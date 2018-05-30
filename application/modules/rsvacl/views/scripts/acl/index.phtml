@@ -14,6 +14,9 @@
 				<a href="<?php echo $url_new;?>" class="btn btn-sm green  pull-right">
 					<i class="fa fa-plus"></i>&nbsp;<?php echo $tr->translate('ADD_NEW');?>
 				</a>
+				<li>
+										<a href="#" onClick="exports()"><i class="fa fa-file-excel-o" aria-hidden="true"></i>&nbsp;&nbsp;Export Excel </a>
+									</li>
 			</div>
 			<div class="portlet-body form">
 				<form method="post" action="<?php //echo $formFilter->getAction(); ?>">
@@ -21,11 +24,96 @@
 						
 					</div>		
 				</form> 
+				<div id="divPrint" style="width: 100%;">
 					<div class="contain_form" style="clear: both;">
-						<?php echo $this->form;?>
+						<?php //echo $this->form;?>
+						<table>
+							<tr>
+							<td id="exportExcel">
+								<table class="table2excel" border="1" &#8203;="" style="border-collapse:collapse;border:1px solid #000; font-size:10px;" width="100%" cellspacing="0">
+									 <tbody><tr bgcolor="#ccc" class="style" align="center" style="font-weight:bold; line-height: 20px; font-size:12px; padding:1px 0px; white-space: nowrap; ">
+										<td>&nbsp;<?php echo $tr->translate("NUM");?></td>
+												<td><?php echo $tr->translate("MODULE");?></td>
+												<td><?php echo $tr->translate("CONTROLLER");?></td>
+												<td><?php echo $tr->translate("ACTION");?></td>
+												<td><?php echo $tr->translate("STATUS");?></td>
+												<td><?php echo $tr->translate("RANK");?></td>
+												<td><?php echo $tr->translate("LABEL");?></td>
+												<td><?php echo $tr->translate("PARENT");?></td>
+												<td><?php echo $tr->translate("IS_PARENT");?></td>
+									</tr>
+									<?php $num=1; 
+									if(!empty($this->rs))foreach ($this->rs AS $index => $row){
+										
+										
+									?>
+									<tr class='row-format<?php echo $num; ?>' id="item_<?php echo $index; ?>">
+												<td align="center" style="width:3% !important"><?php echo $index+1 ?></td>
+												<td style="white-space: nowrap;" class="center"><?php echo $row["module"]?></td>
+												<td style="white-space: nowrap;"><?php echo str_replace(' ','',$row["controller"])?></td>
+												<td style="white-space: nowrap;"><?php echo $row["action"]?></td>
+												<td style="width:8% !important"><?php echo $row["status"]?></td>
+												<td style="width:8% !important"><?php echo $row["rank"]?></td>
+												<td style="width:10% !important"><?php echo $row["lable"]?></td>
+												<td style="width:5% !important"><?php echo $row["parent"]?></td>
+												<td style="width:8% !important"><?php echo $row["is_parent"]?></td>
+										</tr>
+									  <?php }?> 
+									</tbody>
+							   </table>
+								<br>
+								 
+								  <br>
+								  <table align="center" width="100%">
+									   <tbody><tr style="font-size: 11px;">
+											<th style="width:20%;text-align:center;  font-family:'Khmer MEF2'">យល់ព្រមដោយ</th>
+											<th></th>
+											<th style="width:20%;text-align:center; font-family:'Khmer MEF2'">ត្រួតពិនិត្យដោយ</th>
+											<th></th>
+											<th style="width:20%;text-align:center;font-family:'Khmer MEF2'">រៀបចំដោយ</th>
+									   </tr>
+									</tbody>
+								</table>	
+								</td>
+							</tr>
+						</table>
 					</div>
+				</div>
 		   </div>
 		</div>
 	</div>
 </div>
-	
+
+
+<script>
+function doPrint() {
+	window.frames["print_frame"].document.body.innerHTML=document.getElementById('divPrint').innerHTML;
+    window.frames["print_frame"].window.focus();
+    window.frames["print_frame"].window.print();
+    //hideDialog();
+}
+function exports() {
+			title=document.title;
+			var today = new Date();
+			var dd = today.getDate();
+			var mm = today.getMonth()+1; //January is 0!
+
+			var yyyy = today.getFullYear();
+			if(dd<10){
+				dd='0'+dd;
+			} 
+			if(mm<10){
+				mm='0'+mm;
+			} 
+			var today = dd+'-'+mm+'-'+yyyy;
+				$(".table2excel").table2excel({
+					exclude: ".noExl",
+					name: "Excel Document Name",
+					filename: title+"-"+today,
+					fileext: ".xls",
+					exclude_img: true,
+					exclude_links: true,
+					exclude_inputs: true
+				});
+			}
+</script>

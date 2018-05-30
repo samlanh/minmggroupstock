@@ -5,6 +5,11 @@ class Sales_IndexController extends Zend_Controller_Action
     {
     	defined('BASE_URL')	|| define('BASE_URL', Zend_Controller_Front::getInstance()->getBaseUrl());
     	$tr = Application_Form_FrmLanguages::getCurrentlanguage();
+    	$db = new Application_Model_DbTable_DbGlobal();
+    	$rs = $db->getValidUserUrl();
+    	if(empty($rs)){
+    		Application_Form_FrmMessage::Sucessfull("YOU_NO_PERMISION_TO_ACCESS_THIS_SECTION","/index/dashboad");
+    	}
     }
     protected function GetuserInfoAction(){
     	$user_info = new Application_Model_DbTable_DbGetUserInfo();
@@ -35,7 +40,7 @@ class Sales_IndexController extends Zend_Controller_Action
 		$db = new Sales_Model_DbTable_DbSaleOrder();
 		$rows = $db->getAllSaleOrder($search);
 		$columns=array("BRANCH_NAME","Com.Name","CON_NAME","INVOICE_NO","SALE_DATE",
-				"SUB_TOTAL","DISCOUNT","TRANSPORT_FEE","TOTAL_AMOUNT","PAID","BALANCE","PRINT","លុបវិក្កយបត្រ","BY_USER");
+				"SUB_TOTAL","DISCOUNT","TRANSPORT_FEE","TOTAL_AMOUNT","PAID","BALANCE","PRINT","áž›áž»áž”ážœáž·áž€áŸ’áž€áž™áž”áž�áŸ’ážš","BY_USER");
 		if($level==1){
 			$link=array(
 					'module'=>'sales','controller'=>'possale','action'=>'edit',
@@ -48,7 +53,7 @@ class Sales_IndexController extends Zend_Controller_Action
 				'module'=>'sales','controller'=>'possale','action'=>'delete',);
 		
 		$list = new Application_Form_Frmlist();
-		$this->view->list=$list->getCheckList(0, $columns, $rows, array('លុបវិក្កយបត្រ'=>$delete,'វិក្កយបត្រ'=>$invoice,
+		$this->view->list=$list->getCheckList(0, $columns, $rows, array('áž›áž»áž”ážœáž·áž€áŸ’áž€áž™áž”áž�áŸ’ážš'=>$delete,'ážœáž·áž€áŸ’áž€áž™áž”áž�áŸ’ážš'=>$invoice,
 				'contact_name'=>$link,'branch_name'=>$link,'customer_name'=>$link,
 				'sale_no'=>$link));
 		

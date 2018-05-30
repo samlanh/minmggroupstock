@@ -21,7 +21,7 @@ $row=$this->row_tran;
 					<div style="clear:both;"></div>	
 	<div style=" min-height:25cm; margin:0 auto; border: 1px dotted #ccc; padding:0px 0.2cm">
 	 <?php $url_submit = $this->url(array('module'=>'purchase','controller'=>'auditapprove','action'=>'approved'));?>
-	<form id="frm" action=" " class="form-horizontal" enctype="multipart/form-data" method="post">		   
+	<form id="frm" action="" class="form-horizontal" enctype="multipart/form-data" method="post">		   
 	<div id="divPrint" style="width: 100%;">
 	<style>
 		.style{
@@ -165,8 +165,7 @@ $row=$this->row_tran;
 						<i class="fa"></i>
 						<!--<textarea name="reject_approve" id="notefrom_accountingk" style="width:100%;height: 50px;" ><?php echo $this->request["reject_approve"]?></textarea>-->
 						<select name="approve" id="approved_name" class="form-control select2me">
-				        	<option value="1"><?php echo $tr->translate("CHECKED");?></option>
-				        	<!-- <option value="0"><?php //echo $tr->translate("REJECT");?></option> -->
+				        	<option value="1" <?php if($row['is_approve']==1) echo "selected='selected'";?>><?php echo $tr->translate("CHECKED");?></option>
 				        </select>
 					</div>
 				</div>

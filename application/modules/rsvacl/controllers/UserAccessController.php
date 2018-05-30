@@ -7,7 +7,12 @@ class Rsvacl_UserAccessController extends Zend_Controller_Action
     public function init()
     {
         /* Initialize action controller here */
-    	defined('BASE_URL')	|| define('BASE_URL', Zend_Controller_Front::getInstance()->getBaseUrl());  
+    	defined('BASE_URL')	|| define('BASE_URL', Zend_Controller_Front::getInstance()->getBaseUrl()); 
+		$db = new Application_Model_DbTable_DbGlobal();
+		$rs = $db->getValidUserUrl();
+		if(empty($rs)){
+			//Application_Form_FrmMessage::Sucessfull("YOU_NO_PERMISION_TO_ACCESS_THIS_SECTION","/index/dashboad");
+		}		
     }
 
 
@@ -37,7 +42,7 @@ class Rsvacl_UserAccessController extends Zend_Controller_Action
         	$links = array('user_type'=>$link);
         	
         	$list=new Application_Form_Frmlist();        	
-        	$columns=array($tr->translate('USER_TYPE_CAP'), strtoupper($tr->translate('STATUS_CAP')));        	
+        	$columns=array($tr->translate('USER_TYPE'), strtoupper($tr->translate('STATUS_CAP')));        	
         	$this->view->form=$list->getCheckList('radio', $columns, $rows,$links);
         	
         }else $this->view->form = $tr->translate('NO_RECORD_FOUND');

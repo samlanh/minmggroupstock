@@ -5,6 +5,11 @@ class Rsvacl_AclController extends Zend_Controller_Action
     {
         /* Initialize action controller here */
     	defined('BASE_URL')	|| define('BASE_URL', Zend_Controller_Front::getInstance()->getBaseUrl());
+		$db = new Application_Model_DbTable_DbGlobal();
+		$rs = $db->getValidUserUrl();
+		if(empty($rs)){
+			//Application_Form_FrmMessage::Sucessfull("YOU_NO_PERMISION_TO_ACCESS_THIS_SECTION","/index/dashboad");
+		}
     }
 
     public function indexAction()
@@ -13,8 +18,9 @@ class Rsvacl_AclController extends Zend_Controller_Action
     	//$this->_helper->layout()->disableLayout();
     	$tr = Application_Form_FrmLanguages::getCurrentlanguage();
         $getAcl = new Rsvacl_Model_DbTable_DbAcl();
-        $aclQuery = "SELECT `acl_id`,`module`,`controller`,`action`,`status` FROM tb_acl_acl";
+        $aclQuery = "SELECT * FROM tb_acl_acl";
         $rows = $getAcl->getAclInfo($aclQuery);
+		$this->view->rs = $rows;
         if($rows){        	
         	$imgnone='<img src="'.BASE_URL.'/images/icon/none.png"/>';
         	$imgtick='<img src="'.BASE_URL.'/images/icon/tick.png"/>';

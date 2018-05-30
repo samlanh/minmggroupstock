@@ -1,6 +1,8 @@
 <?php 
 	$tr = Application_Form_FrmLanguages::getCurrentlanguage();
 	$url_new = $this->url(array('module'=>'rsvacl','controller'=>'usertype','action'=>'add',));
+	$url_copy = $this->url(array('module'=>'rsvacl','controller'=>'usertype','action'=>'copy',));
+	$url_delete = $this->url(array('module'=>'rsvacl','controller'=>'usertype','action'=>'delete',));
 	$tr = Application_Form_FrmLanguages::getCurrentlanguage();
 ?>
 <title><?php echo $tr->translate("USER_TYPE_CAP");?></title>
@@ -12,9 +14,17 @@
 				<div class="caption">
 					<i class="fa fa-globe"></i><?php echo $tr->translate("USER_TYPE_CAP");?>
 				</div>
+				
 				<a href="<?php echo $url_new;?>" class="btn btn-sm green  pull-right">
 					<i class="fa fa-plus"></i>&nbsp;<?php echo $tr->translate('ADD_NEW');?>
 				</a>
+				<button onClick="copyRecord('<?php echo $url_copy;?>')" class="btn btn-sm green  pull-right" style="background: #4c0643; margin-right: 5px;">
+					<i class="fa fa-plus"></i>&nbsp;<?php echo $tr->translate('COPY');?>
+				</button>
+				
+				<button onClick="copyRecord('<?php echo $url_delete;?>')" class="btn btn-sm green  pull-right" style="background: #4c0643; margin-right: 5px;">
+					<i class="fa fa-trash"></i>&nbsp;<?php echo $tr->translate('DELETE');?>
+				</button>
 			</div>
 			<div class="portlet-body form">
 				<form method="post" action="<?php //echo $formFilter->getAction(); ?>">
@@ -29,4 +39,53 @@
 		</div>
 	</div>
 </div>
+<script>
+//url = <?php echo $url_copy;?>;
+function copyRecord(url) {
+	//alert(1);
+	 var cbs = $("input:checkbox"); //find all checkboxes
+	 var nbCbs = cbs.size(); //the number of checkboxes
+	 var checked = $("input[type=checkbox]:checked"); //find all checked checkboxes + radio buttons
+	 var nbChecked = checked.size();
+	 if(nbChecked < 1) {
+	  alert("Please select record to copy!");
+	 } else {
+	  /*var answer = confirm("Are you sure you want to delete it?")
+	     if (answer){*/
+	   id = new Array();
+	   var i = 0;
+	   checked.each(function() {
+	    id[i] = $(this).val();
+	    i++;
+	   });
+	   window.location.href = url+'/id/'+id;
+	     /*} else {
+	      alert("Sorrty can't delete it!");
+	     }*/
+	 }
+	}
 	
+	function deleteRecord(url) {
+	//alert(1);
+	 var cbs = $("input:checkbox"); //find all checkboxes
+	 var nbCbs = cbs.size(); //the number of checkboxes
+	 var checked = $("input[type=checkbox]:checked"); //find all checked checkboxes + radio buttons
+	 var nbChecked = checked.size();
+	 if(nbChecked < 1) {
+	  alert("Please select record to Delete!");
+	 } else {
+	  var answer = confirm("Are you sure you want to delete it?")
+	     if (answer){
+	   id = new Array();
+	   var i = 0;
+	   checked.each(function() {
+	    id[i] = $(this).val();
+	    i++;
+	   });
+	   window.location.href = url+'/id/'+id;
+	     } else {
+	      alert("Sorrty can't delete it!");
+	     }
+	 }
+	}
+</script>

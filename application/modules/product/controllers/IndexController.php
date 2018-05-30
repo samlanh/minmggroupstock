@@ -5,6 +5,11 @@ public function init()
     {
         /* Initialize action controller here */
     	defined('BASE_URL')	|| define('BASE_URL', Zend_Controller_Front::getInstance()->getBaseUrl());
+    	$db = new Application_Model_DbTable_DbGlobal();
+    	$rs = $db->getValidUserUrl();
+    	if(empty($rs)){
+    		Application_Form_FrmMessage::Sucessfull("YOU_NO_PERMISION_TO_ACCESS_THIS_SECTION","/index/dashboad");
+    	}
     }
     protected function GetuserInfoAction(){
     	$user_info = new Application_Model_DbTable_DbGetUserInfo();

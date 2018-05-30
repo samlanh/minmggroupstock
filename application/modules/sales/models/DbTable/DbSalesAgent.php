@@ -319,4 +319,18 @@ class Sales_Model_DbTable_DbSalesAgent extends Zend_Db_Table_Abstract
 		$agent_id=$db->addRecord($datainfo,"tb_sale_agent");
 		return $agent_id; 
 	}
+	
+	public function getUserCode(){
+		$db = $this->getAdapter();
+		$sql="SELECT user_id  FROM tb_acl_user ORDER BY  user_id DESC LIMIT 1 ";
+		$acc_no = $db->fetchOne($sql);
+		$new_acc_no= (int)$acc_no+1;
+		$acc_no= strlen((int)$acc_no+1);
+		$pre='U-';
+		for($i = $acc_no;$i<5;$i++){
+			$pre.='0';
+		}
+		return $pre.$new_acc_no;
+	}
+	
 }

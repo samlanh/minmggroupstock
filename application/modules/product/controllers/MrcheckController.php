@@ -78,9 +78,34 @@ public function init()
 		}
 		$row=$db_request->getTransferById($id);
 		$this->view->row_tran=$row;
-		if($row['is_approve']==1){
-			Application_Form_FrmMessage::Sucessfull("Can not edit!!!", '/product/transferstock/');
+// 		if($row['is_approve']==1){
+// 			Application_Form_FrmMessage::Sucessfull("Can not edit!!!", '/product/transferstock/');
+// 		}
+		$this->view->rows=$db_request->getTransferItemsbyId($id);
+		$frm = new Product_Form_FrmTransferStock();
+		Application_Model_Decorator::removeAllDecorator($frm);
+		$this->view->formFilter = $frm->add($row);
+	}
+	
+	public function returnAction()
+	{
+		$id=$this->getRequest()->getParam('id');
+		$db_request= new Product_Model_DbTable_DbTransferStock();
+		if($this->getRequest()->isPost()){
+			$post=$this->getRequest()->getPost();
+			$post['id']=$id;
+			$db_result = $db_request->returntProductTransfer($post);
+			if(isset($post["saveclose"])){
+				Application_Form_FrmMessage::Sucessfull("UPDATE_SUCCESS", '/product/mrcheck/');
+			}else{
+				Application_Form_FrmMessage::Sucessfull("UPDATE_SUCCESS", '/product/mrcheck/');
+			}
 		}
+		$row=$db_request->getTransferById($id);
+		$this->view->row_tran=$row;
+		// 		if($row['is_approve']==1){
+		// 			Application_Form_FrmMessage::Sucessfull("Can not edit!!!", '/product/transferstock/');
+		// 		}
 		$this->view->rows=$db_request->getTransferItemsbyId($id);
 		$frm = new Product_Form_FrmTransferStock();
 		Application_Model_Decorator::removeAllDecorator($frm);
