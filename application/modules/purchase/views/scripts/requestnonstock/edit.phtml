@@ -1,8 +1,8 @@
 <?php 
 	$tr = Application_Form_FrmLanguages::getCurrentlanguage();
 	$form=$this->form_purchase;
-	$url_submit = $this->url(array('module'=>'purchase','controller'=>'index','action'=>'edit'));
-	$url_cancel = $this->url(array('module'=>'purchase','controller'=>'index','action'=>'index'));
+	$url_submit = $this->url(array('module'=>'purchase','controller'=>'requestnonstock','action'=>'edit'));
+	$url_cancel = $this->url(array('module'=>'purchase','controller'=>'requestnonstock','action'=>'index'));
 ?>
 <title><?php echo $tr->translate("ADD_PURCAHSE_ORDER");?></title>
 <div class="row">
@@ -128,7 +128,7 @@
 									<th><?php echo $tr->translate("DEL");?></th>
 									<th><?php echo $tr->translate("NUM");?></th>
 									<th style="white-space:nowrap;"><?php echo $tr->translate("ITEM_NAME");?></th>
-									<th><?php echo $tr->translate("FREE");?></th>
+									<!-- <th><?php echo $tr->translate("FREE");?></th> -->
 									<th><?php echo $tr->translate("QTY_UNIT");?></th>
 									<th><?php echo $tr->translate("QTY_PER_UNIT");?></th>
 									<th><?php echo $tr->translate("QTY_ORDER");?></th>
@@ -250,7 +250,6 @@
 								</div>
 							</div>
 							<div class="col-md-2">
-								<button type="submit" name="btnsavenew" class="btn blue btn-block btn-lg"><i class="fa fa-save"></i> <?php echo $tr->translate("UPDATE")?> </button>
 							</div>
 							<div class="col-md-3"></div>
 						</div>
@@ -561,7 +560,7 @@ function initList() {
 	}
 	template+='<td  width="1%">'+index5+'</td>';
 	template+='<td width="30%"><select class="form-control select2me" Onchange="ShowPopupProduct('+ index5 + ');" id="item_id_'+index5+'" name="item_id_'+index5+'" >'+option5+'<option></option></select>'+inp+'</td>';
-	template+='<td ><input type="checkbox" onkeyup="getPriceFree('+index5+')" id="pricefree_'+index5+'" name="pricefree_'+index5+'"/> </td>';
+	//template+='<td ><input type="checkbox" onkeyup="getPriceFree('+index5+')" id="pricefree_'+index5+'" name="pricefree_'+index5+'"/> </td>';
 	template+='<td ><input type="text" onkeyup="totalQty('+index5+')" class="validate[required,custom[number]] input form-control" required="1" value="1" id="qty_unit_'+index5+'" name="qty_unit_'+index5+'" /></td>';
 	template+='<td ><input type="text" onkeyup="totalQty('+index5+')" class="validate[required,custom[number]] input form-control" value="0" id="qty_per_unit_'+index5+'" name="qty_per_unit_'+index5+'" /></td>';
 	template+='<td ><input type="text" readonly="readonly" onkeyup="calculatePrice('+index5+')" class="form-control" required="1" id="qty'+index5+'" name="qty'+index5+'"/></td>';
@@ -611,7 +610,7 @@ function addRow(item_id) {
 	}
 	template+='<td  width="2%">'+index5+'</td>';
 	template+='<td width="30%"><select class="form-control select2me" Onchange="ShowPopupProduct('+ index5 + ');" id="item_id_'+index5+'" name="item_id_'+index5+'" >'+option5+'<option></option></select>'+inp+'</td>';
-	template+='<td ><input type="checkbox" onkeyup="getPriceFree('+index5+')" id="pricefree_'+index5+'" name="pricefree_'+index5+'"/> </td>';
+	//template+='<td ><input type="checkbox" onkeyup="getPriceFree('+index5+')" id="pricefree_'+index5+'" name="pricefree_'+index5+'"/> </td>';
 	template+='<td ><input type="text" onkeyup="totalQty('+index5+')" class="validate[required,custom[number]] input form-control" required="1" value="1" id="qty_unit_'+index5+'" name="qty_unit_'+index5+'" /></td>';
 	template+='<td ><input type="text" onkeyup="totalQty('+index5+')" class="validate[required,custom[number]] input form-control" value="0" id="qty_per_unit_'+index5+'" name="qty_per_unit_'+index5+'" /></td>';
 	template+='<td ><input type="text" readonly onkeyup="calculatePrice('+index5+')" class="form-control" required="1" id="qty'+index5+'" name="qty'+index5+'"/></td>';
@@ -627,7 +626,7 @@ function addRow(item_id) {
 	$("#item_id_"+index5).val(item_id);
 	getQtyById(index5);
 	if(free.checked){
-		$("#pricefree_"+index5).attr({checked:'checked'});  
+		//$("#pricefree_"+index5).attr({checked:'checked'});  
 		$("#price"+index5).val(0);
 		$("#price"+index5).attr('readonly','readonly');
 		$("#dis-value"+index5).attr('readonly','readonly');

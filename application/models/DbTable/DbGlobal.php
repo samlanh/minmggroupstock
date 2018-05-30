@@ -1306,6 +1306,6 @@ function getDnNo($completed=null,$opt=null){
  	}
  	return $pre.$new_acc_no;
  }
- 
+  
 }
 ?>
