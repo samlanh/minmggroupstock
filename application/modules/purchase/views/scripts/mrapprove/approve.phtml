@@ -1,0 +1,223 @@
+﻿<?php 
+$tr=Application_Form_FrmLanguages::getCurrentlanguage();
+ $row=$this->row_tran;
+ $rows=$this->rows;
+ $formFilter = $this->form_purchase;
+?>
+<title><?php echo $tr->translate("PURCHASE_APPROVE");?></title>
+<div class="row">
+	<div class="col-md-12">
+		<div class="portlet box blue">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-globe"></i><?php echo $tr->translate("PURCHASE_APPROVE");?>
+				</div>
+						<div class="btn-group pull-right">
+							 <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true" aria-expanded="false">
+							   Actions <i class="fa fa-angle-down"></i>
+							 </button>
+								<ul class="dropdown-menu" role="menu">
+									<li>
+										<a href="#" onclick="doPrint();">
+											<i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Print
+										</a>
+									</li>
+									<!--<li>
+										<a href="javascript:;"><i class="fa fa-file-excel-o" aria-hidden="true"></i>&nbsp;&nbsp;Export Excel </a>
+									</li>-->
+									
+								</ul>
+					</div>
+			</div>
+            <div class="portlet-body form frmfilter">
+					<div style="clear:both;"></div>	
+	<div style="margin:0 auto; border: 1px dotted #ccc; padding:0px 0.2cm">
+	<div id="divPrint" style="width: 100%;">
+		<style type="text/css">
+			.style{
+			 line-height: 20px;font-size: 9px !important;
+			 font-family: 'Khmer OS Battambang';
+			}
+			ul{margin: 0;padding:0;}
+			table tr td ul li{text-align: center;list-style: none;line-height: 25px; }
+			th{padding: 0px;}
+			table thead tr th,table.collape td.tdheader{
+			 line-height:30px;
+			 background:none repeat scroll 0 0 #F1F1F1;
+			 font-size:13px;
+			 padding:3px;
+			 border: 1px solid #000;
+			}
+			table.collape td{
+				 border: 1px solid #000;
+			}
+			table tr td{
+			 line-height:20px;
+			 padding:5px;
+			 font-size:12px;
+			
+			}
+			ul.pur_info li{line-height:18px; 
+			  font-weight: normal !important;}
+			ul.pur_info li strong{font-weight: bold;}
+			  .hover:hover{background: #ccc;}
+		   </style>
+		<table style="font-family: 'Khmer OS Content'; width:100%;">
+			<tbody>
+			<tr>
+		    	<td align="center">
+		        	<table width="100%" style="font-family: 'Khmer OS Battambang';" cellpadding="0" cellpadding="0">
+		            	<tbody><tr>
+		                	<td width="20%" valign="top"><img src="<?php echo $this->baseUrl();?>/images/logo.jpg" height="75px"></td>
+		                	<td width="60%" valign="top">
+		                		<ul>
+		                			<li style="text-align:center; font-size:20px; font-family: 'Khmer os muol light';padding:5px 0"><?php echo $tr->translate("COMPANY_CUSTOMER");?></li>
+		                			<li style="text-align:center; font-size:13px; font-family: 'Khmer os muol light';padding:5px 0 10px 0"><?php echo $tr->translate("PURCHASE_APPROVE");?></li>
+		                			<!-- <li style="text-align:center; font-size:13px;"><?php //echo date("d/m/Y",strtotime($this->rssearch['start_date']));?> ដល់ <?php //echo date("d/m/Y",strtotime($this->rssearch['end_date']));?></li> -->
+		                		</ul>
+		                	</td>
+		                    <td width="20%"></td>
+		                </tr> 
+		                <tr>
+		                	<td colspan="3" valign="top">
+		                		<table width="100%" cellpadding="0" cellspacing="0" >
+		                			<tbody>
+		                			<tr>
+		                				<td style="font-size: 11px;" valign="top">
+		                				<div style="width:100%;font-size:13px; background: #cccccc;text-align:left;display: block;color:rgb(255, 23, 71);font-weight: bold;padding: 5px 0;">&nbsp;&nbsp;Suppliyer Info</div>
+		                				   <ul class='pur_info'>
+			                					<li style="text-align: left; font-size:13px;line-height: 25px;"><strong><?php echo $tr->translate("Suppliyer Name");?> : </strong><?php echo $row['v_name']?></li>
+			                					<li style="text-align: left; font-size:13px;line-height: 25px;"><strong><?php echo $tr->translate("Contact Name");?> : </strong><?php echo $row['contact_name']?></li>
+			                					<li style="text-align: left; font-size:13px;line-height: 25px;"><strong><?php echo $tr->translate("Contact Number");?> : </strong><?php echo $row['phone_person']?></li>
+			                					<li style="text-align: left; font-size:13px;line-height: 25px;"><strong><?php echo $tr->translate("Contact NumberAddress");?> : </strong><?php echo $row['add_name']?></li>
+		                					</ul>
+		                				</td>
+		                				<td width="50%"></td>
+		                				<td width="25%" style="text-align: left;font-size: 11px;">
+		                					<div style="width:100%;font-size:13px; background: #cccccc;text-align:left;display: block;color:rgb(255, 23, 71);font-weight: bold;    padding: 5px 0;">&nbsp;&nbsp;Purchase Info</div>
+		                					<ul class='pur_info'>
+			                					<li style="text-align: left; font-size:13px;line-height: 25px;"><strong><?php echo $tr->translate("Branch Name");?> : </strong><?php echo $row['branch_name']?></li>
+			                					<li style="text-align: left; font-size:13px;line-height: 25px;"><strong><?php echo $tr->translate("Request Number");?> : </strong><?php echo $row['order_number']?></li>
+			                					<li style="text-align: left; font-size:13px;line-height: 25px;"><strong><?php echo $tr->translate("Request Date");?> : </strong><?php echo date("d-M-Y",strtotime($row['date_order']))?> </li>
+			                					<li style="text-align: left; font-size:13px;line-height: 25px;"><strong><?php echo $tr->translate("Date In");?> : </strong><?php echo date("d-M-Y",strtotime($row['date_in']))?> </li>
+		                						<li style="text-align: left; font-size:13px;line-height: 25px;"><strong><?php echo $tr->translate("Purcase Status");?> : </strong><?php  ?></li>
+		                					</ul>
+		                				</td>
+		                			</tr>
+				                </tbody></table>
+				              </td>
+				           </tr>   
+		            </tbody></table>
+		        </td>
+		    </tr>
+		    </table>
+			<div class="table-responsive" style="width: 100%;">
+			<table width="100%">
+		    <tr>
+		    	<td id="exportExcel">
+		             <table class="collape tablesorter table2excel" id="table" width="100%" style="border-collapse:collapse;border:1px solid #ddd; font-family: 'Khmer OS Battambang';" width="100%" cellspacing="0" border="1">
+		                 <tbody><tr bgcolor="#ccc" class="style" align="center" style="font-weight:bold; line-height: 35px; font-size:12px; padding:1px 0px; white-space: nowrap; ">
+							<td class="tdheader header">&nbsp;<?php echo $tr->translate("NUM");?></td>
+							<td class="tdheader header"><?php echo $tr->translate("ITEM_NAME");?></td>
+							<td class="tdheader header">&nbsp;<?php echo $tr->translate("ITEM_CODE");?></td>
+							<td class="tdheader header">&nbsp;<?php echo $tr->translate("QTY");?></td>
+							<td class="tdheader header" width="10%">&nbsp;<?php echo $tr->translate("ITEM_PRICE");?></td>
+							<td class="tdheader header"><?php echo $tr->translate("TOTAL");?></td>
+		                </tr>
+		                <?php $num=1; 
+		                $r_netotal = 0;$r_paid = 0; $r_balance = 0;
+		                $d_netotal = 0;$d_paid = 0; $d_balance = 0;
+		                $b_netotal = 0;$b_paid = 0; $b_balance = 0;
+		                if(!empty($rows))foreach ($rows AS $index => $rs){?>
+						<tr height="30" class='normal row-format<?php echo $num; $num=1-$num;?> hover' style="border:1px solid #000;">
+						   <td class="items-no" align="center">&nbsp;<?php echo $index+1?></td>
+						   <td class="items" style="white-space: nowrap;">&nbsp;<?php echo $rs["item_name"];?></td>
+						   <td class="items" style="white-space: nowrap;">&nbsp;<?php echo $rs["item_code"];?></td> 
+						   <td class="items" style="white-space: nowrap;">&nbsp;<?php echo number_format($rs["qty_order"],2).' '.$rs["measure_name"];?></td>
+						   <td class="items">&nbsp;<?php echo "$&nbsp;";echo number_format($rs["price"],2);?></td>
+						   <td class="items">&nbsp;<?php echo "$&nbsp;".number_format($rs["sub_total"],2);?></td>
+						</tr>
+						   <?php 
+                    }?>
+                    <tr height="30">
+						<td class="items" colspan="3" style="border:1px solid #fff;border-top:1px solid #000;border-right:1px solid #000;"></td>
+						<td class="items" colspan="2" style="border-left:1px solid #000;">&nbsp;&nbsp;<?php echo $tr->translate("TOTAL");?></td>
+						<td class="items">&nbsp;($)&nbsp;<?php echo number_format($this->row_tran['net_totalafter'],2);?></td>
+					</tr>
+					<!-- 	<tr height="30">
+						<td class="items" colspan="3" style="border:1px solid #fff;border-top:1px solid #000;border-right:1px solid #000;"></td>
+						<td class="items" colspan="2" style="border-left:1px solid #000;">&nbsp;&nbsp;<?php echo $tr->translate("DISCOUNT");?></td>
+						<td class="items" >&nbsp;($)&nbsp;<?php //echo number_format($this->product[0]['discount_real'],2);?></td>
+					</tr>
+				
+					<tr>
+						<td colspan="3" style="border:1px solid #fff;border-top:1px solid #000;border-right:1px solid #000;"></td>
+						<td colspan="2" style="border-left:1px solid #000;">&nbsp;&nbsp;TAX</td>
+						<td >&nbsp;&nbsp;<?php //echo number_format($this->product[0]['tax'],2);?></td>
+					</tr>
+					 -->
+					<tr height="30">
+						<td class="items" colspan="3" style="border:1px solid #fff;border-top:1px solid #000;border-right:1px solid #000;"></td>
+						<td class="items" colspan="2" style="border-left:1px solid #000;">&nbsp;&nbsp;<?php echo $tr->translate("PAID");?></td>
+						<td class="items">&nbsp;($)&nbsp;<?php echo number_format($this->row_tran['paid'],2);?></td>
+					</tr>
+					<tr height="30">
+						<td class="items" colspan="3" style="border:1px solid #fff;border-top:1px solid #000;border-right:1px solid #000;"></td>
+						<td class="items" colspan="2" style="background:#f1f1f1;border-left:1px solid #000;">&nbsp;&nbsp;<?php echo $tr->translate("BALANCE");?> </td>
+						<td class="items" style="background:#f1f1f1;">&nbsp;($)&nbsp;<?php echo number_format($this->row_tran['balance'],2);?></td>
+					</tr>
+		                </tbody>
+					</table>
+				 </td>
+			  </tr>	
+			</table>
+			
+		</div>
+		
+	  </div>	
+	  	<form action="" method="post">
+		    <div class="form-group">
+				<label class="control-label col-md-2"><?php echo $tr->translate("REASON");?><span class="required">
+					</span>
+				</label>
+				<div class="col-md-4">
+					<div class="input-icon right">
+						<i class="fa"></i>
+						<textarea name="remark" id="notefrom_accountingk" style="width:100%;height: 50px;" ><?php echo $row['reason']?></textarea>
+					</div>
+				</div>
+				
+				<label class="control-label col-md-1"><?php //echo $tr->translate("REJECT_FROM_APPROVE");?><span class="required">
+					</span>
+				</label>
+				<div class="col-md-5">
+					<div class="input-icon right">
+						<i class="fa"></i>
+						<select name="approve" id="approved_name" class="form-control select2me">
+				        	<option value="1" <?php if($row['is_approve']==1) echo "selected='selected'";?>><?php echo $tr->translate("CHECKED");?></option>
+				        	<option value="2" <?php if($row['is_approve']==2) echo "selected='selected'";?> ><?php echo $tr->translate("REJECT");?></option>
+				        </select>
+					</div>
+				</div>
+				</div>
+				<br /><br /><br />
+				<div class="form-group">
+					<div  class="col-md-12 col-md-offset-4 col-md-8">
+						<a href="<?php echo $this->baseUrl();?>/purchase/mrcheck/"><button type="button" class="btn red"><i class="fa fa-times"></i> <?php echo $tr->translate("EXIT")?></button></a>
+						<button type="submit" name="save_close" value="saveclose" class="btn btn-primary" ><i class="glyphicon glyphicon-log-in"></i> <?php echo $tr->translate("SAVE_CLOSE")?></button>
+					</div>
+				</div>
+		</form>	
+	</div>
+	 </div>
+   </div>
+</div>
+<iframe name=print_frame width=0 height=0 frameborder=0 src=about:blank></iframe>
+<script>
+function doPrint() {
+	window.frames["print_frame"].document.body.innerHTML=document.getElementById('divPrint').innerHTML;
+    window.frames["print_frame"].window.focus();
+    window.frames["print_frame"].window.print();
+    //hideDialog();
+}
+</script>

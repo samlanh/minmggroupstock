@@ -1,19 +1,19 @@
 <?php
 
-class Purchase_Model_DbTable_DbPurchaseOrder extends Zend_Db_Table_Abstract
+class Purchase_Model_DbTable_DbRequestpurchasing extends Zend_Db_Table_Abstract
 {	
 	function getAllPurchaseOrder($search){//new
 		$db= $this->getAdapter();
 		$sql=" SELECT id,
 		(SELECT name FROM `tb_sublocation` WHERE tb_sublocation.id = branch_id AND status=1 AND name!='' LIMIT 1) AS branch_name,
-		(SELECT v_name FROM `tb_vendor` WHERE tb_vendor.vendor_id=tb_purchase_order.vendor_id LIMIT 1 ) AS vendor_name,
-		order_number,date_order,date_in,
+		(SELECT v_name FROM `tb_vendor` WHERE tb_vendor.vendor_id=tb_purchase_request.vendor_id LIMIT 1 ) AS vendor_name,
+		order_number,DATE_FORMAT(date_order,'%d-%b-%Y')AS date_order,DATE_FORMAT(date_in,'%d-%b-%Y')AS date_in,
 		invoice_no,
 		net_total,paid,(net_total-paid) AS balance,
-		(SELECT name_en FROM `tb_view` WHERE key_code = purchase_status AND `type`=1) As purchase_status,
-		(SELECT name_en FROM `tb_view` WHERE key_code =tb_purchase_order.status AND type=5 LIMIT 1),
-		(SELECT u.username FROM tb_acl_user AS u WHERE u.user_id = user_mod LIMIT 1 ) AS user_name
-		FROM `tb_purchase_order` ";
+		(SELECT name_en FROM `tb_view` WHERE key_code = purchase_status AND `type`=1) As purchase_statuss,
+		(SELECT name_en FROM `tb_view` WHERE key_code =tb_purchase_request.status AND type=5 LIMIT 1) AS `status`,
+		(SELECT u.username FROM tb_acl_user AS u WHERE u.user_id = user_mod LIMIT 1 ) AS user_name,purchase_status,is_approve
+		FROM `tb_purchase_request` ";
 		$from_date =(empty($search['start_date']))? '1': " date_order >= '".$search['start_date']." 00:00:00'";
 		$to_date = (empty($search['end_date']))? '1': " date_order <= '".$search['end_date']." 23:59:59'";
 		$where = " WHERE ".$from_date." AND ".$to_date;
@@ -57,7 +57,6 @@ class Purchase_Model_DbTable_DbPurchaseOrder extends Zend_Db_Table_Abstract
 			p.id=pl.`pro_id` AND p.id=$pro_id ";
 		return $db->fetchRow($sql);
 	}
-	
 	public function addPurchaseOrder($data)
 	{
 		$db = $this->getAdapter();
@@ -70,8 +69,9 @@ class Purchase_Model_DbTable_DbPurchaseOrder extends Zend_Db_Table_Abstract
 			$idrecord=$data['v_name'];
 			$date= new Zend_Date();
 			$number_transaction = $date->get('hh-mm-ss');
+			$PO = "RQ";
 			if($data['txt_order']==""){
-				$PO = "PO";//$po["key_value"];
+				//$po["key_value"];
 				$order_add=$PO.$number_transaction;
 			}
 			else{
@@ -83,12 +83,8 @@ class Purchase_Model_DbTable_DbPurchaseOrder extends Zend_Db_Table_Abstract
 					"order_number"   => 	$order_add,
 					"date_order"     => 	date("Y-m-d",strtotime($data['order_date'])),
 					"date_in"     	 => 	date("Y-m-d",strtotime($data['date_in'])),
-					"purchase_status"=> 	$data['status'],
-					//"payment_method" => $data['payment_name'],
-					//"currency_id"    => $data['currency'],
-					//"discount_type"	 => $data['discount_type'],
-					//"payment_number"        => 	$data['payment_number'],
-					//'date_issuecheque'=>date("Y-m-d",strtotime($data['date_issuecheque'])),
+					"modify_date"	 => 	date("Y-m-d H:i:s"),
+					"purchase_status"=> 	0,
 					"remark"         => $data['remark'],
 					"all_total"      => $data['totalAmoun'],
 					"discount_value" => $data['dis_value'],
@@ -100,96 +96,24 @@ class Purchase_Model_DbTable_DbPurchaseOrder extends Zend_Db_Table_Abstract
 					"paid_after"     => $data['paid'],
 					"balance"        => $data['remain'],
 					"balance_after"  => $data['remain'],
-					'invoice_no' 	 => $data['invoice_no'],
+					//'invoice_no' 	 => $data['invoice_no'],
 					"user_mod"       => $GetUserId,
 					"date"      	 => new Zend_Date(),
 					'commission'	 => $data['commission'],
 					'commission_ensur'=>$data['commission_ensur'],
 					'bank_name'		 => $data['bank_name'],
 					'is_completed'	 => ($data['remain']==0)?1:0,
+					"modify_date"	 => 	date("Y-m-d H:i:s"),
+					'is_approve'	 => 0,
 			);
-			$this->_name="tb_purchase_order";
+			$this->_name="tb_purchase_request";
 			$purchase_id = $this->insert($info_purchase_order);
 			unset($info_purchase_order);
-			
-			$info_purchase_order=array(
-					"branch_id"   	=> $data["LocationId"],
-					"vendor_id"     => $data["v_name"],
-					"payment_type"  => 1,//payment by​ invoice
-					"payment_id"    => 1,	//payment by cash/paypal/cheque
-					"receipt_no"    => '',//$data['receipt'],
-					"date_input"    => date("Y-m-d"),
-					"che_issuedate" => date("Y-m-d",strtotime($data['date_in'])),
-					"che_withdrawaldate" =>  date("Y-m-d",strtotime($data['date_in'])),
-					"expense_date"  => date("Y-m-d",strtotime($data['date_in'])),
-					"total"         => $data['all_totalpayment'],
-					"paid"          => $data['paid'],
-					"balance"       => $data['remain'],
-					"remark"        => $data['remark'],
-					"user_id"       => $GetUserId,
-					'status'        => 1,
-					"bank_name" 	=> '',
-					"cheque_number" => '',
-					"withdraw_name" => '',
-			);
-			$this->_name="tb_vendor_payment";
-			$reciept_id = $this->insert($info_purchase_order);
-			
-			$data_item= array(
-					'receipt_id'	=> $reciept_id,
-					'invoice_id'	=> $purchase_id,
-					'total'			=> $data['all_totalpayment'],
-					'paid'	  		=> $data['paid'],
-					'balance'		=> $data['remain'],
-					'is_completed'  => ($data['remain']==0)?1:0,
-					'status'  		=> 1,
-					'date_input'	=> date("Y-m-d"),
-			);
-			$this->_name='tb_vendorpayment_detail';
-			$this->insert($data_item);
-			
-			if($data["status"]==5 OR $data["status"]==4){
-				$RO = "R";//$ro["key_value"];
-				$date= new Zend_Date();
-				$recieve_no=$RO.$number_transaction;
-				$orderdata = array(
-						//"tax"=>$data["total_tax"],
-						'purchase_id'	 =>$purchase_id,
-						"vendor_id"      => $data['v_name'],
-						"LocationId"     => $data["LocationId"],
-						"recieve_number" => $recieve_no,
-						"date_order"     => $data['order_date'],
-						"date_in"     	 => $data['date_in'],
-						"purchase_status"=> $data['status'],
-						//"payment_method" => $data['payment_name'],
-						//"currency_id"    => $data['currency'],
-						"remark"         => $data['remark'],
-						"all_total"      => $data['totalAmoun'],
-						"discount_value" => $data['dis_value'],
-						"discount_real"  => $data['global_disc'],
-						"net_total"      => $data['all_totalpayment'],
-						"paid"           => $data['paid'],
-						"balance"        => $data['remain'],
-						"user_mod"       => $GetUserId,
-						"date"      	 => new Zend_Date(),
-				);
-				$this->_name='tb_recieve_order';
-				$recieved_order = $this->insert($orderdata);
-				unset($orderdata);
-			}
+			 
 			$ids=explode(',',$data['identity']);
 			$locationid=$data['LocationId'];
 			foreach ($ids as $i)
 			{
-				$rsproduct = $this->getProductCostAndQty($data['item_id_'.$i]);
-				$cost_avg = (($rsproduct['qty']*$rsproduct['price'])+($data['price'.$i]*$data['qty'.$i])) / ($rsproduct['qty']+$data['qty'.$i]);
-				$array=array(
-						'price'=>$cost_avg
-				);
-				$this->_name="tb_product";
-				$where = " id= ".$rsproduct['id'];
-				$this->update($array, $where);
-				
 				$data_item= array(
 						'purchase_id' => 	$purchase_id,
 						'pro_id'	  => 	$data['item_id_'.$i],
@@ -202,39 +126,8 @@ class Purchase_Model_DbTable_DbPurchaseOrder extends Zend_Db_Table_Abstract
 						//'remark'	  => $data['remark_'.$i]
 						//'total_befor' => 	$data['total'.$i],
 				);
-				$this->_name='tb_purchase_order_item';
+				$this->_name='tb_purchase_request_item';
 				$this->insert($data_item);
-	
-				if($data["status"]==5 OR $data["status"]==4){
-					$recieved_item = array(
-							'recieve_id'	  => 	$recieved_order,
-							'pro_id'	  => 	$data['item_id_'.$i],
-							'qty_order'	  => 	$data['qty'.$i],
-							'qty_unit' => 	$data['qty_unit_'.$i],
-							'qty_detail'  => 	$data['qty_per_unit_'.$i],
-							'qty_receive'  => 	$data['qty'.$i],
-							'price'		  => 	$data['price'.$i],
-							'disc_value'	  => $data['real-value'.$i],
-							'sub_total'	  => $data['total'.$i],
-					);
-					$db->insert("tb_recieve_order_item", $recieved_item);
-
-					unset($recieved_item);
-					$rows=$db_global ->productLocationInventory($data['item_id_'.$i], $locationid);//check stock product location
-					if($rows)
-					{
-						if($data["status"]==4 OR $data["status"]==5){
-							$datatostock   = array(
-								'qty'   		=> 		$rows["qty"]+$data['qty'.$i],
-								'last_mod_date'		=>	date("Y-m-d"),
-								'last_mod_userid'=>$GetUserId
-							);
-							$this->_name="tb_prolocation";
-							$where=" id = ".$rows['id'];
-							$this->update($datatostock, $where);
-						}
-					}
-				}
 			}
 			$db->commit();
 		}catch(Exception $e){
@@ -244,39 +137,13 @@ class Purchase_Model_DbTable_DbPurchaseOrder extends Zend_Db_Table_Abstract
 			Application_Model_DbTable_DbUserLog::writeMessageError($err);
 		}
 	}
-	
-	
 	public function updatePurchaseOrder($data)
 	{
 		$db = $this->getAdapter();
 		$db->beginTransaction();
 		try{
-			$db_global = new Application_Model_DbTable_DbGlobal();
-			$row_oldhistory = $this->getPurchaseById($data['id']);// get prev.item
-			if($row_oldhistory['status']==1 AND $row_oldhistory['purchase_status']==5){//usedi and paid
-				$po_item = $this->getPurchaseDetailById($data['id']);//get old item detail
-				if(!empty($po_item)){
-					foreach ($po_item as $rsitem){
-						$rows=$db_global->productLocationInventory($rsitem['pro_id'], $row_oldhistory['branch_id']);//check stock product location
-						if($rows)
-						{
-							$datatostock   = array(
-									'qty'   		=> $rows["qty"]-$rsitem['qty_order'],
-									'last_mod_date'	=> date("Y-m-d"),
-							);
-							$this->_name="tb_prolocation";
-							$where=" id = ".$rows['id'];
-							$this->update($datatostock, $where);
-						}
-					}
-				}
-			}elseif($row_oldhistory['status']==1 AND $row_oldhistory['purchase_status']==2){//activ and open
-			
-			}else{
-	
-			}
-				
-			$this->_name='tb_purchase_order_item';
+			$id=$data['id'];
+			$this->_name='tb_purchase_request_item';
 			$where =" purchase_id=".$data['id'];
 			$this->delete($where);
 				
@@ -292,7 +159,7 @@ class Purchase_Model_DbTable_DbPurchaseOrder extends Zend_Db_Table_Abstract
 					"order_number"   => 	$order_add,
 					"date_order"     => 	date("Y-m-d",strtotime($data['order_date'])),
 					"date_in"     	 => 	date("Y-m-d",strtotime($data['date_in'])),
-					"purchase_status"=> 	$data['status'],
+					"purchase_status"=> 	0,
 					"remark"         => 	$data['remark'],
 					"all_total"      => 	$data['totalAmoun'],
 					"invoice_no"	 =>     $data['invoice_no'],
@@ -306,19 +173,15 @@ class Purchase_Model_DbTable_DbPurchaseOrder extends Zend_Db_Table_Abstract
 					"balance"        => 	$data['remain'],
 					"balance_after"  => 	$data['remain'],
 					"user_mod"       => 	$GetUserId,
-					"date"      => 	new Zend_Date(),
-					'invoice_no' => 	$data['invoice_no'],
-					//'date_issuecheque'=>date("Y-m-d",strtotime($data['date_issuecheque'])),
-					//"payment_method" =>     $data['payment_name'],
-					//"payment_number" =>     $data["payment_number"],
-					//"currency_id"    =>     $data['currency'],
+					"date"      	=> 	new Zend_Date(),
+					'invoice_no' 	=> 	$data['invoice_no'],
 					'status'	    => $data['status_use'],
 					'commission'    => 	$data['commission'],
 					'commission_ensur'=> 	$data['commission_ensur'],
-					'bank_name'=> 	$data['bank_name'],
+					'bank_name'		=> 	$data['bank_name'],
+					'is_approve'	=> 0,
 			);
-			
-			$this->_name="tb_purchase_order";
+			$this->_name="tb_purchase_request";
 			$where=" id=".$data['id'];
 			$purchase_id = $this->update($info_purchase_order, $where);
 			$purchase_id=$data['id'];
@@ -329,7 +192,7 @@ class Purchase_Model_DbTable_DbPurchaseOrder extends Zend_Db_Table_Abstract
 			if(!empty($data['identity']))foreach ($ids as $i)
 			{
 				$data_item= array(
-						'purchase_id' => $purchase_id,
+						'purchase_id' => $data['id'],
 						'pro_id'	  => $data['item_id_'.$i],
 						'qty_order'	  => $data['qty'.$i],
 						'qty_unit'    => $data['qty_unit_'.$i],
@@ -338,27 +201,8 @@ class Purchase_Model_DbTable_DbPurchaseOrder extends Zend_Db_Table_Abstract
 						'disc_value'  => $data['real-value'.$i],
 						'sub_total'	  => $data['total'.$i],
 				);
-				$this->_name='tb_purchase_order_item';
+				$this->_name='tb_purchase_request_item';
 				$this->insert($data_item);
-	
-				if(($data["status"]==5 OR $data["status"]==4) AND $data["status_use"]==1 ){
-					$rows=$db_global->productLocationInventory($data['item_id_'.$i], $locationid);//check stock product location
-					if($rows)
-					{
-						if($data["status"]==4 OR $data["status"]==5){
-							$arr  = array(
-									'qty'   		  =>$rows["qty"]+$data['qty'.$i],
-									'last_mod_date'	  =>date("Y-m-d"),
-									'last_mod_userid' =>$GetUserId,
-									'user_id'=>$GetUserId,
-							);
-							$this->_name="tb_prolocation";
-							$where=" id = ".$rows['id'];
-							$this->update($arr, $where);
-						}
-					}
-						
-				}
 			}		
 			$db->commit();
 		}catch(Exception $e){
@@ -368,6 +212,14 @@ class Purchase_Model_DbTable_DbPurchaseOrder extends Zend_Db_Table_Abstract
 			Application_Model_DbTable_DbUserLog::writeMessageError($err);
 		}
 	}
+	
+	public function getVendorId($id){//just new
+		$db=$this->getAdapter();
+		$sql = "SELECT p.*,(SELECT title FROM `tb_income_expense` WHERE po_id=p.`id` LIMIT 1)  AS po_x FROM `tb_purchase_nonstock` AS p WHERE id=$id LIMIT 1 ";
+		$rows=$db->fetchRow($sql);
+		return $rows;
+	}
+	
 	public function getPurchaseID($id){
 		$db = $this->getAdapter();
 		$sql = "SELECT CONCAT(p.item_name,'(',p.item_code,' )') AS item_name , p.qty_perunit,od.order_id, od.pro_id, od.qty_order,
@@ -380,13 +232,13 @@ class Purchase_Model_DbTable_DbPurchaseOrder extends Zend_Db_Table_Abstract
 	
 	public function getPurchaseById($id){//just new 
 		$db=$this->getAdapter();
-		$sql = "SELECT p.*,(SELECT title FROM `tb_income_expense` WHERE po_id=p.`id` LIMIT 1)  AS po_x FROM `tb_purchase_order` AS p WHERE id=$id LIMIT 1 ";
+		$sql = "SELECT p.*,(SELECT title FROM `tb_income_expense` WHERE po_id=p.`id` LIMIT 1)  AS po_x FROM `tb_purchase_request` AS p WHERE id=$id LIMIT 1 ";
 		$rows=$db->fetchRow($sql);
 		return $rows;
 	}
 	public function getPurchaseDetailById($id){//just new
 		$db=$this->getAdapter();
-		$sql = "SELECT * FROM `tb_purchase_order_item` WHERE purchase_id=$id ";
+		$sql = "SELECT * FROM `tb_purchase_request_item` WHERE purchase_id=$id ";
 		$rows=$db->fetchAll($sql);
 		return $rows;
 	}
