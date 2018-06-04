@@ -71,7 +71,7 @@ public function init()
    						
    			);
    		}
-   		$rows=$db->getAllPurchaseOrder($data);
+   		$rows=$db->getAllPurchaseOrderList($data);
    		$this->view->rs=$rows;
    		$columns=array("TRANSFER_NO","TRANSFER_DATE","FROM_LOCATION","TO_LOCATION","TOTAL_QTY","NOTE","APPROVE","BY_USER","STATUS");
    		$link=array(
@@ -85,27 +85,36 @@ public function init()
    	
     public function addpurchaseAction()
     {
+    	
+    	$id=$this->getRequest()->getParam('id');
 		$db = new Application_Model_DbTable_DbGlobal();
 		if($this->getRequest()->isPost()) {
 			$data = $this->getRequest()->getPost();
 			try {
 			$db = new Purchase_Model_DbTable_DbMrapprove();
+			$data['id']=$id;
 			 if(!empty($data['identity'])){
 				$db->addPurchaseOrder($data);
 			 }
 			Application_Form_FrmMessage::message("Purchase has been Saved!");
 				if(!empty($data['btnsavenew'])){
-					Application_Form_FrmMessage::redirectUrl("/purchase/index");
+					Application_Form_FrmMessage::redirectUrl("/purchase/mrapprove/purchaseorder");
 				}
+				Application_Form_FrmMessage::redirectUrl("/purchase/mrapprove/purchaseorder");
 			}catch (Exception $e){
 				Application_Form_FrmMessage::message('INSERT_FAIL');
 				$err =$e->getMessage();
 				Application_Model_DbTable_DbUserLog::writeMessageError($err);
 			}
 		}
+		
+		$db = new Purchase_Model_DbTable_DbMrapprove();
+		$row = $db->getPurchaseById($id);
+		$this->view->rs = $db->getPurchaseDetailById($id);
+		
 		///link left not yet get from DbpurchaseOrder 	
 		$frm_purchase = new Application_Form_purchase(null);
-		$form_add_purchase = $frm_purchase->productOrder();
+		$form_add_purchase = $frm_purchase->productOrder($row);
 		Application_Model_Decorator::removeAllDecorator($form_add_purchase);
 		$this->view->form_purchase = $form_add_purchase;
 		

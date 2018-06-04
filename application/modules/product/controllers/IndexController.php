@@ -128,6 +128,7 @@ public function init()
 		$this->view->rs_location = $db->getProductLocation($id);
 		$this->view->rs_price = $db->getProductPrcie($id);
 		$rs = $db->getProductById($id);
+		$this->view->rs=$rs;
 		$formProduct = new Product_Form_FrmProduct();
 		$formStockAdd = $formProduct->add($rs);
 		Application_Model_Decorator::removeAllDecorator($formStockAdd);

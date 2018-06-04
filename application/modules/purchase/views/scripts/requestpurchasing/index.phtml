@@ -120,7 +120,7 @@
 									<td class="items"><?php echo $rs["purchase_statuss"];?></td>
 									<td class="items-no" style="white-space: nowrap;">
 										<a <?php echo $edit_status;?> href="<?php echo $this->baseUrl();?>/purchase/requestpurchasing/edit/id/<?php echo $rs["id"]?>"><?php echo  $tr->translate("UPDATE");?></a> | 
-										<a target="_blank" href="<?php echo $this->baseUrl();?>/report/purchase/requestpurchasing/id/<?php echo $rs["id"]?>"><?php echo  $tr->translate("PRINT");?></a>
+										<a target="_blank" href="<?php echo $this->baseUrl();?>/report/index/rpt-purchase-requestdetail/id/<?php echo $rs["id"]?>"><?php echo  $tr->translate("PRINT");?></a>
 									</td>
 									<td class="items"><?php echo $rs["status"];?></td>
 								</tr>

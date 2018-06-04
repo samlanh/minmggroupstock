@@ -13,6 +13,32 @@ class report_indexController extends Zend_Controller_Action
     	$result = $user_info->getUserInfo();
     	return $result;
     }
+    
+    function  rptPurchasenonestockAction(){
+    	if($this->getRequest()->isPost()){
+    		$data = $this->getRequest()->getPost();
+    		$data['start_date']=date("Y-m-d",strtotime($data['start_date']));
+    		$data['end_date']=date("Y-m-d",strtotime($data['end_date']));
+    	}else{
+    		$data = array(
+    				'text_search'=>'',
+    				'start_date'=>date("Y-m-d"),
+    				'end_date'=>date("Y-m-d"),
+    				'suppliyer_id'=>0,
+    				'branch_id'=>-1,
+    				'status_paid'=>-1,
+    				'saleagent_id'=>-1
+    		);
+    	}
+    	$this->view->rssearch = $data;
+    	$query = new report_Model_DbQuery();
+    	$this->view->repurchase =  $query->getAllPurchaseNonestockReport($data);
+    	$frm = new Application_Form_FrmReport();
+    	$formFilter = new Application_Form_Frmsearch();
+    	$this->view->form_purchase = $formFilter;
+    	Application_Model_Decorator::removeAllDecorator($formFilter);
+    }
+    
     public function rptPurchaseAction()//purchase report
     {
     	if($this->getRequest()->isPost()){
@@ -39,6 +65,43 @@ class report_indexController extends Zend_Controller_Action
     	$this->view->form_purchase = $formFilter;
     	Application_Model_Decorator::removeAllDecorator($formFilter);
     }
+    
+    public function rptPurchaseRequestAction()//purchase report
+    {
+    	if($this->getRequest()->isPost()){
+    		$data = $this->getRequest()->getPost();
+    		$data['start_date']=date("Y-m-d",strtotime($data['start_date']));
+    		$data['end_date']=date("Y-m-d",strtotime($data['end_date']));
+    	}else{
+    		$data = array(
+    				'text_search'=>'',
+    				'start_date'=>date("Y-m-d"),
+    				'end_date'=>date("Y-m-d"),
+    				'suppliyer_id'=>0,
+    				'branch_id'=>-1,
+    				'status_paid'=>-1,
+    				'saleagent_id'=>-1
+    		);
+    	}
+    	$this->view->rssearch = $data;
+    	$query = new report_Model_DbQuery();
+    	$this->view->repurchase =  $query->getAllPurchaseRequest($data);
+    	$frm = new Application_Form_FrmReport();
+    
+    	$formFilter = new Application_Form_Frmsearch();
+    	$this->view->form_purchase = $formFilter;
+    	Application_Model_Decorator::removeAllDecorator($formFilter);
+    }
+    
+    function rptPurchaseRequestdetailAction(){
+    	$id = ($this->getRequest()->getParam('id'))? $this->getRequest()->getParam('id'): '0';
+    	if(empty($id)){
+    		$this->_redirect("/report/index/index");
+    	}
+    	$query = new report_Model_DbQuery();
+    	$this->view->product =  $query->getPruchaseRequestDetail($id);
+    }
+    
     function purproductdetailAction(){
     	$id = ($this->getRequest()->getParam('id'))? $this->getRequest()->getParam('id'): '0';
     	if(empty($id)){
@@ -46,8 +109,17 @@ class report_indexController extends Zend_Controller_Action
     	}
     	$query = new report_Model_DbQuery();
     	$this->view->product =  $query->getProductPruchaseById($id);
-    	 
     }
+    
+    function rptPurchaseNonstockDetailAction(){
+    	$id = ($this->getRequest()->getParam('id'))? $this->getRequest()->getParam('id'): '0';
+    	if(empty($id)){
+    		$this->_redirect("/report/index/index");
+    	}
+    	$query = new report_Model_DbQuery();
+    	$this->view->product =  $query->getPurNonstockDetail($id);
+    }
+    
     function rptPurchaseitemAction(){
     	if($this->getRequest()->isPost()){
     		$search = $this->getRequest()->getPost();

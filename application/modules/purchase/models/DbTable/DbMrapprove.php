@@ -47,9 +47,59 @@ class Purchase_Model_DbTable_DbMrapprove extends Zend_Db_Table_Abstract
 		}
 		$dbg = new Application_Model_DbTable_DbGlobal();
 		$where.=$dbg->getAccessPermission();
+		$order=" ORDER BY id DESC ";
+		return $db->fetchAll($sql.$where.$order);
+	}
+	
+	function getAllPurchaseOrderList($search){//new
+		$db= $this->getAdapter();
+		$sql=" SELECT id,
+		(SELECT name FROM `tb_sublocation` WHERE tb_sublocation.id = branch_id AND status=1 AND name!='' LIMIT 1) AS branch_name,
+		(SELECT v_name FROM `tb_vendor` WHERE tb_vendor.vendor_id=tb_purchase_request.vendor_id LIMIT 1 ) AS vendor_name,
+		order_number,DATE_FORMAT(date_order,'%d-%b-%Y')AS date_order,DATE_FORMAT(date_in,'%d-%b-%Y')AS date_in,
+		invoice_no,
+		net_total,paid,(net_total-paid) AS balance,
+		(SELECT name_en FROM `tb_view` WHERE key_code = purchase_status AND `type`=1) As purchase_statuss,
+		(SELECT name_en FROM `tb_view` WHERE key_code =tb_purchase_request.status AND type=5 LIMIT 1) AS `status`,
+		(SELECT u.username FROM tb_acl_user AS u WHERE u.user_id = user_mod LIMIT 1 ) AS user_name,purchase_status,is_approve,
+		(SELECT v.name_en FROM `tb_view` AS v WHERE v.key_code=tb_purchase_request.`is_approve` AND v.type=17 LIMIT 1) is_approves
+		FROM `tb_purchase_request` ";
+		$from_date =(empty($search['start_date']))? '1': " date_order >= '".$search['start_date']." 00:00:00'";
+		$to_date = (empty($search['end_date']))? '1': " date_order <= '".$search['end_date']." 23:59:59'";
+		$where = " WHERE ".$from_date." AND ".$to_date;
+		if(!empty($search['text_search'])){
+			$s_where = array();
+			$s_search = trim(addslashes($search['text_search']));
+			$s_where[] = " order_number LIKE '%{$s_search}%'";
+			$s_where[] = " net_total LIKE '%{$s_search}%'";
+			$s_where[] = " paid LIKE '%{$s_search}%'";
+			$s_where[] = " balance LIKE '%{$s_search}%'";
+			$where .=' AND ('.implode(' OR ',$s_where).')';
+		}
+		if($search['suppliyer_id']>0){
+			$where .= " AND vendor_id = ".$search['suppliyer_id'];
+		}
+		if($search['purchase_status']>0){
+			$where .= " AND purchase_status =".$search['purchase_status'];
+		}
+		if($search['branch_id']>0){
+			$where .= " AND branch_id = ".$search['branch_id'];
+		}
+		if($search['status_paid']>0){
+			if($search['status_paid']==1){
+				$where .= " AND balance <=0 ";
+			}
+			elseif($search['status_paid']==2){
+				$where .= " AND balance >0 ";
+			}
+				
+		}
+		$dbg = new Application_Model_DbTable_DbGlobal();
+		$where.=$dbg->getAccessPermission();
 		$order=" AND is_approve=1 ORDER BY id DESC ";
 		return $db->fetchAll($sql.$where.$order);
 	}
+	
 	function getProductCostAndQty($pro_id){
 		$db = $this->getAdapter();
 		$sql="SELECT p.id,p.`price`,sum(pl.`qty`) as qty 
@@ -129,6 +179,7 @@ class Purchase_Model_DbTable_DbMrapprove extends Zend_Db_Table_Abstract
 				$order_add=$data['txt_order'];
 			}
 			$info_purchase_order=array(
+					"request_id"     => 	$data['id'],
 					"vendor_id"      => 	$data['v_name'],
 					"branch_id"      => 	$data["LocationId"],
 					"order_number"   => 	$order_add,
@@ -162,7 +213,8 @@ class Purchase_Model_DbTable_DbMrapprove extends Zend_Db_Table_Abstract
 			$this->_name="tb_purchase_order";
 			$purchase_id = $this->insert($info_purchase_order);
 			unset($info_purchase_order);
-				
+			
+		 if($data['paid']>0){
 			$info_purchase_order=array(
 					"branch_id"   	=> $data["LocationId"],
 					"vendor_id"     => $data["v_name"],
@@ -198,8 +250,21 @@ class Purchase_Model_DbTable_DbMrapprove extends Zend_Db_Table_Abstract
 			);
 			$this->_name='tb_vendorpayment_detail';
 			$this->insert($data_item);
+		  }
 				
 			if($data["status"]==5 OR $data["status"]==4){
+				
+				$request = array(
+						"modify_date"    => date("Y-m-d H:i:s"),
+						"purchase_status"=> $data['status'],
+						"user_id"        => $GetUserId,
+						"date"      	 => new Zend_Date(),
+				);
+				$this->_name='tb_purchase_request';
+				$where=" id=".$data['id'];
+				$this->update($request, $where);
+				unset($request);
+				
 				$RO = "R";//$ro["key_value"];
 				$date= new Zend_Date();
 				$recieve_no=$RO.$number_transaction;
@@ -228,12 +293,13 @@ class Purchase_Model_DbTable_DbMrapprove extends Zend_Db_Table_Abstract
 				$recieved_order = $this->insert($orderdata);
 				unset($orderdata);
 			}
+			
 			$ids=explode(',',$data['identity']);
 			$locationid=$data['LocationId'];
 			foreach ($ids as $i)
 			{
 				$rsproduct = $this->getProductCostAndQty($data['item_id_'.$i]);
-				$cost_avg = (($rsproduct['qty']*$rsproduct['price'])+($data['price'.$i]*$data['qty'.$i])) / ($rsproduct['qty']+$data['qty'.$i]);
+				$cost_avg = (($rsproduct['qty']*$rsproduct['price'])+($data['price'.$i]*$data['qty_receive'.$i])) / ($rsproduct['qty']+$data['qty_receive'.$i]);
 				$array=array(
 						'price'=>$cost_avg
 				);
@@ -248,9 +314,9 @@ class Purchase_Model_DbTable_DbMrapprove extends Zend_Db_Table_Abstract
 						'qty_order'	  => 	$data['qty'.$i],
 						'qty_detail'  => 	$data['qty_per_unit_'.$i],
 						'price'		  => 	$data['price'.$i],
-						'disc_value'	  => $data['real-value'.$i],
+						'disc_value'  => $data['real-value'.$i],
 						'sub_total'	  => $data['total'.$i],
-						//'remark'	  => $data['remark_'.$i]
+						'qty_receive' => $data['qty_receive'.$i]
 						//'total_befor' => 	$data['total'.$i],
 				);
 				$this->_name='tb_purchase_order_item';
@@ -276,7 +342,7 @@ class Purchase_Model_DbTable_DbMrapprove extends Zend_Db_Table_Abstract
 					{
 						if($data["status"]==4 OR $data["status"]==5){
 							$datatostock   = array(
-									'qty'   		=> 		$rows["qty"]+$data['qty'.$i],
+									'qty'   		=> 		$rows["qty"]+$data['qty_receive'.$i],
 									'last_mod_date'		=>	date("Y-m-d"),
 									'last_mod_userid'=>$GetUserId
 							);

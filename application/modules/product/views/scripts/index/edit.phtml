@@ -23,7 +23,7 @@ $form=$this->form;
 <title><?php echo $tr->translate("EDIT_PRODUCT");?></title>
 <body>
 
-		<form class="form-horizontal" id="product_id" method="post" action="<?php //echo $url_submit;?>" >				
+		<form class="form-horizontal" id="product_id" method="post" action="<?php //echo $url_submit;?>"  enctype="multipart/form-data" >				
 					<div class="portlet box blue">
 						<div class="portlet-title">
 							<div class="caption">
@@ -120,16 +120,25 @@ $form=$this->form;
 															<?php echo $form->getElement('status');?>
 														</div>
 													</div>
-													<?php if($level==1 OR $level==2){?>
+													
 													<div class="form-group">
 														<label class="col-md-2 control-label"><?php echo $tr->translate("COST_PRICE");?></label>
 														<div class="col-md-4">
 															<?php echo $form->getElement('price');?>
 														</div>
-														<label class="col-md-2 control-label"></label>
-														<div class="col-md-4"></div>
+													   <label class="control-label col-md-2"><?php echo $tr->translate("PHOTO");?><span class="required">
+															</span>
+														</label>
+														<div class="col-md-4">
+															<div class="input-icon right">
+																<i class="fa"></i>
+																<?php echo $form->getElement("pro_img");?>
+															<input type="hidden" name="old_pic" value="<?php echo $this->rs['photo'];?>" />
+															</div>
+															<img style="width:130px;height: 130px;" src="<?php echo $this->baseUrl();?>/images/proimage/<?php echo $this->rs['photo']?>" alt="Smiley face">  
+														</div>
 													</div>
-													<?php }?>
+													
 													<h3 class="form-section"></h3>
 													<div class="portlet box blue">
 														<div class="portlet-title">

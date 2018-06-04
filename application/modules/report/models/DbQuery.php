@@ -11,6 +11,55 @@ Class report_Model_DbQuery extends Zend_Db_Table_Abstract{
 		$sql="SELECT COUNT(i.id) FROM `tb_invoice` AS i,`tb_sales_order` AS s WHERE i.`sale_id`=s.`id` AND s.`customer_id`=$cu_id";
 		return $db->fetchOne($sql);
 	}
+	
+	public function getAllPurchaseRequest($search){//1
+		$db= $this->getAdapter();
+		$sql=" SELECT id,
+		(SELECT NAME FROM `tb_sublocation` WHERE tb_sublocation.id = branch_id AND STATUS=1 AND NAME!='' LIMIT 1) AS branch_name,
+		(SELECT v_name FROM `tb_vendor` WHERE tb_vendor.vendor_id=tb_purchase_request.vendor_id LIMIT 1 ) AS vendor_name,
+		order_number,invoice_no,date_order,date_in,
+		(SELECT symbal FROM `tb_currency` WHERE id= currency_id LIMIT 1) AS curr_name,
+		currency_id,
+		net_total,paid,balance,balance_after,
+		(SELECT payment_name FROM `tb_paymentmethod` WHERE payment_typeId=payment_method LIMIT 1 ) AS payment_method,
+		(SELECT name_en FROM `tb_view` WHERE key_code = purchase_status AND `type`=1 LIMIT 1 ) AS purchase_status,
+		(SELECT name_en FROM `tb_view` WHERE key_code =tb_purchase_request.status AND TYPE=2 LIMIT 1),
+		(SELECT u.username FROM tb_acl_user AS u WHERE u.user_id = user_mod LIMIT 1 ) AS user_name
+		FROM `tb_purchase_request`  ";
+		$from_date =(empty($search['start_date']))? '1': " date_order >= '".$search['start_date']." 00:00:00'";
+		$to_date = (empty($search['end_date']))? '1': " date_order <= '".$search['end_date']." 23:59:59'";
+		$where = " WHERE status=1 and ".$from_date." AND ".$to_date;
+		if(!empty($search['text_search'])){
+			$s_where = array();
+			$s_search = trim(addslashes($search['text_search']));
+			$s_where[] = " order_number LIKE '%{$s_search}%'";
+			$s_where[] = " net_total LIKE '%{$s_search}%'";
+			$s_where[] = " paid LIKE '%{$s_search}%'";
+			$s_where[] = " balance LIKE '%{$s_search}%'";
+			$where .=' AND ('.implode(' OR ',$s_where).')';
+		}
+		if($search['suppliyer_id']>0){
+			$where .= " AND vendor_id = ".$search['suppliyer_id'];
+		}
+		if($search['branch_id']>0){
+			$where .= " AND branch_id =".$search['branch_id'];
+		}
+	
+		if($search['status_paid']>0){
+			if($search['status_paid']==1){
+				$where .= " AND balance <=0 ";
+			}
+			elseif($search['status_paid']==2){
+				$where .= " AND balance >0 ";
+			}
+	
+		}
+		$dbg = new Application_Model_DbTable_DbGlobal();
+		$where.=$dbg->getAccessPermission();
+		$order=" ORDER BY id DESC ";
+		//echo $sql.$where.$order;
+		return $db->fetchAll($sql.$where.$order);
+	}
 		
 	public function getAllPurchaseReport($search){//1
 		$db= $this->getAdapter();
@@ -60,6 +109,56 @@ Class report_Model_DbQuery extends Zend_Db_Table_Abstract{
 		//echo $sql.$where.$order;
 		return $db->fetchAll($sql.$where.$order);
 	}
+	
+	public function getAllPurchaseNonestockReport($search){//1
+		$db= $this->getAdapter();
+		$sql=" SELECT id,
+		(SELECT NAME FROM `tb_sublocation` WHERE tb_sublocation.id = branch_id AND STATUS=1 AND NAME!='' LIMIT 1) AS branch_name,
+		(SELECT v_name FROM `tb_vendor` WHERE tb_vendor.vendor_id=tb_purchase_nonstock.vendor_id LIMIT 1 ) AS vendor_name,
+		order_number,invoice_no,date_order,date_in,
+		(SELECT symbal FROM `tb_currency` WHERE id= currency_id LIMIT 1) AS curr_name,
+		currency_id,
+		net_total,paid,balance,balance_after,
+		(SELECT payment_name FROM `tb_paymentmethod` WHERE payment_typeId=payment_method LIMIT 1 ) AS payment_method,
+		(SELECT name_en FROM `tb_view` WHERE key_code = purchase_status AND `type`=1 LIMIT 1 ) AS purchase_status,
+		(SELECT name_en FROM `tb_view` WHERE key_code =tb_purchase_nonstock.status AND TYPE=2 LIMIT 1) ,
+		(SELECT u.username FROM tb_acl_user AS u WHERE u.user_id = user_mod LIMIT 1 ) AS user_name
+		FROM `tb_purchase_nonstock`  ";
+		$from_date =(empty($search['start_date']))? '1': " date_order >= '".$search['start_date']." 00:00:00'";
+		$to_date = (empty($search['end_date']))? '1': " date_order <= '".$search['end_date']." 23:59:59'";
+		$where = " WHERE status=1 and ".$from_date." AND ".$to_date;
+		if(!empty($search['text_search'])){
+			$s_where = array();
+			$s_search = trim(addslashes($search['text_search']));
+			$s_where[] = " order_number LIKE '%{$s_search}%'";
+			$s_where[] = " net_total LIKE '%{$s_search}%'";
+			$s_where[] = " paid LIKE '%{$s_search}%'";
+			$s_where[] = " balance LIKE '%{$s_search}%'";
+			$where .=' AND ('.implode(' OR ',$s_where).')';
+		}
+		if($search['suppliyer_id']>0){
+			$where .= " AND vendor_id = ".$search['suppliyer_id'];
+		}
+		if($search['branch_id']>0){
+			$where .= " AND branch_id =".$search['branch_id'];
+		}
+	
+		if($search['status_paid']>0){
+			if($search['status_paid']==1){
+				$where .= " AND balance <=0 ";
+			}
+			elseif($search['status_paid']==2){
+				$where .= " AND balance >0 ";
+			}
+	
+		}
+		$dbg = new Application_Model_DbTable_DbGlobal();
+		$where.=$dbg->getAccessPermission();
+		$order=" ORDER BY id DESC ";
+		//echo $sql.$where.$order;
+		return $db->fetchAll($sql.$where.$order);
+	}
+	
 	function getProductPruchaseById($id){//2
 		$db = $this->getAdapter();
 		$sql=" SELECT 
@@ -91,6 +190,71 @@ Class report_Model_DbQuery extends Zend_Db_Table_Abstract{
 				 AND po.status=1 AND p.id = $id ";
 		return $db->fetchAll($sql);
 	}
+	
+	function getPruchaseRequestDetail($id){//2
+		$db = $this->getAdapter();
+		$sql=" SELECT
+		(SELECT name FROM `tb_sublocation` WHERE id=p.branch_id) AS branch_name,
+		p.order_number,p.date_order,p.date_in,p.remark,
+		p.commission,p.commission_ensur,p.bank_name,p.date_issuecheque,
+		(SELECT item_name FROM `tb_product` WHERE id= po.pro_id LIMIT 1) AS item_name,
+		(SELECT item_code FROM `tb_product` WHERE id=po.pro_id LIMIT 1 ) AS item_code,
+			
+		(SELECT tb_measure.name FROM `tb_measure` WHERE tb_measure.id=(SELECT measure_id FROM `tb_product` WHERE id= po.pro_id LIMIT 1)) as measue_name,
+		(SELECT qty_perunit FROM `tb_product` WHERE id= po.pro_id LIMIT 1) AS qty_perunit,
+		(SELECT unit_label FROM `tb_product` WHERE id=po.pro_id LIMIT 1 ) AS unit_label,
+		(SELECT payment_name FROM `tb_paymentmethod` WHERE payment_typeId=p.payment_method) as payment_method,
+		p.payment_number,
+	
+		(SELECT symbal FROM `tb_currency` WHERE id=p.currency_id limit 1) As curr_name,
+		(SELECT v_name FROM `tb_vendor` WHERE tb_vendor.vendor_id=p.vendor_id LIMIT 1 ) AS vendor_name,
+		(SELECT v_phone FROM `tb_vendor` WHERE tb_vendor.vendor_id=p.vendor_id LIMIT 1 ) AS v_phone,
+		(SELECT contact_name FROM `tb_vendor` WHERE tb_vendor.vendor_id=p.vendor_id LIMIT 1 ) AS contact_name,
+		(SELECT add_name FROM `tb_vendor` WHERE tb_vendor.vendor_id=p.vendor_id LIMIT 1 ) AS add_name,
+		(SELECT name_en FROM `tb_view` WHERE key_code = purchase_status AND `type`=1 LIMIT 1) As purchase_status,
+		(SELECT u.username FROM tb_acl_user AS u WHERE u.user_id = p.user_mod LIMIT 1 ) AS user_name,
+		po.qty_order,po.qty_unit,po.qty_detail,po.price,po.sub_total,p.net_total,
+			
+		p.paid,p.discount_real,p.tax,
+		p.balance
+		FROM `tb_purchase_request` AS p,
+		`tb_purchase_request_item` AS po WHERE p.id=po.purchase_id
+		AND po.status=1 AND p.id = $id ";
+		return $db->fetchAll($sql);
+	}
+	
+	function getPurNonstockDetail($id){//2
+		$db = $this->getAdapter();
+		$sql=" SELECT
+		(SELECT NAME FROM `tb_sublocation` WHERE id=p.branch_id) AS branch_name,
+		p.order_number,p.date_order,p.date_in,p.remark,
+		p.commission,p.commission_ensur,p.bank_name,p.date_issuecheque,
+		(SELECT item_name FROM `tb_product` WHERE id= po.pro_id LIMIT 1) AS item_name,
+		(SELECT item_code FROM `tb_product` WHERE id=po.pro_id LIMIT 1 ) AS item_code,
+			
+		(SELECT tb_measure.name FROM `tb_measure` WHERE tb_measure.id=(SELECT measure_id FROM `tb_product` WHERE id= po.pro_id LIMIT 1)) AS measue_name,
+		(SELECT qty_perunit FROM `tb_product` WHERE id= po.pro_id LIMIT 1) AS qty_perunit,
+		(SELECT unit_label FROM `tb_product` WHERE id=po.pro_id LIMIT 1 ) AS unit_label,
+		(SELECT payment_name FROM `tb_paymentmethod` WHERE payment_typeId=p.payment_method) AS payment_method,
+		p.payment_number,
+	
+		(SELECT symbal FROM `tb_currency` WHERE id=p.currency_id LIMIT 1) AS curr_name,
+		(SELECT v_name FROM `tb_vendor` WHERE tb_vendor.vendor_id=p.vendor_id LIMIT 1 ) AS vendor_name,
+		(SELECT v_phone FROM `tb_vendor` WHERE tb_vendor.vendor_id=p.vendor_id LIMIT 1 ) AS v_phone,
+		(SELECT contact_name FROM `tb_vendor` WHERE tb_vendor.vendor_id=p.vendor_id LIMIT 1 ) AS contact_name,
+		(SELECT add_name FROM `tb_vendor` WHERE tb_vendor.vendor_id=p.vendor_id LIMIT 1 ) AS add_name,
+		(SELECT name_en FROM `tb_view` WHERE key_code = purchase_status AND `type`=1 LIMIT 1) AS purchase_status,
+		(SELECT u.username FROM tb_acl_user AS u WHERE u.user_id = p.user_mod LIMIT 1 ) AS user_name,
+		po.qty_order,po.qty_unit,po.qty_detail,po.price,po.sub_total,p.net_total,
+			
+		p.paid,p.discount_real,p.tax,
+		p.balance
+		FROM `tb_purchase_nonstock` AS p,
+		`tb_purchase_nonstock_item` AS po WHERE p.id=po.purchase_id
+		AND po.status=1 AND p.id = $id";
+		return $db->fetchAll($sql);
+	}
+	
 	function getPruchaseProductDetail($search){//3
 		$db = $this->getAdapter();
 		$sql=" SELECT

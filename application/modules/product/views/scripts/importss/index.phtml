@@ -1,0 +1,115 @@
+<?php
+	$tr = Application_Form_FrmLanguages::getCurrentlanguage();
+	echo $this->headTitle($tr->translate('IMPORT_FILE_ITEMS_PRICE')); 
+	$url_save = $this->url(array('module'=>'items','controller'=>'importss','action'=>'index'));
+	$formFilter = $this->formFilter;
+?>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<script type="text/javascript" src="js/dojo/dojo.js" djConfig="isDebug: true, parseOnLoad: true"></script>
+
+<script type="text/javascript">
+
+dojo.require("dojo.data.ItemFileWriteStore");  
+    dojo.require("dojo.NodeList-manipulate");
+    dojo.require('dijit.form.Textarea');
+    dojo.require("dojo.parser");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.form.FilteringSelect"); 
+    //dojo.require("dojo.data.ItemFileWriteStore"); 
+	dojo.require("dojo.html");
+	dojo.require("dijit.form.NumberTextBox");
+	require(["dijit/form/CheckBox","dijit/Dialog","dijit/layout/TabContainer"]);
+	
+require(["dojo/ready"], function(ready){
+	ready(function(){
+
+	});
+	
+});
+	 
+</script>
+<form id='add_client' action="<?php //echo $url_save; ?>" enctype="multipart/form-data" dojoType="dijit.form.Form" method="post">
+<script type="dojo/method" event="onSubmit">			
+	if(this.validate()) {
+			return true;
+	}else{
+			return false;
+	}
+</script>
+<style>
+.button {
+  display: inline-block;
+  padding: 5px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 15px !important;
+  box-shadow: 0 9px #999;
+}
+
+.button:hover {background-color: #3e8e41}
+
+.button:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+</style>
+<table width="50%" style=" margin-left:25%; margin-top:10px;">
+	<tr class="header">
+			<td colspan="2"><h1 style="font-size:50px;"><?php echo $tr->translate('IMPORT_FILE_ITEMS_PRICE')?></h1></td>
+	</tr>
+	<tr>
+		<td>
+		<fieldset>
+							<table style="margin: 0 auto; width:100%; font-size:14px;white-space: nowrap;" cellspacing="5">
+							    <tr>
+							    	<td><?php echo $tr->translate('CHOOSE_BRANCH')?>(Exel)</td>
+							   	 	<td valign="middle"><?php echo $formFilter->getElement('branch');?></td>
+								</tr>
+								<tr><td style="height: 10px;"></td></tr>
+							    <tr>
+							    	<td><?php echo $tr->translate('CHOOSE_FILE')?>(Exel)</td>
+							   	 	<td valign="middle"><input type="file" name="file_excel" id="file_excel" required="required" class="fullside"/></td>
+								</tr>
+							</table>
+						
+		</fieldset>		
+		</td>
+	</tr>
+	<tr>
+	    <td height="10px;">
+	    </td>
+	</tr>
+	<tr  class="footer_button">
+		<td colspan="3" align="center">
+			 <input class="button" type="submit" value="<?php echo $tr->translate('SAVE_CLOSE')?>" label="<?php echo $tr->translate('IMPORT_FILE')?>" id="import_file" dojoType="dijit.form.Button" name="import_file"
+										 iconClass="dijitEditorIcon dijitEditorIconSave" /> 
+		</td>
+	</tr>
+</table>	
+</form>
+
+<script>
+$('#add_client').submit(function() {
+	branch = $("#branch").val();
+    if(branch==''){
+        alert("Please Select Location!!!");
+        $('#branch').select2('open');
+        return false;
+    }
+	var r = confirm("សូមត្រួតពិនិត្យទិន្នន័យ អោយបានត្រឹមត្រូវ !\nតើលោកអ្នកពិតជាចង់រក្សាទុកទិន្នន័យនេះមែនឫទេ?");
+	if (r == true) {
+	    return true;
+	} else {
+	   return false;
+	}
+});
+</script>

@@ -18,6 +18,9 @@ class Product_Form_FrmProduct extends Zend_Form
 				'required'=>'1'
 		));
 		
+		$signature = new Zend_Form_Element_File("pro_img");
+		$this->addElement($signature);
+		
 		$pro_code = new Zend_Form_Element_Text("pro_code");
 		$pro_code->setAttribs(array(
 				'class'=>'form-control',

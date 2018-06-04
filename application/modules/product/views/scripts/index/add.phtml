@@ -14,7 +14,7 @@
 ?>						 
 <title><?php echo $tr->translate("ADD_NEW_PRODUCT");?></title>
 <body>
-	<form class="form-horizontal" id="product_id" method="post" action="<?php echo $url_submit;?>" >				
+	<form class="form-horizontal" id="product_id" method="post" action="<?php echo $url_submit;?>" enctype="multipart/form-data" >				
 		<div class="portlet box blue">
 			<div class="portlet-title">
 				<div class="caption">
@@ -112,6 +112,17 @@
 											</div>
 										</div>
 										
+									<div class="form-group">
+										<label class="control-label col-md-2"><?php echo $tr->translate("PHOTO");?><span class="required">
+											</span>
+										</label>
+										<div class="col-md-4">
+											<div class="input-icon right">
+												<i class="fa"></i>
+												<?php echo $form->getElement("pro_img");?>
+											</div>
+										</div>
+							       </div>
 										<?php }?>
 										<h3 class="form-section"><?php echo $tr->translate("");?></h3>
 										<div class="portlet box blue">

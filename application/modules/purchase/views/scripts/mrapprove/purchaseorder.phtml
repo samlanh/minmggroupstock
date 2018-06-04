@@ -100,7 +100,7 @@
 							if(!empty($this->rs)){
 								foreach ($this->rs as $key=>$rs){
 									$edit_status = '';
-									if($rs["purchase_status"]==1){ //$rs["pedding_stat"]>3
+									if($rs["purchase_status"]==5){ //$rs["pedding_stat"]>3
 										$edit_status = "style='pointer-events: none;cursor: default;color: #ccc;'";
 									}
 							?>
@@ -118,7 +118,7 @@
 									<td class="items"><?php echo $rs["is_approves"];?></td>
 									<td class="items-no" style="white-space: nowrap;">
 										<a <?php echo $edit_status;?> href="<?php echo $this->baseUrl();?>/purchase/mrapprove/addpurchase/id/<?php echo $rs["id"]?>"><?php echo  $tr->translate("PO");?></a> | 
-										<a target="_blank" href="<?php echo $this->baseUrl();?>/report/purchase/requestpurchasing/id/<?php echo $rs["id"]?>"><?php echo  $tr->translate("PRINT");?></a>
+										<a target="_blank" href="<?php echo $this->baseUrl();?>/report/index/rpt-purchase-requestdetail/id/<?php echo $rs["id"]?>"><?php echo  $tr->translate("PRINT");?></a>
 									</td>
 									<td class="items"><?php echo $rs["status"];?></td>
 								</tr>

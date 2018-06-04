@@ -244,7 +244,7 @@ class Application_Form_purchase extends Zend_Form
     			$netTotalElement->setValue($data['all_total']);//r
     			$allTotalElement->setValue($data['net_total']);//r
     			$remainlElement->setValue($data['balance']);//r
-				$title->setvalue($data["po_x"]);
+				//$title->setvalue($data["po_x"]);
 				
 				$commission_ensur->setvalue($data["commission_ensur"]);
 				$bank_name->setvalue($data["bank_name"]);

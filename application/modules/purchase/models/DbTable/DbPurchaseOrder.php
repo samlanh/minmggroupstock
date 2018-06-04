@@ -261,7 +261,7 @@ class Purchase_Model_DbTable_DbPurchaseOrder extends Zend_Db_Table_Abstract
 						if($rows)
 						{
 							$datatostock   = array(
-									'qty'   		=> $rows["qty"]-$rsitem['qty_order'],
+									'qty'   		=> $rows["qty"]-$rsitem['qty_receive'],
 									'last_mod_date'	=> date("Y-m-d"),
 							);
 							$this->_name="tb_prolocation";
@@ -287,6 +287,7 @@ class Purchase_Model_DbTable_DbPurchaseOrder extends Zend_Db_Table_Abstract
 			$idrecord=$data['v_name'];
 			$order_add=$data['txt_order'];
 			$info_purchase_order=array(
+					"request_id"     => 	$row_oldhistory['request_id'],
 					"vendor_id"      => 	$data['v_name'],
 					"branch_id"      => 	$data["LocationId"],
 					"order_number"   => 	$order_add,
@@ -328,6 +329,15 @@ class Purchase_Model_DbTable_DbPurchaseOrder extends Zend_Db_Table_Abstract
 			$locationid=$data['LocationId'];
 			if(!empty($data['identity']))foreach ($ids as $i)
 			{
+				$rsproduct = $this->getProductCostAndQty($data['item_id_'.$i]);
+				$cost_avg = (($rsproduct['qty']*$rsproduct['price'])+($data['price'.$i]*$data['qty_receive'.$i])) / ($rsproduct['qty']+$data['qty_receive'.$i]);
+				$array=array(
+						'price'=>$cost_avg
+				);
+				$this->_name="tb_product";
+				$where = " id= ".$rsproduct['id'];
+				$this->update($array, $where);
+				
 				$data_item= array(
 						'purchase_id' => $purchase_id,
 						'pro_id'	  => $data['item_id_'.$i],
@@ -337,6 +347,7 @@ class Purchase_Model_DbTable_DbPurchaseOrder extends Zend_Db_Table_Abstract
 						'price'		  => $data['price'.$i],
 						'disc_value'  => $data['real-value'.$i],
 						'sub_total'	  => $data['total'.$i],
+						'qty_receive' => $data['qty_receive'.$i]
 				);
 				$this->_name='tb_purchase_order_item';
 				$this->insert($data_item);
@@ -347,7 +358,7 @@ class Purchase_Model_DbTable_DbPurchaseOrder extends Zend_Db_Table_Abstract
 					{
 						if($data["status"]==4 OR $data["status"]==5){
 							$arr  = array(
-									'qty'   		  =>$rows["qty"]+$data['qty'.$i],
+									'qty'   		  =>$rows["qty"]+$data['qty_receive'.$i],
 									'last_mod_date'	  =>date("Y-m-d"),
 									'last_mod_userid' =>$GetUserId,
 									'user_id'=>$GetUserId,

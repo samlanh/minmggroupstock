@@ -29,16 +29,20 @@ class Purchase_RequestnonstockController extends Zend_Controller_Action
 		$rows = $db->getAllPurchaseOrder($search);
 		$list = new Application_Form_Frmlist();
 		$columns=array("BRANCH_NAME","VENDOR_NAME","PURCHASE_ORDER","ORDER_DATE","DATE_IN",
-				 "INVOICE_NO","TOTAL_AMOUNT","PAID","BALANCE","ORDER_STATUS","STATUS","BY_USER");
+				 "INVOICE_NO","TOTAL_AMOUNT","PAID","BALANCE","ACTION","STATUS","BY_USER");
 		$link=array(
 				'module'=>'purchase','controller'=>'requestnonstock','action'=>'edit',
 		);
+		$print=array(
+				'module'=>'report','controller'=>'index','action'=>'rpt-purchase-nonstock-detail',
+		);
 		
-		$this->view->list=$list->getCheckList(0, $columns, $rows, array('branch_name'=>$link,'vendor_name'=>$link,'order_number'=>$link,'date_order'=>$link));
+		$this->view->list=$list->getCheckList(0, $columns, $rows, array('បោះពុម្ព'=>$print,'branch_name'=>$link,'vendor_name'=>$link,'order_number'=>$link,'date_order'=>$link));
 		$formFilter = new Application_Form_Frmsearch();
 		$this->view->formFilter = $formFilter;
 		Application_Model_Decorator::removeAllDecorator($formFilter);
 	}
+	
 	public function addAction(){
 		$db = new Application_Model_DbTable_DbGlobal();
 		if($this->getRequest()->isPost()) {

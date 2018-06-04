@@ -1,4 +1,4 @@
-<?php 
+﻿<?php 
 	$tr = Application_Form_FrmLanguages::getCurrentlanguage();
 	$form=$this->form_purchase;
 	$url_submit = $this->url(array('module'=>'purchase','controller'=>'index','action'=>'edit'));
@@ -18,7 +18,7 @@
 			</div>
 			<div class="portlet-body form">
 				<!-- BEGIN FORM-->
-				<form id="frm" autocomplete="off"  action="<?php echo $url_submit; ?>" class="form-horizontal" enctype="multipart/form-data" method="post">
+				<form id="frm" autocomplete="off"  action="" class="form-horizontal" enctype="multipart/form-data" method="post">
 					<div class="form-body">
 						<div class="form-group">
 							<label class="control-label col-md-2"><?php echo $tr->translate("VENDOR_NAME");?> <span class="required">
@@ -78,6 +78,7 @@
 							</div>
 						</div>
 						<div class="form-group" >
+						   <div style="display: none">
 							<label class="control-label col-md-2"><?php echo $tr->translate("STATUS");?><span class="required">
 								 </span>
 							</label>
@@ -86,6 +87,7 @@
 									<?php echo $form->getElement("status_use");?>
 									<?php echo $form->getElement("status");?>
 								</div>
+							</div>
 							</div>
 							<label class="control-label col-md-2"><?php echo $tr->translate("REMARK");?><span class="required">
 								 </span>
@@ -96,6 +98,7 @@
 								</div>
 							</div>
 						</div>
+						<!-- 
 						<div class="form-group">
 						<div class="col-md-12">
 							<label class="control-label col-md-1 col-lg-1">
@@ -122,15 +125,17 @@
 							</label>
 						</div>
 						</div>
+						 -->
 						<div class="portlet-body">
 							<table class="table table-striped table-bordered table-hover" id="table_order" style="font-size:12px;">
 								<tr height="33px">
-									<th><?php echo $tr->translate("DEL");?></th>
+							<!--		<th><?php echo $tr->translate("DEL");?></th> -->
 									<th><?php echo $tr->translate("NUM");?></th>
 									<th style="white-space:nowrap;"><?php echo $tr->translate("ITEM_NAME");?></th>
-									<th><?php echo $tr->translate("FREE");?></th>
+							<!-- 		<th><?php echo $tr->translate("FREE");?></th> -->
 									<th><?php echo $tr->translate("QTY_UNIT");?></th>
 									<th><?php echo $tr->translate("QTY_PER_UNIT");?></th>
+									<th><?php echo $tr->translate("QTY_RECEIVE");?></th>
 									<th><?php echo $tr->translate("QTY_ORDER");?></th>
 									<th><?php echo $tr->translate("UNIT_PRICE_CAP");?></th>
 									<th style="white-space:nowrap;"><?php echo $tr->translate("DISCOUNT");?></th>
@@ -542,6 +547,8 @@ function addProduct(){
 	    });	
 }
 $(document).ready(function() {
+	$('#v_name').attr("style", "pointer-events: none;");
+	$('#LocationId').attr("style", "pointer-events: none;");
 	initList();	
 });
 function initList() {
@@ -555,23 +562,25 @@ function initList() {
 	template='<tr id="row_order_'+index5+'" style="height:33px;">';
 	var inp = '';
 	if(index5 == 1) {
-		template+='<td >&nbsp;</td>';
+		//template+='<td >&nbsp;</td>';
 	} else {
-		template+='<td ><img onClick="deleteRecord('+index5+')" src="<?php echo BASE_URL; ?>/images/icon/delete.gif" /></td>';
+		//template+='<td ><img onClick="deleteRecord('+index5+')" src="<?php echo BASE_URL; ?>/images/icon/delete.gif" /></td>';
 	}
 	template+='<td  width="1%">'+index5+'</td>';
 	template+='<td width="30%"><select class="form-control select2me" Onchange="ShowPopupProduct('+ index5 + ');" id="item_id_'+index5+'" name="item_id_'+index5+'" >'+option5+'<option></option></select>'+inp+'</td>';
-	template+='<td ><input type="checkbox" onkeyup="getPriceFree('+index5+')" id="pricefree_'+index5+'" name="pricefree_'+index5+'"/> </td>';
+	//template+='<td ><input type="checkbox" onkeyup="getPriceFree('+index5+')" id="pricefree_'+index5+'" name="pricefree_'+index5+'"/> </td>';
 	template+='<td ><input type="text" onkeyup="totalQty('+index5+')" class="validate[required,custom[number]] input form-control" required="1" value="1" id="qty_unit_'+index5+'" name="qty_unit_'+index5+'" /></td>';
 	template+='<td ><input type="text" onkeyup="totalQty('+index5+')" class="validate[required,custom[number]] input form-control" value="0" id="qty_per_unit_'+index5+'" name="qty_per_unit_'+index5+'" /></td>';
+	template+='<td ><input type="text"  readonly="readonly" onkeyup="calculatePrice('+index5+');" class="form-control" required="1" id="qty_receive'+index5+'" name="qty_receive'+index5+'"/></td>';
 	template+='<td ><input type="text" readonly="readonly" onkeyup="calculatePrice('+index5+')" class="form-control" required="1" id="qty'+index5+'" name="qty'+index5+'"/></td>';
 	template+='<td ><input type="text" onkeyup="calculatePrice('+index5+')" required="1" class="validate[required,custom[number]] input form-control" id="price'+index5+'" name="price'+index5+'" /><input type="hidden" id="oldprice_'+index5+'" name="oldprice_'+index5+'"/></td>';
 	template+='<td  width="5%"><input type="text" onkeyup="calculatePrice('+index5+')" value="0" id="dis_value'+index5+'" name="dis_value'+index5+'" class="form-control" /><input type="hidden" id="olddis_value_'+index5+'" name="olddis_value_'+index5+'"/><input type="hidden" readonly="readonly" class="input70px" id="real-value'+index5+'" name="real-value'+index5+'" /></td>';
 	template+='<td ><input type="text" class="form-control" readonly="readonly" id="total'+index5+'" name="total'+index5+'" /></span></td>';
 	template+="</tr>";
 	$('#table_order').append(template);
-	
+	$('#item_id_'+index5).attr("style", "pointer-events: none;");
 	$("#item_id_"+index5).val("<?php echo $r['pro_id'];?>");
+	$("#qty_receive"+index5).val("<?php echo $r['qty_receive'];?>");
 	$("#qty"+index5).val("<?php echo $r['qty_order'];?>");
 	$("#qty_unit_"+index5).val("<?php echo $r['qty_unit'];?>");
 	$("#qty_per_unit_"+index5).val("<?php echo $r['qty_detail'];?>");
@@ -611,7 +620,7 @@ function addRow(item_id) {
 	}
 	template+='<td  width="2%">'+index5+'</td>';
 	template+='<td width="30%"><select class="form-control select2me" Onchange="ShowPopupProduct('+ index5 + ');" id="item_id_'+index5+'" name="item_id_'+index5+'" >'+option5+'<option></option></select>'+inp+'</td>';
-	template+='<td ><input type="checkbox" onkeyup="getPriceFree('+index5+')" id="pricefree_'+index5+'" name="pricefree_'+index5+'"/> </td>';
+//	template+='<td ><input type="checkbox" onkeyup="getPriceFree('+index5+')" id="pricefree_'+index5+'" name="pricefree_'+index5+'"/> </td>';
 	template+='<td ><input type="text" onkeyup="totalQty('+index5+')" class="validate[required,custom[number]] input form-control" required="1" value="1" id="qty_unit_'+index5+'" name="qty_unit_'+index5+'" /></td>';
 	template+='<td ><input type="text" onkeyup="totalQty('+index5+')" class="validate[required,custom[number]] input form-control" value="0" id="qty_per_unit_'+index5+'" name="qty_per_unit_'+index5+'" /></td>';
 	template+='<td ><input type="text" readonly onkeyup="calculatePrice('+index5+')" class="form-control" required="1" id="qty'+index5+'" name="qty'+index5+'"/></td>';
@@ -627,7 +636,7 @@ function addRow(item_id) {
 	$("#item_id_"+index5).val(item_id);
 	getQtyById(index5);
 	if(free.checked){
-		$("#pricefree_"+index5).attr({checked:'checked'});  
+		//$("#pricefree_"+index5).attr({checked:'checked'});  
 		$("#price"+index5).val(0);
 		$("#price"+index5).attr('readonly','readonly');
 		$("#dis-value"+index5).attr('readonly','readonly');
@@ -642,6 +651,7 @@ function addRow(item_id) {
 }
 <?php $url_qty =  $this->url(array('module'=>'purchase','controller'=>'index','action'=>'getqtybyid')); ?>
 function getQtyById(index){//use
+	
 			item_id=$("#item_id_"+index).val();
 				qty_unit=$("#qty_unit_"+index).val();
 				qty_per_unit=$("#qty_per_unit_"+index).val();
@@ -649,7 +659,8 @@ function getQtyById(index){//use
 				if(branch_id=='' || branch_id==-1){alert("Please Select Branch First ");}
 				if(qty_unit==null || qty_unit==""){
 					if(qty_per_unit!==null && qty_per_unit!==""){
-						$("#qty"+index).val(qty_per_unit);
+						//$("#qty"+index).val(qty_per_unit);
+						$("#qty_receive"+index).val(qty_per_unit);
 					}
 				}else{
 					$.ajax({
@@ -662,7 +673,15 @@ function getQtyById(index){//use
 							detail_qty =  $("#qty_per_unit_"+index).val();
 							$("#current_qty"+index).val(item_qty.qty);
 							total_qty = parseFloat(main_qty) + parseFloat(detail_qty/(item_qty.qty_perunit));
-							$("#qty"+index).val(total_qty.toFixed(3));
+							//$("#qty"+index).val(total_qty.toFixed(3));
+							if(total_qty>$("#qty"+index).val()){
+								alert('Quantity​​ Not Enough!!!');
+								$("#qty_receive"+index).val($("#qty"+index).val());
+								$("#qty_unit_"+index).val(0);
+								$("#qty_per_unit_"+index).val(0);
+								return false;
+							}
+							$("#qty_receive"+index).val(total_qty.toFixed(3));
 						},
 						error:function(e){
 							alert(e);
@@ -742,11 +761,12 @@ function doRemain() {
 	}
 }
 function totalQty(index){
-	calculatePrice(index);
 	getQtyById(index);
+	calculatePrice(index);
 }
 function calculatePrice(index) {
-	var qty = $('#qty'+index).val();
+	//var qty = $('#qty'+index).val();
+	var qty = $('#qty_receive'+index).val();
 	var price = $('#price'+index).val();
 	var total = price * qty;	
 	var ds = $('#dis_value'+index).val();

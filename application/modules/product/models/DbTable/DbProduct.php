@@ -367,7 +367,8 @@ class Product_Model_DbTable_DbProduct extends Zend_Db_Table_Abstract
 			  p.`size_id`,
 			  p.`status`,
 			  p.`unit_label` ,
-			   p.`price` 
+			   p.`price`,
+			   p.photo
 			FROM
 			  `tb_product` AS p 
 			WHERE p.id = $id ";
@@ -410,7 +411,21 @@ class Product_Model_DbTable_DbProduct extends Zend_Db_Table_Abstract
 		$result = $user_info->getUserInfo();
 		$session_user=new Zend_Session_Namespace('auth');
 		$request=Zend_Controller_Front::getInstance()->getRequest();
-		 $level = $result["level"];
+		$level = $result["level"];
+		
+		$photoname = str_replace(" ", "_", $data['name']).rand(). '.jpg';
+		$upload = new Zend_File_Transfer();
+		$upload->addFilter('Rename',
+				array('target' => PUBLIC_PATH . '/images/proimage/'. $photoname, 'overwrite' => true) ,'pro_img');
+		$receive = $upload->receive();
+		if($receive)
+		{
+			$arr['photo'] = $photoname;
+		}
+		else{
+			$arr['photo']="";
+		}
+		
     	try {
 			
     		$arr = array(
@@ -423,7 +438,7 @@ class Product_Model_DbTable_DbProduct extends Zend_Db_Table_Abstract
     			'measure_id'	=>	$data["measure"],
     			//'size_id'		=>	$data["size"],
     			//'serial_number'	=>	$data["serial"],
-    			//'model_id'		=>	$data["model"],
+    			'photo'		    =>	$arr["photo"],
     			'qty_perunit'	=>	$data["qty_unit"],
     			'unit_label'	=>	$data["label"],
     			'user_id'		=>	$this->getUserId(),
@@ -494,6 +509,20 @@ class Product_Model_DbTable_DbProduct extends Zend_Db_Table_Abstract
 		$session_user=new Zend_Session_Namespace('auth');
 		$request=Zend_Controller_Front::getInstance()->getRequest();
 		 $level = $result["level"];
+		 
+		 $photoname = str_replace(" ", "_", $data['name']).'.jpg';
+		 $upload = new Zend_File_Transfer();
+		 $upload->addFilter('Rename',
+		 		array('target' => PUBLIC_PATH . '/images/proimage/'. $photoname, 'overwrite' => true) ,'pro_img');
+		 $receive = $upload->receive();
+		 if($receive)
+		 {
+		 	$arr['photo'] = $photoname;
+		 }
+		 else{
+		 	$arr['photo']=$data['old_pic'];
+		 }
+		 
     	try {
     		$arr = array(
     				'item_name'		=>	$data["name"],
@@ -506,6 +535,7 @@ class Product_Model_DbTable_DbProduct extends Zend_Db_Table_Abstract
     				'measure_id'	=>	$data["measure"],
     				//'size_id'		=>	$data["size"],
     				//'serial_number'	=>	$data["serial"],
+    				'photo'		    =>	$arr["photo"],
     				'qty_perunit'	=>	$data["qty_unit"],
     				'unit_label'	=>	$data["label"],
     				'user_id'		=>	$this->getUserId(),

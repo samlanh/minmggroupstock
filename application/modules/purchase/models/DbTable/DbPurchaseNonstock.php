@@ -9,8 +9,7 @@ class Purchase_Model_DbTable_DbPurchaseNonstock extends Zend_Db_Table_Abstract
 		(SELECT v_name FROM `tb_vendor` WHERE tb_vendor.vendor_id=tb_purchase_nonstock.vendor_id LIMIT 1 ) AS vendor_name,
 		order_number,DATE_FORMAT(date_order,'%d-%b-%Y')AS date_order,DATE_FORMAT(date_in,'%d-%b-%Y')AS date_in,
 		invoice_no,
-		net_total,paid,(net_total-paid) AS balance,
-		(SELECT name_en FROM `tb_view` WHERE key_code = purchase_status AND `type`=1) As purchase_status,
+		net_total,paid,(net_total-paid) AS balance,'បោះពុម្ព',
 		(SELECT name_en FROM `tb_view` WHERE key_code =tb_purchase_nonstock.status AND type=5 LIMIT 1),
 		(SELECT u.username FROM tb_acl_user AS u WHERE u.user_id = user_mod LIMIT 1 ) AS user_name
 		FROM `tb_purchase_nonstock` ";
