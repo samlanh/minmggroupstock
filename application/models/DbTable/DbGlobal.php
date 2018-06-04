@@ -253,51 +253,26 @@ function getAllVendor($opt=null){
     	}
     	return $pre.$new_acc_no;
     }
-	
-	function getAllInvoicePaymentPurchase($post_id,$type){
+   
+   function getAllInvoicePaymentPurchase($post_id,$type){
    	$db= $this->getAdapter();
    	if($type==1){//by customer
-   		$sql=" SELECT 
-				  i.invoice_id as id,
-				  i.`invoice_no`,
-				  i.`invoice_controlling_date`,
-				  i.`receive_invoice_date`,
-				  i.`invoice_date` ,
-				  i.`grand_total`,
-				  i.grand_total_after,
-				  i.paid,
-				  i.balance,
-				  i.`sub_total`,
-				  i.vat,
-				  i.total_vat,
-				  i.vendor_id
-				FROM
-				  `tb_invoice_controlling` AS i 
-				WHERE i.`vendor_id`=$post_id";
-   		$sql.=" AND is_completed=0";
-   		$sql.=" ORDER BY id DESC ";
+   		$sql=" SELECT p.*,
+   		(SELECT SUM(paid) FROM `tb_vendorpayment_detail` WHERE tb_vendorpayment_detail.invoice_id=p.id) as paid
+   		FROM tb_purchase_order AS p
+   		WHERE p.vendor_id= $post_id AND status=1  ";
+   		$sql.=" AND p.is_completed=0 AND p.balance_after>0 ";
+   		$sql.=" ORDER BY p.id DESC ";
    	}else{//by invoice
-   		$sql=" SELECT 
-				  i.invoice_id as id,
-				  i.`invoice_no`,
-				  i.`invoice_controlling_date`,
-				  i.`receive_invoice_date`,
-				  i.`invoice_date` ,
-				  i.`grand_total`,
-				  i.grand_total_after,
-				  i.paid,
-				   i.`sub_total`,
-				   i.vat,
-				  i.total_vat,
-				  i.balance,
-				  i.vendor_id
-				FROM
-				  `tb_invoice_controlling` AS i 
-				WHERE i.`invoice_id`=$post_id";
-   		$sql.=" AND is_completed=0 LIMIT 1 ";
+   		$sql=" SELECT p.*,
+   		(SELECT SUM(paid) FROM `tb_vendorpayment_detail` WHERE tb_vendorpayment_detail.invoice_id=p.id) as paid
+   		FROM tb_purchase_order AS p WHERE p.id= $post_id AND p.status=1  ";
+   		$sql.=" AND p.is_completed=0 AND p.balance_after>0 LIMIT 1 ";
    	}
    	return  $db->fetchAll($sql);
    }
+   
+   
 function getAllInvoicePO($completed=null,$opt=null){
    	$db= $this->getAdapter();
 	$tr = Application_Form_FrmLanguages::getCurrentlanguage();

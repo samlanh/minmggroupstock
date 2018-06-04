@@ -55,6 +55,7 @@
 								<th class="tdheader"><?php echo  $tr->translate("PAID");?></th>
 								<th class="tdheader"><?php echo  $tr->translate("BALANCE");?></th>
 								<th class="tdheader"><?php echo  $tr->translate("ORDER_STATUS");?></th>
+								<th class="tdheader"><?php echo  $tr->translate("IS_PROVE");?></th>
 								<th class="tdheader" ><?php echo  $tr->translate("ACTION");?></th>
 								<th class="tdheader"><?php echo  $tr->translate("STATUS");?></th>
 							</tr>
@@ -114,6 +115,7 @@
 									<td class="items"><?php echo $rs["paid"];?></td>
 									<td class="items"><?php echo $rs["balance"];?></td>
 									<td class="items"><?php echo $rs["purchase_statuss"];?></td>
+									<td class="items"><?php echo $rs["is_approves"];?></td>
 									<td class="items-no" style="white-space: nowrap;">
 										<a <?php echo $edit_status;?> href="<?php echo $this->baseUrl();?>/purchase/mrapprove/approve/id/<?php echo $rs["id"]?>"><?php echo  $tr->translate("CHECK");?></a> | 
 										<a target="_blank" href="<?php echo $this->baseUrl();?>/report/index/rpt-purchase-requestdetail/id/<?php echo $rs["id"]?>"><?php echo  $tr->translate("PRINT");?></a>
