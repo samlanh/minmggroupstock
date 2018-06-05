@@ -13,6 +13,9 @@
 				<div class="caption">
 					<i class="icon-home"></i><?php echo $tr->translate("Suppliyer Payment")?>
 				</div>
+				<a href="<?php echo $url_cancel;?>" class="btn btn-bg blue  pull-right">
+					<i class="fa fa-times"></i>&nbsp;<?php echo $tr->translate("GO_BACK");?>
+				</a>
 			</div>
 			<div class="portlet-body form">
 				<!-- BEGIN FORM-->
@@ -120,6 +123,16 @@
 									<?php echo $form->getElement("remark");?>
 								</div>
 							</div>
+							
+							<label class="control-label col-md-2"><?php echo $tr->translate("RECEIPT_NO");?><span class="required">
+								</span>
+							</label>
+							<div class="col-md-4">
+								<div class="input-icon right">
+									<?php echo $form->getElement("receipt_no");?>
+								</div>
+							</div>
+							
 					    </div>
 						
 						<div class="portlet-body">
@@ -346,7 +359,7 @@ function doRemain() {
 	var paid = Number($('#paid').val());
 	if(paid > all_total){
 		var paid = $('#paid').val(all_total);
-		 $('#remain').val(0);
+		  $('#balance').val(0);
    }else{
 	   remain = all_total-paid;
 	   $('#balance').val(remain.toFixed(2));

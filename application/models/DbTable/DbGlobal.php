@@ -273,22 +273,39 @@ function getAllVendor($opt=null){
    }
    
    
-function getAllInvoicePO($completed=null,$opt=null){
-   	$db= $this->getAdapter();
-	$tr = Application_Form_FrmLanguages::getCurrentlanguage();
-   	$sql="SELECT i.`id`,i.`invoice_id`,i.`invoice_no`,i.`invoice_controlling_date`,i.`receive_invoice_date`,i.`invoice_date` FROM `tb_invoice_controlling` AS i WHERE 1";
-   	if($completed!=null){
-   		$sql.="  AND i.is_completed=0 ";
-   	}
-   	$sql.=" ORDER BY id DESC ";
-   	$row =  $db->fetchAll($sql);
-   	if($opt==null){
-   		return $row;
-   	}else{
-   		$options=array(-1=>$tr->translate("SELECT_INVOICE"));
-   		if(!empty($row)) foreach($row as $read) $options[$read['invoice_id']]=$read['invoice_no'];
-   		return $options;
-   	}
+// function getAllInvoicePO($completed=null,$opt=null){
+//    	$db= $this->getAdapter();
+// 	$tr = Application_Form_FrmLanguages::getCurrentlanguage();
+//    	$sql="SELECT i.`id`,i.`invoice_id`,i.`invoice_no`,i.`invoice_controlling_date`,i.`receive_invoice_date`,i.`invoice_date` FROM `tb_invoice_controlling` AS i WHERE 1";
+//    	if($completed!=null){
+//    		$sql.="  AND i.is_completed=0 ";
+//    	}
+//    	$sql.=" ORDER BY id DESC ";
+//    	$row =  $db->fetchAll($sql);
+//    	if($opt==null){
+//    		return $row;
+//    	}else{
+//    		$options=array(-1=>$tr->translate("SELECT_INVOICE"));
+//    		if(!empty($row)) foreach($row as $read) $options[$read['invoice_id']]=$read['invoice_no'];
+//    		return $options;
+//    	}
+//    }
+   
+   function getAllInvoicePO($completed=null,$opt=null){
+	   	$db= $this->getAdapter();
+	   	$sql=" SELECT id,invoice_no,(SELECT v_name FROM `tb_vendor` WHERE tb_vendor.vendor_id = p.vendor_id) AS vendor_name FROM `tb_purchase_order` AS p WHERE  p.status=1 and p.balance_after>0 ";
+	   	if($completed!=null){
+	   		$sql.="  AND p.is_completed=0 ";
+	   	}
+	   	$sql.=" ORDER BY id DESC ";
+	   	$row =  $db->fetchAll($sql);
+	   	if($opt==null){
+	   		return $row;
+	   	}else{
+	   		$options=array(-1=>"Select Invoice");
+	   		if(!empty($row)) foreach($row as $read) $options[$read['id']]=$read['invoice_no']."-".$read['vendor_name'];
+	   		return $options;
+	   	}
    }
 
 function getDnNo($completed=null,$opt=null){
@@ -1277,6 +1294,21 @@ function getDnNo($completed=null,$opt=null){
  	$acc_no= strlen((int)$acc_no+1);
  	$pre ='S';
  	for($i = $acc_no;$i<4;$i++){
+ 		$pre.='0';
+ 	}
+ 	return $pre.$new_acc_no;
+ }
+ 
+ public function getVendorPaidNumber($branch_id = null){
+ 	$this->_name='tb_vendor_payment';
+ 	$db = $this->getAdapter();
+ 	$sql=" SELECT COUNT(id)  FROM $this->_name WHERE branch_id=".$branch_id." LIMIT 1 ";
+ 	$pre = $this->getPrefixCode($branch_id)."R";
+ 	$acc_no = $db->fetchOne($sql);
+ 
+ 	$new_acc_no= (int)$acc_no+1;
+ 	$acc_no= strlen((int)$acc_no+1);
+ 	for($i = $acc_no;$i<5;$i++){
  		$pre.='0';
  	}
  	return $pre.$new_acc_no;

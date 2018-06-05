@@ -245,7 +245,7 @@
 <script>
 $('#frm').submit(function() {
 	customer_id=$("#v_name").val();
-	if(customer_id=='' || customer_id==-1){
+	if(customer_id=='' || customer_id==-1 || customer_id==0){
 		alert("Please select vendor name");
 		$('#v_name').select2('open');
 		return false;	
@@ -510,7 +510,7 @@ function addNewVendor(){
         type: "post",
         data: $('#frmvendor').serialize(),
         success: function(data){
-			alert(222);
+			//alert(222);
             val = $.parseJSON(data);
 		      val = $.parseJSON(data);
 		    $('#v_name').append($("<option></option>").attr("value",val['vid']).attr("selected",true).text(v_name));                       

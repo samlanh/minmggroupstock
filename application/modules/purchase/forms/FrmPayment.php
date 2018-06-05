@@ -109,6 +109,12 @@ class Purchase_Form_FrmPayment extends Zend_Form
     	$cheque->setAttribs(array("class"=>"form-control",'readonly'=>'readonly',"placeHolder"=>"Cheque Number"));
     	$this->addElement($cheque);
     	
+    	$receipt_no = new Zend_Form_Element_Text('receipt_no');
+    	$receipt_no->setAttribs(array("class"=>"form-control",'readonly'=>'readonly',"placeHolder"=>"Cheque Number"));
+    	$re_no = $db->getVendorPaidNumber($result['branch_id']);
+    	$receipt_no->setValue($re_no);
+    	$this->addElement($receipt_no);
+    	
     	$bank = new Zend_Form_Element_Text('bank_name');
     	$bank->setAttribs(array("class"=>"form-control",'readonly'=>'readonly','require'=>true,"placeHolder"=>"Bank Name"));
     	$this->addElement($bank);
@@ -136,7 +142,7 @@ class Purchase_Form_FrmPayment extends Zend_Form
     			$customerid->setValue($data[0]["vendor_id"]);
     			$customerid->setAttribs(array("readonly"=>true));
     			$locationID->setValue($data[0]['branch_id']);
-    			//$roder_element->setValue($data['receipt_no']);
+    			$receipt_no->setValue($data[0]['receipt_no']);
     			$paymentmethodElement->setValue($data[0]['payment_id']);
     			$date_inElement->setValue(date("m/d/Y",strtotime($data[0]['expense_date'])));
     			

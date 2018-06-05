@@ -850,3 +850,26 @@ if(commission==''){commission=0;};
 	$('#paid').val(0);
 }
 </script>	
+
+<script>
+$('#frm').submit(function() {
+	customer_id=$("#v_name").val();
+	if(customer_id=='' || customer_id==-1 || customer_id==0){
+		alert("Please select vendor name");
+		$('#v_name').select2('open');
+		return false;	
+	}
+	identity =$("#identity").val();
+	if(identity=='' || identity==-1){
+		alert("Please add product row");
+		$('#add_item').select2('open');
+		return false;
+	}
+	var r = confirm("សូមត្រួតពិនិត្យទិន្នន័យ អោយបានត្រឹមត្រូវ !\nតើលោកអ្នកពិតជាចង់រក្សាទុកទិន្នន័យនេះមែនឫទេ?");
+	if (r == true) {
+	    return true;
+	} else {
+	   return false;	    
+	}
+});
+</script>

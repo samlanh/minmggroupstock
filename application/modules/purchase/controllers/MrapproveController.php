@@ -85,7 +85,6 @@ public function init()
    	
     public function addpurchaseAction()
     {
-    	
     	$id=$this->getRequest()->getParam('id');
 		$db = new Application_Model_DbTable_DbGlobal();
 		if($this->getRequest()->isPost()) {

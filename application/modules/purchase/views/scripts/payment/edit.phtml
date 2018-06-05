@@ -2,7 +2,7 @@
 	$tr = Application_Form_FrmLanguages::getCurrentlanguage();
 	$form=$this->form_sale;
 	$url_submit = $this->url(array('module'=>'sales','controller'=>'payment','action'=>'edit',null));
-	$url_cancel = $this->url(array('module'=>'sales','controller'=>'payment','action'=>'index',null));
+	$url_cancel = $this->url(array('module'=>'purchase','controller'=>'payment','action'=>'index'));
 	$url_new = $this->url(array('module'=>'sales','controller'=>'payment','action'=>'edit',null));
 ?>
 <title><?php echo $tr->translate("Edit Customer Payment");?></title>
@@ -13,10 +13,13 @@
 				<div class="caption">
 					<i class="icon-home"></i><?php echo $tr->translate("Edit Customer Payment")?>
 				</div>
+				<a href="<?php echo $url_cancel;?>" class="btn btn-bg blue  pull-right">
+					<i class="fa fa-times"></i>&nbsp;<?php echo $tr->translate("GO_BACK");?>
+				</a>
 			</div>
 			<div class="portlet-body form">
 				<!-- BEGIN FORM-->
-				<form id="frm" action="<?php //echo $url_submit; ?>" class="form-horizontal" enctype="multipart/form-data" method="post">
+				<form id="frm" action=" " class="form-horizontal" enctype="multipart/form-data" method="post">
 					<div class="form-body" style="background:#fbf9f9;">
 						<div class="form-group">
 							<label class="control-label col-md-2"><?php echo $tr->translate("PAYMENT_METHOD");?> <span class="required">
@@ -112,6 +115,14 @@
 							<div class="col-md-4">
 								<div class="input-icon right">
 									<?php echo $form->getElement("remark");?>
+								</div>
+							</div>
+							<label class="control-label col-md-2"><?php echo $tr->translate("RECEIPT_NO");?><span class="required">
+								</span>
+							</label>
+							<div class="col-md-4">
+								<div class="input-icon right">
+									<?php echo $form->getElement("receipt_no");?>
 								</div>
 							</div>
 					    </div>
@@ -251,9 +262,9 @@ function initialize(){
 			template+='<td >'+index+'</td>';
 			template+='<td ><?php echo $row['date_input'];?></td>';
 			template+='<td ><?php echo $row['invoice_no'];?><input type="hidden" value="<?php echo $row['invoice_id'];?>" id="invoice_no'+index+'" name="invoice_no'+index+'"/></td>';
-			template+='<td ><?php echo $row['net_total'];?><input type="hidden" value="<?php echo $row['total'];?>" id="subtotal'+index+'" name="subtotal'+index+'"/></td>';
+			template+='<td ><?php echo $row['total'];?><input type="hidden" value="<?php echo $row['total'];?>" id="subtotal'+index+'" name="subtotal'+index+'"/></td>';
 			template+='<td ><?php echo $row['discount'];?><input type="hidden" value="<?php echo $row['discount'];?>" id="discount'+index+'" name="discount'+index+'"/></td>';
-			template+='<td ><?php echo $row['net_total']-$row['balance_after']-$row['paid'];?><input type="hidden" value="<?php echo $row['net_total']-$row['balance_after']-$row['paid'];?>" id="paid_amount'+index+'" name="paid_amount'+index+'"/><input type="hidden" name="old_paid_'+index+'" id="old_paid_'+index+'" value="<?php echo $row['paid'];?>" /></td>';
+			template+='<td ><?php echo $row['paid'];?><input type="hidden" value="<?php $row['paid'];?>" id="paid_amount'+index+'" name="paid_amount'+index+'"/><input type="hidden" name="old_paid_'+index+'" id="old_paid_'+index+'" value="<?php echo $row['paid'];?>" /></td>';
 			template+='<td ><?php echo $row['balance']+$row['paid'];?><input type="hidden" value="<?php echo $row['balance']+$row['paid'];?>" id="balance_after'+index+'" name="balance_after'+index+'"/></td>';
 	    template+="</tr>";
 		i++;
@@ -355,7 +366,7 @@ function doRemain() {
 	var paid = Number($('#paid').val());
 	if(paid>all_total){
 		var paid = $('#paid').val(all_total);
-		 $('#remain').val(0);
+		$('#balance').val(0);
    }else{
 	   remain = all_total-paid;
 	   $('#balance').val(remain.toFixed(2));
