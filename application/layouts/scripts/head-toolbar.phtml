@@ -5,6 +5,11 @@ $tr = Application_Form_FrmLanguages::getCurrentlanguage();
 $session_user=new Zend_Session_Namespace('auth');
 $request=Zend_Controller_Front::getInstance()->getRequest();
 ?>
+<style>
+.page-header.navbar .top-menu .navbar-nav > li.dropdown .dropdown-toggle .badge.badge-default {
+    background-color: #fa3e3e;
+}
+</style>
 	<div class="page-header-inner">
 		<!-- BEGIN LOGO -->
 		<div class="page-logo">
@@ -23,6 +28,43 @@ $request=Zend_Controller_Front::getInstance()->getRequest();
 		<!-- BEGIN TOP NAVIGATION MENU -->
 		<div class="top-menu">
 			<ul class="nav navbar-nav pull-right">
+			
+			
+			<li class="dropdown dropdown-extended dropdown-inbox" id="header_inbox_bar">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+					<i class="icon-envelope-open"></i>
+					<span class="badge badge-default">
+					<?php 
+					    $dbtable = new Product_Model_DbTable_DbGetBranch();
+						$num = $dbtable->getSumNumProduct($session_user->user_id);
+						echo $num;
+					?></span>
+					</a>
+					<ul class="dropdown-menu">
+						<li class="external">
+							<h3><a  target="_blank" href="<?php echo $this->url(array('module'=>'report','controller'=>'product','action'=>'rpt-procut-qtywarning'));?>"><span class="bold">You have <?php echo $num;?>product  quantity​​ in stock not enough!!!</span></a> </h3>
+						</li>
+						<li>
+							<ul class="dropdown-menu-list scroller" style="height: 275px;" data-handle-color="#637283">
+								<li>
+									<a target="_blank" href="<?php echo $this->url(array('module'=>'report','controller'=>'product','action'=>'rpt-procut-qtywarning'));?>">
+									<span class="photo">
+									</span>
+									<span class="subject">
+									<span class="from">
+									<?php echo $tr->translate("COMPANY_CUSTOMER");?> </span>
+									<span class="time">Just Now </span>
+									</span>
+									<span class="message">
+									List product in stock... </span>
+									</a>
+								</li>
+						
+							</ul>
+						</li>
+					</ul>
+				</li>
+			
 				<!-- BEGIN NOTIFICATION DROPDOWN -->
 				<!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
 				<li style="display: none;" class="dropdown dropdown-extended dropdown-notification" id="header_notification_bar">

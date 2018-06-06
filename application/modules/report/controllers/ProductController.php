@@ -316,5 +316,28 @@ class report_ProductController extends Zend_Controller_Action
     	Application_Model_Decorator::removeAllDecorator($frm);
     	$this->view->formFilter = $frm->filter();
     }
+    
+    function rptProcutQtywarningAction(){
+    	$db = new report_Model_DbProduct();
+    	if($this->getRequest()->isPost()){
+    		$data = $this->getRequest()->getPost();
+    	}else{
+    		$data = array(
+    				'ad_search'	=>	'',
+    				'branch'	=>	'',
+    				'brand'		=>	'',
+    				'category'	=>	'',
+    				'model'		=>	'',
+    				'color'		=>	'',
+    				'size'		=>	'',
+    				'status_qty'=>	-1
+    		);
+    	}
+    	$this->view->search = $db->getBranch($data["branch"]);
+    	$this->view->product = $db->getAllProductQtyWarning($data);
+    	$formFilter = new Product_Form_FrmProduct();
+    	$this->view->formFilter = $formFilter->productFilter();
+    	Application_Model_Decorator::removeAllDecorator($formFilter);
+    }
 	
 }
