@@ -43,7 +43,7 @@ class Purchase_PaymentController extends Zend_Controller_Action
 		
 
 		$link_print=array(
-				'module'=>'report','controller'=>'bookingpayment','action'=>'rpt-driver-paymentdetail',
+				'module'=>'report','controller'=>'index','action'=>'rpt-vendor-paymentdetail',
 		);
 			
 		if($level==1){

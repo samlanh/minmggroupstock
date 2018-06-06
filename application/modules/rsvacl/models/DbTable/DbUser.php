@@ -125,7 +125,7 @@ class RsvAcl_Model_DbTable_DbUser extends Zend_Db_Table_Abstract
 	//add user
 	public function insertUser($arr)
 	{ 
-		$photoname = str_replace(" ", "_", $arr['username']).rand(). '.jpg';
+		$photoname = str_replace(" ", "_", $arr['username']). '.jpg';
 		$upload = new Zend_File_Transfer();
 		$upload->addFilter('Rename',
 				array('target' => PUBLIC_PATH . '/images/'. $photoname, 'overwrite' => true) ,'signature');
@@ -233,7 +233,7 @@ class RsvAcl_Model_DbTable_DbUser extends Zend_Db_Table_Abstract
 				$this->update($arr, $where);
 		}
 		
-		$photoname = str_replace(" ", "_", $arr['username']).rand(). '.jpg';
+	    $photoname = str_replace(" ", "_", $arr['username']). '.jpg';
 		$upload = new Zend_File_Transfer();
 		$upload->addFilter('Rename',
 				array('target' => PUBLIC_PATH . '/images/'. $photoname, 'overwrite' => true) ,'signature');
@@ -243,9 +243,8 @@ class RsvAcl_Model_DbTable_DbUser extends Zend_Db_Table_Abstract
 			$arr['photo'] = $photoname;
 		}
 		else{
-			$arr['photo']=$arr['old_pic'];
+			$arr['photo']=$arr["old_pic"];
 		}
-		
 		try{
 			$db=$this->getAdapter();
 			$db->beginTransaction();

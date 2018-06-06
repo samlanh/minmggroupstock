@@ -131,12 +131,18 @@ $request=Zend_Controller_Front::getInstance()->getRequest();
 						</li>
 					</ul>
 				</li>
+				<?php if($session_user->user_img !=''){
+				       $img=$session_user->user_img ;
+				}else
+				{
+					$img='profile.png';
+				}?>
 				<!-- END TODO DROPDOWN -->
 				<!-- BEGIN USER LOGIN DROPDOWN -->
 				<!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
 				<li class="dropdown dropdown-user">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
-					<img alt="" class="img-circle" src="<?php echo $this->baseUrl()?>/assets/admin/layout/img/avatar3_small.jpg"/>
+					<img alt="" class="img-circle" src="<?php echo $this->baseUrl()?>/images/<?php echo $img?>"/>
 					<span class="username username-hide-on-mobile">
 					<?php echo $session_user->fullname;?> </span>
 					<i class="fa fa-angle-down"></i>

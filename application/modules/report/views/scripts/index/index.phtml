@@ -17,36 +17,19 @@
   
   ?>
 <div class="row">
-				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-					<div class="dashboard-stat blue-madison">
-						<a class="more" href="<?php echo $rpt_purchase;?>">
-						<div class="visual">
-							<i class="fa fa-comments"></i>
-						</div>
-						<div class="details">
-							<div class="number">
-							</div>
-							<div class="desc">
-								 <?php echo $tr->translate("RPT_PURCHASE");?>
-							</div>
-						</div>
-						</a>
-						<a class="more" href="javascript:;">
-						View more <i class="m-icon-swapright m-icon-white"></i>
-						</a>
-					</div>
-				</div>
+<h3 class="form-section" style="border-bottom: 3px solid red;"><?php echo $tr->translate("REQUEST_AND_PURCHASE_REPORT");?></h3>
+				
 				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 					<div class="dashboard-stat red-intense">
-						<a class="more" href="<?php echo $rpt_purcahsedetail;?>">
+						<a class="more" href="<?php echo $this->url(array('module'=>'report','controller'=>'index','action'=>'rpt-purchase-request'), null, true);?>">
 						<div class="visual">
-							<i class="fa fa-bar-chart-o"></i>
+							<i class="fa fa-globe"></i>
 						</div>
 						<div class="details">
 							<div class="number">
 							</div>
 							<div class="desc">
-								  <?php echo $tr->translate("RPT_PURCHASE_DETAIL");?>
+								  <?php echo $tr->translate("RPT_PURCHASE_REQUEST");?>
 							</div>
 						</div>
 						</a>
@@ -55,6 +38,9 @@
 						</a>
 					</div>
 				</div>
+				
+				
+				
 				
 	<!-- 		
 				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
@@ -236,68 +222,9 @@
 						</div>
 					</div>
 		 -->	
-				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-					<div class="dashboard-stat purple-plum">
-						<a class="more" href="<?php echo $rpt_expense;?>">
-						<div class="visual">
-							<i class="fa fa-globe"></i>
-						</div>
-						<div class="details">
-							<div class="number">
-								 
-							</div>
-							<div class="desc">
-								<?php echo $tr->translate("RPT_EXPENSE");?>
-							</div>
-						</div>
-						</a>
-						<a class="more" href="javascript:;">
-						View more <i class="m-icon-swapright m-icon-white"></i>
-						</a>
-					</div>
-				</div>
-				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-					<div class="dashboard-stat purple-plum">
-						<a class="more" href="<?php echo $this->url(array('module'=>'report','controller'=>'index','action'=>'rpt-typeexpense'), null, true);?>">
-						<div class="visual">
-							<i class="fa fa-globe"></i>
-						</div>
-						<div class="details">
-							<div class="number">
-							</div>
-							<div class="desc">
-							 <?php echo $tr->translate("RPT_EXPENSE_TYPE");?>
-							</div>
-						</div>
-						</a>
-						<a class="more" href="javascript:;">
-						View more <i class="m-icon-swapright m-icon-white"></i>
-						</a>
-					</div>
-				</div>
-				
-				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-					<div class="dashboard-stat purple-plum">
-						<a class="more" href="<?php echo $this->url(array('module'=>'report','controller'=>'index','action'=>'rpt-purchase-request'), null, true);?>">
-						<div class="visual">
-							<i class="fa fa-globe"></i>
-						</div>
-						<div class="details">
-							<div class="number">
-							</div>
-							<div class="desc">
-								  <?php echo $tr->translate("RPT_PURCHASE_REQUEST");?>
-							</div>
-						</div>
-						</a>
-						<a class="more" href="javascript:;">
-						View more <i class="m-icon-swapright m-icon-white"></i>
-						</a>
-					</div>
-				</div>
-				
-				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-					<div class="dashboard-stat purple-plum">
+		 
+		 <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+					<div class="dashboard-stat red-intense">
 						<a class="more" href="<?php echo $this->url(array('module'=>'report','controller'=>'index','action'=>'rpt-purchasenonestock'), null, true);?>">
 						<div class="visual">
 							<i class="fa fa-globe"></i>
@@ -317,7 +244,72 @@
 				</div>
 				
 				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-					<div class="dashboard-stat purple-plum">
+					<div class="dashboard-stat red-intense">
+						<a class="more" href="<?php echo $rpt_purchase;?>">
+						<div class="visual">
+							<i class="fa fa-comments"></i>
+						</div>
+						<div class="details">
+							<div class="number">
+							</div>
+							<div class="desc">
+								 <?php echo $tr->translate("RPT_PURCHASE");?>
+							</div>
+						</div>
+						</a>
+						<a class="more" href="javascript:;">
+						View more <i class="m-icon-swapright m-icon-white"></i>
+						</a>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+					<div class="dashboard-stat red-intense">
+						<a class="more" href="<?php echo $rpt_purcahsedetail;?>">
+						<div class="visual">
+							<i class="fa fa-bar-chart-o"></i>
+						</div>
+						<div class="details">
+							<div class="number">
+							</div>
+							<div class="desc">
+								  <?php echo $tr->translate("RPT_PURCHASE_DETAIL");?>
+							</div>
+						</div>
+						</a>
+						<a class="more" href="javascript:;">
+						View more <i class="m-icon-swapright m-icon-white"></i>
+						</a>
+					</div>
+				</div>
+		 
+				
+		</div>
+		
+		<div class="row">
+		<h3 class="form-section" style="border-bottom: 3px solid blue;"><?php echo $tr->translate("VEDER_PAYMENT_REPORT");?></h3>
+				
+				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+					<div class="dashboard-stat blue-madison">
+						<a class="more" href="<?php echo $this->url(array('module'=>'report','controller'=>'index','action'=>'rpt-vendor-payment'), null, true);?>">
+						<div class="visual">
+							<i class="fa fa-globe"></i>
+						</div>
+						<div class="details">
+							<div class="number">
+							</div>
+							<div class="desc">
+								  <?php echo $tr->translate("RPT_VENDOR_PAYMENT");?>
+							</div>
+						</div>
+						</a>
+						<a class="more" href="javascript:;">
+						View more <i class="m-icon-swapright m-icon-white"></i>
+						</a>
+					</div>
+				</div>
+				
+				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+					<div class="dashboard-stat blue-madison">
 						<a class="more" href="<?php echo $this->url(array('module'=>'report','controller'=>'index','action'=>'rpt-vandorbalance'), null, true);?>">
 						<div class="visual">
 							<i class="fa fa-globe"></i>
@@ -335,7 +327,6 @@
 						</a>
 					</div>
 				</div>
-				
 				<!-- 
 				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 					<div class="dashboard-stat green-haze">
@@ -491,4 +482,50 @@
 					</div>
 				</div>
 				 -->
+</div>
+
+<div class="row">
+<h3 class="form-section" style="border-bottom: 3px solid SlateBlue"><?php echo $tr->translate("OTHER_REPORT");?></h3>
+		
+		<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+					<div class="dashboard-stat purple-plum">
+						<a class="more" href="<?php echo $rpt_expense;?>">
+						<div class="visual">
+							<i class="fa fa-globe"></i>
+						</div>
+						<div class="details">
+							<div class="number">
+								 
+							</div>
+							<div class="desc">
+								<?php echo $tr->translate("RPT_EXPENSE");?>
+							</div>
+						</div>
+						</a>
+						<a class="more" href="javascript:;">
+						View more <i class="m-icon-swapright m-icon-white"></i>
+						</a>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+					<div class="dashboard-stat purple-plum">
+						<a class="more" href="<?php echo $this->url(array('module'=>'report','controller'=>'index','action'=>'rpt-typeexpense'), null, true);?>">
+						<div class="visual">
+							<i class="fa fa-globe"></i>
+						</div>
+						<div class="details">
+							<div class="number">
+							</div>
+							<div class="desc">
+							 <?php echo $tr->translate("RPT_EXPENSE_TYPE");?>
+							</div>
+						</div>
+						</a>
+						<a class="more" href="javascript:;">
+						View more <i class="m-icon-swapright m-icon-white"></i>
+						</a>
+					</div>
+				</div>
+		
+
 </div>

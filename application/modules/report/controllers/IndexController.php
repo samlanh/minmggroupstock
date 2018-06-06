@@ -987,6 +987,7 @@ class report_indexController extends Zend_Controller_Action
     	$this->view->formFilter = $formFilter;
     	Application_Model_Decorator::removeAllDecorator($formFilter);
     }
+    
 	 public function rptVandorbalanceAction()//purchase report
     {
     	if($this->getRequest()->isPost()){
@@ -1011,6 +1012,42 @@ class report_indexController extends Zend_Controller_Action
     	Application_Model_Decorator::removeAllDecorator($form_search);
     	$this->view->form_purchase = $form_search;
     }
+    
+    public function rptVendorPaymentAction()//purchase report
+    {
+    	if($this->getRequest()->isPost()){
+    		$data = $this->getRequest()->getPost();
+    		$data['start_date']=date("Y-m-d",strtotime($data['start_date']));
+    		$data['end_date']=date("Y-m-d",strtotime($data['end_date']));
+    	}else{
+    		$data = array(
+    				'text_search'=>'',
+    				'start_date'=>date("Y-m-d"),
+    				'end_date'=>date("Y-m-d"),
+    				'suppliyer_id'=>0,
+    				'branch_id'=>0,
+    		);
+    	}
+    	$this->view->rssearch = $data;
+    	$query = new report_Model_DbQuery();
+    	$this->view->vendor_payment =  $query->getVendorPaymentByid($data);
+    	$frm = new Application_Form_FrmReport();
+    
+    	$form_search=$frm->FrmReportPurchase($data);
+    	Application_Model_Decorator::removeAllDecorator($form_search);
+    	$this->view->form_purchase = $form_search;
+    }
+    
+    public function rptVendorPaymentdetailAction(){
+    	$id=$this->getRequest()->getParam('id');
+    	$query = new report_Model_DbQuery();
+    	$row=$this->view->vendor_payment =  $query->getVendorPaymentOnerow($id);
+    	if(empty($row)){
+    		$this->_redirect("/report/index/rpt-vendor-payment");
+    	}
+    	$this->view->v_detail =  $query->getVendorPaymentDetail($id);
+    }
+    
 	public function rptchequewithdrawalwarningAction()//purchase report
     {
     	if($this->getRequest()->isPost()){

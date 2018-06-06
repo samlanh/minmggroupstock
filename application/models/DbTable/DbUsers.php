@@ -11,7 +11,7 @@ class Application_Model_DbTable_DbUsers extends Zend_Db_Table_Abstract
     }
 	//function get user info from database
 	public function getUserInfo($user_id)	{
-		$sql = "SELECT au.`fullname`,au.`email`, au.`username`, au.`user_type_id`, aut.`user_type`, au.`LocationId`
+		$sql = "SELECT au.`fullname`,au.`email`, au.`username`, au.`user_type_id`, aut.`user_type`, au.`LocationId`,`photo`	
 				FROM `tb_acl_user` AS au
 				INNER JOIN `tb_acl_user_type` AS aut ON(au.`user_type_id` = aut.`user_type_id`)
 				WHERE user_id=" . $user_id;

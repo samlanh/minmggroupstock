@@ -135,6 +135,7 @@ class Purchase_Form_FrmPayment extends Zend_Form
     	
     	Application_Form_DateTimePicker::addDateField(array('order_date','date_in'));
     		if($data != null) {
+    			//print_r($data[0]['vtotal']);exit();
     			$idElement = new Zend_Form_Element_Hidden('id');
     			$this->addElement($idElement);
     			$idElement ->setValue($data[0]["id"]);
@@ -147,9 +148,9 @@ class Purchase_Form_FrmPayment extends Zend_Form
     			$date_inElement->setValue(date("m/d/Y",strtotime($data[0]['expense_date'])));
     			
     			$descriptionElement->setValue($data[0]['remark']);
-    			$allTotalElement->setValue($data[0]['total']);
-    			$remainlElement->setValue($data[0]['balance']);
-    			$paidElement->setValue($data[0]['paid']);
+    			$allTotalElement->setValue($data[0]['vtotal']);
+    			$remainlElement->setValue($data[0]['vbalance']);
+    			$paidElement->setValue($data[0]['vpaid']);
     			$locationID->setAttribs(array("readonly"=>true));
 				
 				$holder_name->setValue($data[0]["withdraw_name"]);

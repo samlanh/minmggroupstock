@@ -1359,8 +1359,66 @@ SUM(vp.paid) AS total_paid
 		$dbg = new Application_Model_DbTable_DbGlobal();
 		$where.=$dbg->getAccessPermission();
 		$order=" ORDER BY date_order DESC ";
-		echo $sql.$where.$order;
+		//echo $sql.$where.$order;
 		return $db->fetchAll($sql.$where.$order);
+	}
+	
+	
+	public function getVendorPaymentByid($search=null){//1
+		$db= $this->getAdapter();
+		$sql=" SELECT v.* ,
+		     (SELECT l.name FROM `tb_sublocation` AS l WHERE l.id = v.branch_id AND l.status=1 AND l.name!='' LIMIT 1) AS branch_name,
+		     (SELECT v_name FROM `tb_vendor` WHERE tb_vendor.vendor_id=v.vendor_id LIMIT 1 ) AS vendor_name,
+		     (SELECT u.username FROM tb_acl_user AS u WHERE u.user_id = user_id LIMIT 1 ) AS user_name
+		      FROM `tb_vendor_payment` AS v WHERE v.status=1 ";
+	
+		$from_date =(empty($search['start_date']))? '1': " v.expense_date >= '".$search['start_date']." 00:00:00'";
+		$to_date = (empty($search['end_date']))? '1': " v.expense_date <= '".$search['end_date']." 23:59:59'";
+		$where = " AND ".$from_date." AND ".$to_date;
+		if(!empty($search['text_search'])){
+			$s_where = array();
+			$s_search = trim(addslashes($search['text_search']));
+			$s_where[] = " receipt_no LIKE '%{$s_search}%'";
+			$s_where[] = " total LIKE '%{$s_search}%'";
+			$s_where[] = " paid LIKE '%{$s_search}%'";
+			$s_where[] = " balance LIKE '%{$s_search}%'";
+			$where .=' AND ('.implode(' OR ',$s_where).')';
+		}
+		if($search['suppliyer_id']>0){
+			$where .= " AND v.vendor_id = ".$search['suppliyer_id'];
+		}
+		if($search['branch_id']>0){
+			$where .= " AND v.branch_id =".$search['branch_id'];
+		}
+		$dbg = new Application_Model_DbTable_DbGlobal();
+		$where.=$dbg->getAccessPermission();
+		$order=" ORDER BY v.receipt_no ASC ";
+	//	echo $sql.$where.$order;
+		return $db->fetchAll($sql.$where.$order);
+	}
+	
+	public function getVendorPaymentOnerow($id){//1
+		$db= $this->getAdapter();
+		$sql=" SELECT v.* ,
+		(SELECT v_name FROM `tb_vendor` WHERE tb_vendor.vendor_id=v.vendor_id LIMIT 1 ) AS com_name,
+        (SELECT contact_name FROM `tb_vendor` WHERE tb_vendor.vendor_id=v.vendor_id LIMIT 1 ) AS con_name,
+        (SELECT `phone_person` FROM `tb_vendor` WHERE tb_vendor.vendor_id=v.vendor_id LIMIT 1 ) AS phone_name,
+		(SELECT l.name FROM `tb_sublocation` AS l WHERE l.id = v.branch_id AND l.status=1 AND l.name!='' LIMIT 1) AS branch_name,
+		(SELECT v_name FROM `tb_vendor` WHERE tb_vendor.vendor_id=v.vendor_id LIMIT 1 ) AS vendor_name,
+		(SELECT u.username FROM tb_acl_user AS u WHERE u.user_id = user_id LIMIT 1 ) AS user_name
+		FROM `tb_vendor_payment` AS v WHERE v.id=$id";
+		return $db->fetchRow($sql);
+	}
+	
+	public function getVendorPaymentDetail($id){//1
+		$db= $this->getAdapter();
+		$sql=" SELECT vd.*,
+				(SELECT p.invoice_no FROM `tb_purchase_order` AS p WHERE p.id=vd.invoice_id LIMIT 1 ) AS invoice_name
+				FROM `tb_vendor_payment` AS v,`tb_vendorpayment_detail` AS vd
+				WHERE v.`id`=vd.`receipt_id`
+				AND v.`status`=1
+				AND vd.`receipt_id`=$id";
+		return $db->fetchAll($sql);
 	}
 	
 	public function getchequeWithdrawalWaring($search){//1

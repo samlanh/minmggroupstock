@@ -257,7 +257,7 @@ function initialize(){
 	var i=0;
 	<?php if (!empty($this->reciept_detail)) foreach ($this->reciept_detail as $row){?>
 		index=i+1;
-		template+='<tr style="height:30px;">';
+		template+='<tr style="height:30px;"  id="row_order_'+index+'">';
             template+='<td ><img onClick="deleteRecord('+index+')" src="<?php echo BASE_URL; ?>/images/icon/delete.gif" /></td>';
 			template+='<td >'+index+'</td>';
 			template+='<td ><?php echo $row['date_input'];?></td>';
@@ -265,7 +265,7 @@ function initialize(){
 			template+='<td ><?php echo $row['total'];?><input type="hidden" value="<?php echo $row['total'];?>" id="subtotal'+index+'" name="subtotal'+index+'"/></td>';
 			template+='<td ><?php echo $row['discount'];?><input type="hidden" value="<?php echo $row['discount'];?>" id="discount'+index+'" name="discount'+index+'"/></td>';
 			template+='<td ><?php echo $row['paid'];?><input type="hidden" value="<?php $row['paid'];?>" id="paid_amount'+index+'" name="paid_amount'+index+'"/><input type="hidden" name="old_paid_'+index+'" id="old_paid_'+index+'" value="<?php echo $row['paid'];?>" /></td>';
-			template+='<td ><?php echo $row['balance']+$row['paid'];?><input type="hidden" value="<?php echo $row['balance']+$row['paid'];?>" id="balance_after'+index+'" name="balance_after'+index+'"/></td>';
+			template+='<td ><?php echo $row['balance'];?><input type="hidden" value="<?php echo $row['balance']+$row['paid'];?>" id="balance_after'+index+'" name="balance_after'+index+'"/></td>';
 	    template+="</tr>";
 		i++;
 		if($('#identity').val()!="") {
