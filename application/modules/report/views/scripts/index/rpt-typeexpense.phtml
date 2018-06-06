@@ -35,15 +35,19 @@
 				<form method="post" action="<?php //echo $formFilter->getAction(); ?>">
 					<div class="form-group" style="padding-top: 6px;">
 						<?php $formFilter = $this->formFilter; ?>
-						<label class="control-label col-md-2"><?php echo $formFilter->getElement('text_search');?></label>
-						<label class="control-label col-md-2"><?php echo $formFilter->getElement('branch_id');?></label>
-						<label class="control-label col-md-2"><?php echo $formFilter->getElement('title');?></label>
-						<label class="control-label col-md-2"><div class="input-icon right"><i class="icon-calendar"></i><?php echo $formFilter->getElement('start_date');?></div></label>
-						<label class="control-label col-md-2"><div class="input-icon right"><i class="icon-calendar"></i><?php echo $formFilter->getElement('end_date');?></div></label>
-						<label class="control-label col-md-2">
+						<label class="control-label col-md-3"><?php echo $formFilter->getElement('text_search');?></label>
+						<label class="control-label col-md-3"><?php echo $formFilter->getElement('branch_id');?></label>
+						<label class="control-label col-md-3"><?php echo $formFilter->getElement('title');?></label>
+						<label class="control-label col-md-3"><div class="input-icon right"><i class="icon-calendar"></i><?php echo $formFilter->getElement('start_date');?></div></label>
+					</div><div style="clear:both;"></div>	
+					
+					<div class="form-group" style="padding-top: 6px;">
+						<label class="control-label col-md-3"><div class="input-icon right"><i class="icon-calendar"></i><?php echo $formFilter->getElement('end_date');?></div></label>
+						<label class="control-label col-md-3">
 							<button class="btn btn-primary col-md-12" value="" ><i class="fa fa-save"></i>&nbsp;<?php echo $tr->translate("REFRESH");?></button>
 						</label>
-					</div><div style="clear:both;"></div>	
+					</div><div style="clear:both;"></div>
+					
 				</form> 
 			</div>
 <div style="border: 1px dotted #000;background: #fff; margin: 0 auto;min-height: 27cm;">
