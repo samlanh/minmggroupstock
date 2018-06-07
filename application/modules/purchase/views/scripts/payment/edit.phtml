@@ -222,6 +222,9 @@ $( document ).ready(function() {
 	//checkControll();
 	//$( "#customer_id" ).attr( "readOnly", true );
 	//$( "#invoice_id" ).attr( "readOnly", true );
+	$('#payment_method').attr("style", "pointer-events: none;");
+	$('#invoice_id').attr("style", "pointer-events: none;");
+	$('#customer_id').attr("style", "pointer-events: none;");
 });
 function checkControll(){
 	$("#table_order").html("");

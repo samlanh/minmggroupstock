@@ -525,9 +525,16 @@ function addNewVendor(){
 function popupProduct(){
 	$('#productpopup').modal('show');
 }
+
 <?php $url_add_new =  $this->url(array('module'=>'product','controller'=>'index','action'=>'add-newproudct')); ?>
 function addProduct(){
 		branch_id = $("#LocationId").val();
+		if($("#name").val()==''){
+			alert("Please Input Product!!!");
+			$("#name").focus();
+			return false;
+		}
+		
 		$.ajax({
 	        url: "<?php echo $url_add_new;?>",
 	        type: "post",
@@ -539,14 +546,16 @@ function addProduct(){
 		      $('#productpopup').modal('hide');
 			  addRow(data['pro_id']);
 			  $('#item_id_'+index5).append($("<option></option>").attr("value",data['pro_id']).attr("selected",true).text($("#name").val()));                       
-				 $("#item_id_"+index5).select2();
-				 $('#qty'+index5).val(1);
+			  $("#item_id_"+index5).select2();
+			  $('#qty'+index5).val(1);
+			  $('#frmproduct').trigger('reset');
 	        },
 	        error:function(err){
-	           alert(err);
+	          // alert(err);
 	        }
 	    });	
 }
+
 var index5 = 0;num=0;
 var option5 = '<?php echo $this->items; ?>';
 var baseUrl = '<?php echo BASE_URL; ?>';
@@ -625,7 +634,7 @@ function getQtyById(index){//use
 							$("#qty"+index).val(total_qty.toFixed(3));
 						},
 						error:function(e){
-							alert("err product"+e);
+							//alert("err product"+e);
 						}
 				});
 			}

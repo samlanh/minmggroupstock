@@ -667,6 +667,7 @@ $( document ).ready(function() {
 				 $('#brand').append($("<option></option>").attr("value",rs['brand_id']).attr("selected",true).text(brand_name));                       
 				 $("#brand").select2();
 				$('#brandpopup').modal('hide');
+				$('#frmbrand').trigger('reset');
 			},
 			error:function(err){
 				alert("faile insert");
@@ -686,6 +687,7 @@ $( document ).ready(function() {
 				 $('#category').append($("<option></option>").attr("value",rs['cat_id']).attr("selected",true).text(cat_name));                       
 				 $("#category").select2();
 				$('#categorypopup').modal('hide');
+				$('#frmCat').trigger('reset');
 			},
 			error:function(err){
 				alert("faile insert");
@@ -706,6 +708,7 @@ $( document ).ready(function() {
 				 $("#measure").select2();
 				$('#measurepopup').modal('hide');
 				document.getElementById('lb_measure').innerHTML = measure_name; 
+				$('#frmMesure').trigger('reset');
 			},
 			error:function(err){
 				alert("faile insert");

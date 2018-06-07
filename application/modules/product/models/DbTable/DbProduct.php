@@ -792,7 +792,6 @@ class Product_Model_DbTable_DbProduct extends Zend_Db_Table_Abstract
 // 	    }
 //     }
     public function addAjaxProduct($data){
-    	//print_r($data);exit();
     	$db = $this->getAdapter();
     	$db->beginTransaction();
     	try {
@@ -811,7 +810,7 @@ class Product_Model_DbTable_DbProduct extends Zend_Db_Table_Abstract
     				'unit_label'	=>	$data["label"],
     				'user_id'		=>	$this->getUserId(),
     				'note'			=>	$data["description"],
-    				//'status'		=>	$data["status"],
+    				'status'		=>	1,
     		);
     		$this->_name="tb_product";
     		$id = $this->insert($arr);
