@@ -6,6 +6,11 @@ class Purchase_PaymentController extends Zend_Controller_Action
     {
     	defined('BASE_URL')	|| define('BASE_URL', Zend_Controller_Front::getInstance()->getBaseUrl());
     	$this->tr = Application_Form_FrmLanguages::getCurrentlanguage();
+    	$db = new Application_Model_DbTable_DbGlobal();
+    	$rs = $db->getValidUserUrl();
+    	if(empty($rs)){
+    		Application_Form_FrmMessage::Sucessfull("YOU_NO_PERMISION_TO_ACCESS_THIS_SECTION","/index/dashboad");
+    	}
     }
     protected function GetuserInfoAction(){
     	$user_info = new Application_Model_DbTable_DbGetUserInfo();

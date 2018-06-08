@@ -54,11 +54,13 @@
 		<div id="divPrint"  >
 			<table style="background:#fff; margin: 0 auto; width: 100%; padding: 0px 10px 1cm 10px;font-family: 'Hanuman';">
 							<tr style="font-size: 13px;">
-								<td colspan="3" align="center">
-									<strong style="font-weight:bold;font-family: Arial Black;color:#000; font-size: 16px;font-family:'Khmer MEF2';"><?php echo $tr->translate("COMPANY_CUSTOMER");?></strong><br />
-				<strong style="font-weight:bold;font-family: Arial Black;color:#000; font-size: 14px;font-family:'Khmer MEF2';"><?php echo $tr->translate("RPT_EXPENSE_TYPE");?></strong><br />
-									<strong style="font-weight:bold;font-family: Arial Black;color:#000; font-size: 14px;font-family:'Khmer MEF2';">For Date <?php echo date("d-M-Y",strtotime($this->search["start_date"]))?> to <?php echo date("d-M-Y",strtotime($this->search["end_date"]));?></strong>
+								 <td width="2%" valign="top"><img src="<?php echo $this->baseUrl();?>/images/logo.jpg" height="55px"></td>
+								<td   align="center" width="60%">
+									<strong style="font-weight:bold;font-family: Arial Black;color:#000; font-size: 14px;font-family:'Khmer OS Muol Light';"><?php echo $tr->translate("COMPANY_CUSTOMER");?></strong><br />
+				​​​​​​​​                    <strong style="font-weight:bold;font-family: Arial Black;color:#000; font-size: 14px;font-family:'Khmer OS Muol Light';"><?php echo $tr->translate("RPT_EXPENSE_TYPE");?></strong><br />
+									<strong style="font-weight:bold;font-family: Arial Black;color:#000; font-size: 12px;font-family:'Khmer MEF2';">For Date <?php echo date("d-M-Y",strtotime($this->search["start_date"]))?> to <?php echo date("d-M-Y",strtotime($this->search["end_date"]));?></strong>
 								</td>
+								<td width="20%"></td>
 							</tr>
 							<tr>
 								<td width="20%" align="left">
