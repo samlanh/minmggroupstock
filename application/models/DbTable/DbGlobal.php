@@ -1242,6 +1242,20 @@ function getDnNo($completed=null,$opt=null){
  	}
  	return $pre.$new_acc_no;
  }
+ 
+ public function getCloselistNo(){
+ 	$this->_name='tb_closelist';
+ 	$db = $this->getAdapter();
+ 	$sql=" SELECT id FROM $this->_name ORDER BY id DESC LIMIT 1 ";
+ 	$acc_no = $db->fetchOne($sql);
+ 	$new_acc_no= (int)$acc_no+1;
+ 	$acc_no= strlen((int)$acc_no+1);
+ 	$pre ='cl';
+ 	for($i = $acc_no;$i<4;$i++){
+ 		$pre.='0';
+ 	}
+ 	return $pre.$new_acc_no;
+ }
   
  public function getStaffNo(){
  	$this->_name='tb_staff';

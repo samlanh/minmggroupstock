@@ -171,6 +171,39 @@ class Product_Model_DbTable_DbDamagedStock extends Zend_Db_Table_Abstract
 		return $db->fetchRow($sql);
 	}
 	
+	
+	
+	function getAllProductCloseList($id,$location,$type){
+		$db = $this->getAdapter();
+		$sql = "SELECT
+		p.`id`,
+		p.`item_name` ,
+		p.`qty_perunit` ,
+		p.`item_code`,
+		p.`unit_label`,
+		p.price,
+		(SELECT m.`name` FROM `tb_measure` AS m WHERE m.id=p.`measure_id` LIMIT 1) AS measure,
+		(SELECT b.name FROM `tb_brand` AS b WHERE b.id=p.`brand_id`) AS brand,
+		(SELECT c.name FROM `tb_category` AS c WHERE c.id = p.`cate_id`) AS category,
+		(SELECT v.name_kh FROM `tb_view` AS v WHERE v.id=p.`model_id`) AS model,
+		(SELECT v.name_kh FROM `tb_view` AS v WHERE v.id=p.`color_id`) AS color,
+		(SELECT v.name_kh FROM `tb_view` AS v WHERE v.id=p.`size_id`) AS size,
+		pl.`qty`,
+		pl.damaged_qty
+		FROM
+		`tb_product` AS p,
+		`tb_prolocation` AS pl WHERE p.`id` = pl.`pro_id` AND  pl.`location_id`=1";
+		$where='';
+// 		if($type==1){
+// 			$where="  AND p.`id`=$id AND pl.`location_id` = $location";
+// 			return $db->fetchRow($sql.$where);
+// 		}else{
+// 			$where=" AND  pl.`location_id`=1";
+// 			return $db->fetchAll($sql.$where);
+// 		}
+		return $db->fetchAll($sql);
+	}
+	
 	//for get current qty time /26-8-13
 	public function getCurrentItem($post){
 		$db=$this->getAdapter();

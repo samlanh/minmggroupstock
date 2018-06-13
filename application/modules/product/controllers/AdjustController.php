@@ -56,14 +56,12 @@ public function init()
 			}
     		
     	}
-
     	//for add location
-    	
     	$frm = new Product_Form_FrmAdjust();
     	Application_Model_Decorator::removeAllDecorator($frm);
     	$this->view->formFilter = $frm->add();
-    	
 	}
+	
 	public function priceAction(){
 		$formFilter = new Product_Form_FrmItemPrice();
 		$frmsearch=$formFilter->searchPrice(null);
