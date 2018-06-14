@@ -24,15 +24,18 @@ class Product_CloselistController extends Zend_Controller_Action
 		$date =new Zend_Date();
    		if($this->getRequest()->isPost()){   
     		$data = $this->getRequest()->getPost();
+    		$data['start_date']=date("Y-m-d",strtotime($data["start_date"]));
+    		$data['end_date']=date("Y-m-d",strtotime($data["end_date"]));
     	}else{
 			$data = array(
     			'ad_search'		=>	'',
+			    'branch'        =>	'',
     			'start_date'	=>	date("Y-m-d"),
 				'end_date'		=>	date("Y-m-d"),
     		);
 		}
    
-		$rows=$db->getAllRequestStock($data);
+		$rows=$db->getAllCloseList($data);
    		$columns=array("LOCATION_NAME","CLOSE_DATE","MODIFY_DATE","NOTE","USER_NAME");
    		$link=array(
    		    'module'=>'product','controller'=>'closelist','action'=>'edit',
@@ -63,20 +66,28 @@ class Product_CloselistController extends Zend_Controller_Action
 	
 	public function editAction()
 	{
+	    $id=$this->getRequest()->getParam('id');
+	    $db_adjust= new Product_Model_DbTable_DbCloselist();
 	    if($this->getRequest()->isPost()){
 	        $post=$this->getRequest()->getPost();
-	        $db_adjust= new Product_Model_DbTable_DbCloselist();
-	        $db_result = $db_adjust->addCloseList($post);
+	        $post['id']=$id;
+	        $db_result = $db_adjust->updateCloseList($post);
 	        if(isset($post["save_close"])){
-	            Application_Form_FrmMessage::Sucessfull("INSERT_SUCCESS",self::REDIRECT_URL_ADD_CLOSE);
+	            Application_Form_FrmMessage::Sucessfull("UPDATE_SUCCESS",self::REDIRECT_URL_ADD_CLOSE);
 	        }else{
-	            Application_Form_FrmMessage::Sucessfull("INSERT_SUCCESS",self::REDIRECT_URL_ADD);
+	            Application_Form_FrmMessage::Sucessfull("UPDATE_SUCCESS",self::REDIRECT_URL_ADD_CLOSE);
 	        }
 	    }
 	    //for add location
+	    if(empty($id)){
+	        Application_Form_FrmMessage::Sucessfull("ID not found!",self::REDIRECT_URL_ADD_CLOSE);
+	    }
+	    $row=$db_adjust->getCloselistById($id);
+	    $this->view->rows=$db_adjust->getCloselistDetail($id);
 	    $frm = new Product_Form_FrmCloselist();
 	    Application_Model_Decorator::removeAllDecorator($frm);
-	    $this->view->formFilter = $frm->add();
+	    $this->view->formFilter = $frm->add($row);
+	   
 	}
 	
 	public function getprocloselistAction(){

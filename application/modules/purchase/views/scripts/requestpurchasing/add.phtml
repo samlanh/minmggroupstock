@@ -608,7 +608,7 @@ function addRow(item_id) {
 	 $("#item_id_"+index5).select2();
 	$("#row_order_0").remove();
 }
-<?php $url_qty =  $this->url(array('module'=>'purchase','controller'=>'index','action'=>'getqtybyid')); ?>
+<?php $url_qty =  $this->url(array('module'=>'purchase','controller'=>'requestpurchasing','action'=>'getqtybyid')); ?>
 function getQtyById(index){//use
 				item_id=$("#item_id_"+index).val();
 				qty_unit=$("#qty_unit_"+index).val();
@@ -812,7 +812,7 @@ function addNewLocation(){
         }
     });
 }
-<?php $url_code =  $this->url(array('module'=>'purchase','controller'=>'index','action'=>'check-purchaseno')); ?>
+<?php $url_code =  $this->url(array('module'=>'purchase','controller'=>'requestpurchasing','action'=>'check-purchaseno')); ?>
 function CheckPOInvoice(){
 	pur_no=$("#txt_order").val();
 	if(pur_no=="" || pur_no ==null){

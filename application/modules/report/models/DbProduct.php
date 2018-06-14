@@ -11,6 +11,7 @@ Class report_Model_DbProduct extends Zend_Db_Table_Abstract{
 		$sql ="SELECT b.`name` FROM `tb_sublocation` AS b WHERE b.`id`='".$id."'";
 		return $db->fetchOne($sql);
 	}
+	
 	function getAllProduct($data){
 		$db = $this->getAdapter();
 		$db_globle = new Application_Model_DbTable_DbGlobal();
@@ -232,6 +233,68 @@ Class report_Model_DbProduct extends Zend_Db_Table_Abstract{
 		$location = $db_globle->getAccessPermission('pl.`location_id`');
 		$group = " GROUP BY p.`id` ORDER BY p.`item_name`";
 		return $db->fetchAll($sql.$where.$location.$group);
+	}
+	
+	function getAllSummaryStock($data){
+	    $db = $this->getAdapter();
+	    $db_globle = new Application_Model_DbTable_DbGlobal();
+	    $sql ="SELECT pur.`date_in`,
+               (SELECT tb_vendor.v_name FROM `tb_vendor` WHERE tb_vendor.`vendor_id`=pur.`vendor_id` LIMIT 1)AS vendor_name,
+               p.`item_name`,p.`item_code`,
+               (SELECT cd.qty_adjust FROM `tb_closelist_detail` AS cd WHERE cd.pro_id=p.id LIMIT 1) AS cl_qty,
+               purd.`qty_receive` AS qty_pur,
+               (SELECT srd.receive_qty FROM `tb_staff_request_detail` AS srd WHERE srd.pro_id=p.id LIMIT 1) AS req_qty,
+               pl.`qty` AS curr_qty,
+               (SELECT m.name FROM `tb_measure` AS m WHERE m.id = p.`measure_id` LIMIT 1) AS measure,
+               p.`price`
+       
+              FROM `tb_purchase_order` AS pur,`tb_purchase_order_item` AS purd,
+                   `tb_product` AS p,`tb_prolocation` AS pl
+              WHERE pur.`id`=purd.`purchase_id`
+              AND purd.`pro_id`=p.`id`
+              AND p.`id`=pl.`pro_id`";
+	    $where = '';
+	    if($data["ad_search"]!=""){
+	        $s_where=array();
+	        $s_search = addslashes(trim($data['ad_search']));
+	        $s_where[]= " p.item_name LIKE '%{$s_search}%'";
+	        $s_where[]=" p.barcode LIKE '%{$s_search}%'";
+	        $s_where[]= " p.item_code LIKE '%{$s_search}%'";
+	        $s_where[]= " p.serial_number LIKE '%{$s_search}%'";
+	        $where.=' AND ('.implode(' OR ', $s_where).')';
+	    }
+	    if($data["branch"]!=""){
+	        $where.=' AND pl.`location_id`='.$data["branch"];
+	    }
+	    if($data["brand"]!=""){
+	        $where.=' AND p.brand_id='.$data["brand"];
+	    }
+	    if($data["category"]!=""){
+	        $where.=' AND p.cate_id='.$data["category"];
+	    }
+	    if($data["category"]!=""){
+	        $where.=' AND p.cate_id='.$data["category"];
+	    }
+	    if($data["model"]!=""){
+	        $where.=' AND p.model_id='.$data["model"];
+	    }
+	    if($data["size"]!=""){
+	        $where.=' AND p.size_id='.$data["size"];
+	    }
+	    if($data["color"]!=""){
+	        $where.=' AND p.color_id='.$data["color"];
+	    }
+	    if($data["status_qty"]>-1){
+	        if($data["status_qty"]==1){
+	            $where.=' AND pl.qty>0';
+	        }else{
+	            $where.=' AND pl.qty=0';
+	        }
+	        
+	    }
+	    $location = $db_globle->getAccessPermission('pl.`location_id`');
+	    $group = " GROUP BY p.`id` ORDER BY p.`item_name`";
+	    return $db->fetchAll($sql.$where.$location.$group);
 	}
 	
 }

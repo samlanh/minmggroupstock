@@ -5,7 +5,7 @@ class Product_Form_FrmCloselist extends Zend_Form
     {
 
 	}
-	function add(){
+	function add($data=null){
 		$tr = Application_Form_FrmLanguages::getCurrentlanguage();
 		$db = new Product_Model_DbTable_DbAdjustStock();
 		$db_global = new Application_Model_DbTable_DbGlobal();
@@ -65,6 +65,15 @@ class Product_Form_FrmCloselist extends Zend_Form
 		));
 		$start_date ->setValue($date->get('MM/d/Y'));
 		
+		if(!empty($data)){
+		   //print_r($data);exit();
+		   $from_loc->setValue($data['location_id']);
+		   $close_no->setValue($data['close_num']);
+		   $start_date->setValue(date("m/d/Y",strtotime($data['close_date'])));
+		   $note->setValue($data['note']);
+		   //$from_loc->setAttribs(array('readOnly'=>'readOnly',));
+		}
+		
 		$this->addElements(array($start_date,$close_no,$pro_name,$from_loc));
 		return $this;
 	}
@@ -79,6 +88,13 @@ class Product_Form_FrmCloselist extends Zend_Form
 				'class'=>'form-control',
 		));
 		$pro_name ->setValue($request->getParam("ad_search"));
+		
+		$db_global = new Application_Model_DbTable_DbGlobal();
+		$rs_from_loc = $db_global -> getAllLocation();
+		$date =new Zend_Date();
+		
+		$user_info = new Application_Model_DbTable_DbGetUserInfo();
+		$result = $user_info->getUserInfo();
 		
 		$start_date = New Zend_Form_Element_Text("start_date");
 		$start_date->setAttribs(array(
@@ -104,7 +120,22 @@ class Product_Form_FrmCloselist extends Zend_Form
 			$end_date ->setValue($date->get('MM/d/Y'));
 		}
 		
-		$this->addElements(array($pro_name,$end_date,$start_date));
+		$from_loc = new Zend_Form_Element_Select("branch");
+		$from_loc->setAttribs(array(
+		    'class'=>'form-control select2me',
+		));
+		
+		$opt = array(''=>$tr->translate("SELECT BRANCH"));
+		if(!empty($rs_from_loc)){
+		    foreach ($rs_from_loc as $rs){
+		        $opt[$rs["id"]] = $rs["name"];
+		    }
+		}
+		$from_loc->setMultiOptions($opt);
+		$from_loc ->setValue($request->getParam("branch"));
+		//$from_loc->setValue($result["branch_id"]);
+		
+		$this->addElements(array($from_loc,$pro_name,$end_date,$start_date));
 		return $this;
 	}
 	
