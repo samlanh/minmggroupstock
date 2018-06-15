@@ -2,6 +2,7 @@
 $tr=Application_Form_FrmLanguages::getCurrentlanguage();
 $brach_name =  $this->branch;
 $formFilter = $this->formFilter;
+//print_r($this->product);
 ?>
 <title>Product Current Stock Report</title>
 <div class="row">
@@ -29,7 +30,7 @@ $formFilter = $this->formFilter;
 				</div>
 			</div>
             <div class="portlet-body form frmfilter">
-				<form method="post" action="<?php //echo $formFilter->getAction(); ?>">
+				<form method="post" action="">
 					<div class="form-body">
 							<div class="form-group">
 								<label class="control-label col-md-3">
@@ -39,28 +40,22 @@ $formFilter = $this->formFilter;
 									<?php echo $formFilter->getElement('branch');?>
 								</label>
 								<label class="control-label col-md-3">
-									<?php echo $formFilter->getElement('brand');?>
+									<?php echo $formFilter->getElement('suppliyer_id');?>
 								</label>
 								<label class="control-label col-md-3">
-									<?php echo $formFilter->getElement('category');?>
+									<?php echo $formFilter->getElement('measure');?>
 								</label>
 							</div>
 							<div class="form-group">
 								<label class="control-label col-md-3">
-									<?php echo $formFilter->getElement('model');?>
+									<?php echo $formFilter->getElement('start_date');?>
 								</label>
 								<label class="control-label col-md-3">
-									<?php echo $formFilter->getElement('size');?>
-								</label>
-								<label class="control-label col-md-3">
-									<?php echo $formFilter->getElement('color');?>
-								</label>
-								<label class="control-label col-md-3">
-									<?php echo $formFilter->getElement('status_qty');?>
+									<?php echo $formFilter->getElement('end_date');?>
 								</label>
 							</div>
 							<div class="form-group">
-								<label class="control-label col-md-2  pull-right">
+								<label class="control-label col-md-2  ">
 									<button type="submit" class="btn btn-primary col-md-12"><?php echo $tr->translate("SEARCH");?></button>
 								</label>
 							</div>
@@ -126,21 +121,25 @@ $formFilter = $this->formFilter;
 			                 <tr bgcolor="#ccc" class="style" align="center" style="font-weight:bold; line-height: 20px; font-size:12px; padding:1px 0px; white-space: nowrap; ">
 			                    <td>&nbsp;<?php echo $tr->translate("NUM");?></td>
 								<td><?php echo $tr->translate("BRANCH_NAME");?></td>
-								<td><?php echo $tr->translate("ITEM_CODE");?></ts>
+								<td><?php echo $tr->translate("DATE_IN");?></td>
+								<td><?php echo $tr->translate("VENDOR_NAME");?></td>
 								<td><?php echo $tr->translate("ITEM_NAME");?></td>
-								<td><?php echo $tr->translate("BARCODE");?></td>
-								<td><?php echo $tr->translate("PRODUCT_CATEGORY");?></td>
+								<td><?php echo $tr->translate("ITEM_CODE");?></td>
+								<td><?php echo $tr->translate("ដើមគ្រា");?></td>
+								<td><?php echo $tr->translate("ស្តុកចូល");?></td>
+								<td><?php echo $tr->translate("សរុប");?></td>
+								<td><?php echo $tr->translate("ស្តុកចេញ");?></td>
+								<td><?php echo $tr->translate("ស្តុកសល់");?></td>
 								<td><?php echo $tr->translate("MEASURE");?></td>
-								<td><?php echo $tr->translate("QTY");?></td>
-								<!--<td><?php echo $tr->translate("COST_PRICE");?></td>
-								<td><?php echo $tr->translate("STATUS");?></td>-->
+								<td><?php echo $tr->translate("COST_PRICE");?></td>
+								<td><?php echo $tr->translate("តម្លៃសរុប");?></td>
+								<td><?php echo $tr->translate("OTHER");?></td>
 			                </tr>
 		                </thead>
 		                <tbody>
 		                <?php $num=1; 
-		                $r_netotal = 0;$r_paid = 0; $r_balance = 0;
-		                $d_netotal = 0;$d_paid = 0; $d_balance = 0;
-		                $b_netotal = 0;$b_paid = 0; $b_balance = 0;
+		                $total_qty=0;
+		                $total_price=0;
 		                if(!empty($this->product))foreach ($this->product AS $index => $row){
 // 							$raw_qty = $row["qty"];
 // 							$array = explode(".",$row["qty"]);
@@ -158,16 +157,26 @@ $formFilter = $this->formFilter;
 // 							}else{
 // 								$l_qty = 0;
 // 							}
+		                    $total_qty=$row["cl_qty"]+$row["qty_pur"];
+		                    $total_price=$row["curr_qty"]*$row["price"];
 						?>
 						<tr class='row-format<?php echo $num; ?>' id="item_<?php echo $index; ?>">
 									<td align="center" style="width:3% !important">&nbsp;<?php echo $index+1 ?></td>
-									<td style="white-space: nowrap;" class="center"><?php //echo $row["branch"]?></td>
-									<td style="white-space: nowrap;">&nbsp;&nbsp;<?php echo $row["item_code"]?>&nbsp;&nbsp;</td>
+									<td style="white-space: nowrap;" class="center"><?php echo $row["location_name"]?></td>
+									<td style="white-space: nowrap;" class="center"><?php echo date("d-M-Y",strtotime($row["date_in"]))?></td>
+									<td style="white-space: nowrap;" class="center"><?php echo $row["vendor_name"]?></td>
 									<td style="">&nbsp;&nbsp;<?php echo $row["item_name"]?>&nbsp;&nbsp;</td>
-									<td style="width:8% !important">&nbsp;&nbsp;<?php //echo $row["barcode"]?>&nbsp;&nbsp;</td>
-									<td style="width:10% !important" class="center"><?php //echo $row["cat"]?></td>
+									<td style="white-space: nowrap;">&nbsp;&nbsp;<?php echo $row["item_code"]?>&nbsp;&nbsp;</td>
+									
+									<td style="white-space: nowrap;">&nbsp;&nbsp;<?php echo $row["cl_qty"]?>&nbsp;&nbsp;</td>
+									<td style="white-space: nowrap;">&nbsp;&nbsp;<?php echo $row["qty_pur"]?>&nbsp;&nbsp;</td>
+									<td style="white-space: nowrap;">&nbsp;&nbsp;<?php echo $total_qty?>&nbsp;&nbsp;</td>
+									<td style="white-space: nowrap;">&nbsp;&nbsp;<?php echo $row["req_qty"]?>&nbsp;&nbsp;</td>
+									<td style="white-space: nowrap;">&nbsp;&nbsp;<?php echo $row["curr_qty"]?>&nbsp;&nbsp;</td>
 									<td style="width:5% !important" class="center"><?php echo $row["measure"]?></td>
-									<td style="width:8% !important" class="center"><?php //echo $l_qty;?></td>
+									<td style="white-space: nowrap;">&nbsp;$&nbsp;&nbsp;<?php echo $row["price"]?>&nbsp;</td>
+									<td style="width:8% !important" class="center">&nbsp;$&nbsp;&nbsp;<?php echo number_format($total_price,2);?></td>
+									<td style="width:8% !important" class="center"></td>
 									
 							</tr>
 						  <?php }?> 

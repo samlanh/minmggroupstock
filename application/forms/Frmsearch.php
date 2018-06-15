@@ -27,6 +27,7 @@ class Application_Form_Frmsearch extends Zend_Form
 		));
 		$vendor_element->setValue($vendorValue);
 		$this->addElement($vendor_element);
+		
 		$_stutas = new Zend_Form_Element_Select('status');
 		$_stutas ->setAttribs(array(
 				'class'=>' form-control',			

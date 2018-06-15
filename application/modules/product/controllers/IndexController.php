@@ -43,11 +43,11 @@ public function init()
 		if($level==1 or $level==2){
 			$rows = $db->getAllProductForAdmin($data);
 			$columns=array("BRANCH_NAME","ITEM_CODE","ITEM_NAME",
-					"PRODUCT_CATEGORY","MEASURE","QTY","SOLD_PRICE","COST_PRICE","USER","STATUS");
+					"PRODUCT_CATEGORY","MEASURE","QTY","COST_PRICE","USER","STATUS");
 		}else{
 			$rows = $db->getAllProduct($data);
 			$columns=array("BRANCH_NAME","ITEM_CODE","ITEM_NAME",
-					"PRODUCT_CATEGORY","MEASURE","QTY","SOLD_PRICE","COST_PRICE","USER","STATUS");
+					"PRODUCT_CATEGORY","MEASURE","QTY","COST_PRICE","USER","STATUS");
 		}
 		$link=array(
 				'module'=>'product','controller'=>'index','action'=>'edit',

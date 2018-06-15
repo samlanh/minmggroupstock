@@ -337,7 +337,61 @@ class Product_Form_FrmProduct extends Zend_Form
 		$status_qty->setMultiOptions($opt);
 		$status_qty->setValue($request->getParam("status_qty"));
 		
-		$this->addElements(array($status_qty,$ad_search,$branch,$brand,$model,$category,$color,$size,$status));
+		$db_globle=new Application_Model_DbTable_DbGlobal();
+		$rs=$db_globle->getGlobalDb('SELECT vendor_id, v_name FROM tb_vendor WHERE v_name!="" AND status=1 ');
+		$options=array($tr->translate('SELECT_VENDOR'));
+		$vendorValue = $request->getParam('suppliyer_id');
+		if(!empty($rs)) foreach($rs as $read) $options[$read['vendor_id']]=$read['v_name'];
+		$vendor_element=new Zend_Form_Element_Select('suppliyer_id');
+		$vendor_element->setMultiOptions($options);
+		$vendor_element->setAttribs(array(
+		    'id'=>'suppliyer_id',
+		    'class'=>'form-control select2me'
+		));
+		$vendor_element->setValue($vendorValue);
+		$this->addElement($vendor_element);
+		
+		$opt = array(''=>$tr->translate("SELECT_MEASURE"),-1=>$tr->translate("ADD_NEW_MEASURE"));
+		$measure = new Zend_Form_Element_Select("measure");
+		$measure->setAttribs(array(
+		    'class'=>'form-control select2me',
+		    //'required'=>'required',
+		    'Onchange'	=>	'getMeasureLabel();getPopupMeasure();'
+		));
+		$row_measure= $db->getMeasure();
+		if(!empty($row_measure)){
+		    foreach ($row_measure as $rs){
+		        $opt[$rs["id"]] = $rs["name"];
+		    }
+		}
+		$measure->setMultiOptions($opt);
+		$measure->setValue($request->getParam('measure'));
+		
+		/////////////Date of lost item		/////////////////
+		$startDateValue = $request->getParam('start_date');
+		$endDateValue = $request->getParam('end_date');
+		
+		if($endDateValue==""){
+		    $endDateValue=date("m/d/Y");
+		}
+		
+		$startDateElement = new Zend_Form_Element_Text('start_date');
+		$startDateElement->setValue($startDateValue);
+		$startDateElement->setAttribs(array(
+		    'class'=>'form-control form-control-inline date-picker',
+		    'placeholder'=>'Start Date'
+		));
+		
+		$this->addElement($startDateElement);
+		$endDateElement = new Zend_Form_Element_Text('end_date');
+		
+		$endDateElement->setValue($endDateValue);
+		$this->addElement($endDateElement);
+		$endDateElement->setAttribs(array(
+		    'class'=>'form-control form-control-inline date-picker'
+		));
+		
+		$this->addElements(array($measure,$status_qty,$ad_search,$branch,$brand,$model,$category,$color,$size,$status));
 		return $this;
 	}
 }

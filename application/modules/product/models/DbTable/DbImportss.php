@@ -59,17 +59,15 @@ class Product_Model_DbTable_DbImportss extends Zend_Db_Table_Abstract
 //add category
 				$parent_id=0;
 				$rs_sub_cat=0;
-				if($data[$i]['E']!=''){
-					$rs_sub_cat = $this->getSubCategory($data[$i]['E']);
+				if($data[$i]['F']!=''){
+					$rs_sub_cat = $this->getSubCategory($data[$i]['F']);
 					if(empty($rs_sub_cat)){
 						$arr_sub = array(
-								'name'	=>	$data[$i]['E'],
+								'name'	=>	$data[$i]['F'],
 								'status'	=>	1,
 								'parent_id'	=>	0,
 								'date'		=>	date("Y-m-d"),
 								'user_id'	=>	$GetUserId,
-								//'start_code'=>	$data[$i]['M'],
-								//'prefix'	=>	$data[$i]['O'],
 						);
 						$db->getProfiler()->setEnabled(true);
 						$this->_name="tb_category";
@@ -82,11 +80,11 @@ class Product_Model_DbTable_DbImportss extends Zend_Db_Table_Abstract
 				}
 //add Measure
 				$rs_measure=0;
-				if($data[$i]['D']!=''){
-					$rs_measure = $this->getMeasure($data[$i]['D']);
+				if($data[$i]['R']!=''){
+					$rs_measure = $this->getMeasure($data[$i]['R']);
 					if(empty($rs_measure)){
 						$arr_measure = array(
-								'name'	=>	$data[$i]['D'],
+								'name'	=>	$data[$i]['R'],
 								'status'	=>	1,
 								'date'		=>	date("Y-m-d"),
 								'user_id'	=>	$GetUserId,
@@ -105,29 +103,21 @@ class Product_Model_DbTable_DbImportss extends Zend_Db_Table_Abstract
 // 					$status = 0;
 // 				}
 //add product
-				$rs_product = $this->getProduct($sub_id,$data[$i]['B']);
+				$rs_product = $this->getProduct($sub_id,$data[$i]['E']);
 				if(empty($rs_product)){
 					$arr_product = array(
-						'item_name'	=>	$data[$i]['B'],
-						//'item_code'	=>	$data[$i]['D'],
-						//'note'		=>	$data[$i]['G'],
+						'item_name'	=>	$data[$i]['E'],
+						'item_code'	=>	$data[$i]['G'],
+						'note'		=>	$data[$i]['U'],
 						'measure_id'=>	$measur_id,
 						'cate_id'	=>	$sub_id,
 						'status'	=>	1,
-						//'price'		=>	$data[$i]['F'],
-						//'date'		=>	date("Y-m-d"),
+						'price'		=>	$data[$i]['S'],
+					   // 'price'		=>	number_format($data[$i]['S'],2),
 						'user_id'	=>	$GetUserId,	
-						//'product_type'	=>	$data[$i]['A'],
-						//'is_convertor'	=>	$data[$i]['P'],
-						//'convertor_measure'	=>	$data[$i]['Q'],
-						//'sign'		=> $data[$i]['R'],
 					);
-// 					$db->getProfiler()->setEnabled(true);
 					$this->_name="tb_product";
 					$pro_id = $this->insert($arr_product);
-// 					Zend_Debug::dump($db->getProfiler()->getLastQueryProfile()->getQuery());
-// 					Zend_Debug::dump($db->getProfiler()->getLastQueryProfile()->getQueryParams());
-// 					$db->getProfiler()->setEnabled(false);
 				}else{
 					$pro_id = $rs_product;
 				}
@@ -137,9 +127,8 @@ class Product_Model_DbTable_DbImportss extends Zend_Db_Table_Abstract
 							'pro_id'			=>	$pro_id,
 							'location_id'		=>	1,
 							//'qty'				=>	number_format($data[$i]['C'],2),
-							'qty'				=>	$data[$i]['C'],
+							'qty'				=>	$data[$i]['H'],
 							'qty_warning'		=>	0,
-							//'price'				=>	$data[$i]['F'],
 							'damaged_qty'		=>	0,
 							'last_mod_userid'	=>	$GetUserId,
 					);
@@ -150,9 +139,8 @@ class Product_Model_DbTable_DbImportss extends Zend_Db_Table_Abstract
 							'pro_id'			=>	$pro_id,
 							'location_id'		=>	1,
 							//'qty'				=>	number_format($data[$i]['C'],2),
-							'qty'				=>	$data[$i]['C'],
+							'qty'				=>	$data[$i]['H'],
 							'qty_warning'		=>	0,
-							//'price'				=>	$data[$i]['F'],
 							'damaged_qty'		=>	0,
 							'last_mod_userid'	=>	$GetUserId,
 					);

@@ -235,10 +235,12 @@ Class report_Model_DbProduct extends Zend_Db_Table_Abstract{
 		return $db->fetchAll($sql.$where.$location.$group);
 	}
 	
-	function getAllSummaryStock($data){
+	function getAllSummaryStock($data=null){
 	    $db = $this->getAdapter();
 	    $db_globle = new Application_Model_DbTable_DbGlobal();
-	    $sql ="SELECT pur.`date_in`,
+	   // $date="  AND cd.`close_date` BETWEEN '".$data['fil_start_date']."' AND '".$data['fil_end_date']."'";
+	    
+	    $sql ="SELECT (SELECT l.name FROM  `tb_sublocation` AS l WHERE l.`id`=pur.`branch_id` LIMIT 1)AS location_name, pur.`date_in`,
                (SELECT tb_vendor.v_name FROM `tb_vendor` WHERE tb_vendor.`vendor_id`=pur.`vendor_id` LIMIT 1)AS vendor_name,
                p.`item_name`,p.`item_code`,
                (SELECT cd.qty_adjust FROM `tb_closelist_detail` AS cd WHERE cd.pro_id=p.id LIMIT 1) AS cl_qty,
@@ -253,7 +255,10 @@ Class report_Model_DbProduct extends Zend_Db_Table_Abstract{
               WHERE pur.`id`=purd.`purchase_id`
               AND purd.`pro_id`=p.`id`
               AND p.`id`=pl.`pro_id`";
-	    $where = '';
+	    $from_date =(empty($data['start_date']))? '1': " pur.`date_in` >= '".$data['start_date']." 00:00:00'";
+	    $to_date = (empty($data['end_date']))? '1': " pur.`date_in` <= '".$data['end_date']." 23:59:59'";
+	    $where = "  AND ".$from_date." AND ".$to_date;
+	   // $where="  ";
 	    if($data["ad_search"]!=""){
 	        $s_where=array();
 	        $s_search = addslashes(trim($data['ad_search']));
@@ -266,34 +271,17 @@ Class report_Model_DbProduct extends Zend_Db_Table_Abstract{
 	    if($data["branch"]!=""){
 	        $where.=' AND pl.`location_id`='.$data["branch"];
 	    }
-	    if($data["brand"]!=""){
-	        $where.=' AND p.brand_id='.$data["brand"];
+	    
+	    if(!empty($data["suppliyer_id"])){
+	        $where.=' AND pur.`vendor_id`='.$data["suppliyer_id"];
 	    }
-	    if($data["category"]!=""){
-	        $where.=' AND p.cate_id='.$data["category"];
+	    
+	    if($data["measure"]!=""){
+	        $where.=' AND p.`measure_id`='.$data["measure"];
 	    }
-	    if($data["category"]!=""){
-	        $where.=' AND p.cate_id='.$data["category"];
-	    }
-	    if($data["model"]!=""){
-	        $where.=' AND p.model_id='.$data["model"];
-	    }
-	    if($data["size"]!=""){
-	        $where.=' AND p.size_id='.$data["size"];
-	    }
-	    if($data["color"]!=""){
-	        $where.=' AND p.color_id='.$data["color"];
-	    }
-	    if($data["status_qty"]>-1){
-	        if($data["status_qty"]==1){
-	            $where.=' AND pl.qty>0';
-	        }else{
-	            $where.=' AND pl.qty=0';
-	        }
-	        
-	    }
+	    echo $sql.$where;
 	    $location = $db_globle->getAccessPermission('pl.`location_id`');
-	    $group = " GROUP BY p.`id` ORDER BY p.`item_name`";
+	    $group = "  ORDER BY pur.`date_in` ASC";
 	    return $db->fetchAll($sql.$where.$location.$group);
 	}
 	

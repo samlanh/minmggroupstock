@@ -351,16 +351,16 @@ class report_ProductController extends Zend_Controller_Action
         $db = new report_Model_DbProduct();
         if($this->getRequest()->isPost()){
             $data = $this->getRequest()->getPost();
+            $data['start_date']=date("Y-m-d",strtotime($data['start_date']));
+            $data['end_date']=date("Y-m-d",strtotime($data['end_date']));
         }else{
             $data = array(
-                'ad_search'	=>	'',
-                'branch'	=>	'',
-                'brand'		=>	'',
-                'category'	=>	'',
-                'model'		=>	'',
-                'color'		=>	'',
-                'size'		=>	'',
-                'status_qty'=>	-1
+                'ad_search'	  =>	'',
+                'branch'	  =>	'',
+                'measure'	  =>	'',
+                'suppliyer_id'=>	0,
+                'start_date'=>date("Y-m-01"),
+                'end_date'=>date("Y-m-d"),
             );
         }
         $this->view->search = $db->getBranch($data["branch"]);
