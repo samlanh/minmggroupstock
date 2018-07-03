@@ -285,6 +285,99 @@ Class report_Model_DbProduct extends Zend_Db_Table_Abstract{
 	    return $db->fetchAll($sql.$where.$location.$group);
 	}
 	
+	
+	function getAllProductSummary($search){
+	    $db= $this->getAdapter();
+	    $user_info = $this->GetuserInfo();
+	    $loc = $user_info["branch_id"];
+	    $sql="SELECT  
+            p.`item_code`,
+    	    p.`id`,
+    	    p.`item_name` ,
+    	    pl.`qty`,
+    	    p.price,
+    	    pl.`location_id`,
+    	    (SELECT m.name FROM `tb_measure` AS m WHERE m.id=p.`measure_id`) AS measure,
+      	    pur.`date_in`,
+  	    (SELECT v.v_name FROM `tb_vendor` AS v WHERE v.vendor_id=pur.`vendor_id` LIMIT 1) AS vendor_name
+	    FROM `tb_purchase_order` AS pur,`tb_purchase_order_item` AS purd,
+             `tb_product` AS p,`tb_prolocation` AS pl
+         WHERE pur.`id`=purd.`purchase_id`
+         AND purd.`pro_id`=p.`id`
+         AND p.`id`=pl.`pro_id`
+         AND pl.`location_id`=$loc
+	     AND p.`status`=1 ";
+	    $where='';
+	    $from_date =(empty($search['start_date']))? '1': "  pur.`date_in` >= '".$search['start_date']."'";
+	    $to_date = (empty($search['end_date']))? '1': "     pur.`date_in` <= '".$search['end_date']."'";
+	    $where = " AND ".$from_date." AND ".$to_date;
+	    
+	    if(!empty($search['ad_search'])){
+	        $s_where = array();
+	        $s_search=addslashes(trim($search['ad_search']));
+	        $s_search = str_replace(' ', '', $s_search);
+	        $s_where[]="REPLACE(p.`item_code`,' ','')   LIKE '%{$s_search}%'";
+	        $s_where[]="REPLACE(p.`item_name`,' ','')   LIKE '%{$s_search}%'";
+	        $where .=' AND ('.implode(' OR ',$s_where).')';
+	    }
+	    if($search['measure']>0){
+	        $where .= " AND p.`measure_id` = ".$search['measure'];
+	    }
+	    
+// 	    if($search['branch']>0){
+// 	        $where .= " AND pl.`location_id` = ".$search['branch'];
+// 	    }
+	    
+// 	    if($search['product_id']>0){
+// 	        $where .= " AND p.`id` = ".$search['product_id'];
+// 	    }
+	    
+	    if($search['suppliyer_id']>0){
+	        $where .= " AND pur.`vendor_id` = ".$search['suppliyer_id'];
+	    }
+	    
+	    $order="  GROUP BY p.`id` ORDER BY p.`item_code` ASC";
+	    return $db->fetchAll($sql.$where.$order);
+	}
+	
+	function getReceiveByPro($pro_id,$data){
+	    //print_r($data);exit();
+	    $db= $this->getAdapter();
+	    $user_info = $this->GetuserInfo();
+	    $loc = $user_info["branch_id"];
+	    $from_date =(empty($data['start_date']))? '1': "  r.`date_in` >= '".$data['start_date']."'";
+	    $to_date = (empty($data['end_date']))? '1': "   r.`date_in` <= '".$data['end_date']."'";
+	    $where = " AND ".$from_date." AND ".$to_date;
+	    $sql="SELECT
+	    r.`date_in`,
+	    SUM(rt.`qty_receive`) AS qty_receive
+	    FROM
+	    `tb_purchase_order` AS r,
+	    `tb_purchase_order_item` AS rt
+	    WHERE r.`id` = rt.`purchase_id`
+	    AND rt.`pro_id` =$pro_id";
+	    $groupby = "  GROUP BY rt.`pro_id`";
+	    return $db->fetchRow($sql.$where.$groupby);
+	}
+	
+	function getDeliByPro($id,$data){
+	    $db= $this->getAdapter();
+	    $user_info = $this->GetuserInfo();
+	    $loc = $user_info["branch_id"];
+	    $from_date =(empty($data['start_date']))? '1': "  d.`date_request` >= '".$data['start_date']."'";
+	    $to_date = (empty($data['end_date']))? '1': "    d.`date_request` <= '".$data['end_date']."'";
+	    $where = " AND ".$from_date." AND ".$to_date;
+	    $sql=" SELECT
+	    d.`date_request`,
+	    SUM(dd.`receive_qty`) AS deli_qty
+	    FROM
+	    `tb_staff_request` AS d,
+	    `tb_staff_request_detail` AS dd
+	    WHERE d.`id` = dd.`staff_request_id` AND dd.`pro_id` = $id ";
+	    $groupby = " GROUP BY dd.`pro_id`";
+	    return $db->fetchRow($sql.$where.$groupby);
+	}
+	
 }
 
 ?>

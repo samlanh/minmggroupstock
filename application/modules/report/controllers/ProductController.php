@@ -8,10 +8,10 @@ class report_ProductController extends Zend_Controller_Action
     	defined('BASE_URL')	|| define('BASE_URL', Zend_Controller_Front::getInstance()->getBaseUrl());
     	$tr = Application_Form_FrmLanguages::getCurrentlanguage();
     	$db = new Application_Model_DbTable_DbGlobal();
-    	$rs = $db->getValidUserUrl();
-    	if(empty($rs)){
-    		Application_Form_FrmMessage::Sucessfull("YOU_NO_PERMISION_TO_ACCESS_THIS_SECTION","/index/dashboad");
-    	}
+//     	$rs = $db->getValidUserUrl();
+//     	if(empty($rs)){
+//     		Application_Form_FrmMessage::Sucessfull("YOU_NO_PERMISION_TO_ACCESS_THIS_SECTION","/index/dashboad");
+//     	}
     }
     protected function GetuserInfo(){
     	$user_info = new Application_Model_DbTable_DbGetUserInfo();
@@ -369,6 +369,32 @@ class report_ProductController extends Zend_Controller_Action
         $this->view->formFilter = $formFilter->productFilter();
         Application_Model_Decorator::removeAllDecorator($formFilter);
         
+    }
+    
+    public function rptstocksummaryAction()
+    {
+        $db = new report_Model_DbProduct();
+        if($this->getRequest()->isPost()){
+            $data = $this->getRequest()->getPost();
+            $data['start_date']=date("Y-m-d",strtotime($data['start_date']));
+            $data['end_date']=date("Y-m-d",strtotime($data['end_date']));
+        }else{
+            $data = array(
+                'ad_search'	  =>	'',
+                'branch'	  =>	'',
+                'measure'	  =>	'',
+                'suppliyer_id'=>	0,
+                'start_date'=>date("Y-m-01"),
+                'end_date'=>date("Y-m-d"),
+            );
+        }
+       $this->view->searchs = $db->getBranch($data["branch"]);
+        $this->view->search=$data;
+        $this->view->stockin =$db->getAllProductSummary($data);
+        
+        $formFilter = new Product_Form_FrmProduct();
+        $this->view->formFilter = $formFilter->productFilter();
+        Application_Model_Decorator::removeAllDecorator($formFilter);
     }
 	
 }

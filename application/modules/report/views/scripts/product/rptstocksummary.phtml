@@ -1,0 +1,225 @@
+<?php 
+$tr=Application_Form_FrmLanguages::getCurrentlanguage();
+$brach_name =  $this->branch;
+$result = $this->stockin;
+$db = new report_Model_DbProduct();
+//print_r($result);
+?>
+<?php $formFilter = $this->formFilter; ?>
+<title><?php echo $tr->translate("STOCK_SUMMARY");?></title>
+<div class="row">
+	<div class="col-md-12">
+		<div class="portlet box blue">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-globe"></i><?php echo $tr->translate("STOCK_SUMMARY");?>
+				</div>
+						<div class="btn-group pull-right">
+							 <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true" aria-expanded="false">
+							    <?php echo $tr->translate("ACTIONS");?> <i class="fa fa-angle-down"></i>
+							 </button>
+								<ul class="dropdown-menu" role="menu">
+									<li>
+										<a href="#" onclick="doPrint();">
+											<i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;<?php echo $tr->translate("PRINT");?>
+										</a>
+									</li>
+									<li><a href="#" onClick="exports()"><i class="fa fa-file-excel-o" aria-hidden="true"></i>&nbsp;&nbsp;Export Excel </a> </li>
+									
+								</ul>
+					</div>
+			</div>
+            <div class="portlet-body form frmfilter">
+				<form method="post" action="">
+					<div class="form-body">
+							<div class="form-group">
+								<label class="control-label col-md-3">
+									<?php echo $formFilter->getElement('ad_search');?>
+								</label>
+								<label class="control-label col-md-3">
+									<?php echo $formFilter->getElement('branch');?>
+								</label>
+								<label class="control-label col-md-3">
+									<?php echo $formFilter->getElement('suppliyer_id');?>
+								</label>
+								<label class="control-label col-md-3">
+									<?php echo $formFilter->getElement('measure');?>
+								</label>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3">
+									<?php echo $formFilter->getElement('start_date');?>
+								</label>
+								<label class="control-label col-md-3">
+									<?php echo $formFilter->getElement('end_date');?>
+								</label>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-2  ">
+									<button type="submit" class="btn btn-primary col-md-12"><?php echo $tr->translate("SEARCH");?></button>
+								</label>
+							</div>
+							
+						
+				</div><div style="clear:both;"></div>	
+				</form> 
+	<div style=" min-height:28cm; margin:25 0 0 0; padding:0px 0.2cm">
+	<div id="divPrint" style="width: 100%;">
+		<style>
+			.style{
+					line-height: 20px;font-size: 12px !important;
+					font-family: 'Khmer OS Battambang';
+				}
+				ul{margin: 0;padding:0;}
+				table tr td ul li{text-align: center;list-style: none;line-height: 25px; }
+				th{padding: 0px;}
+				table thead tr th{
+					line-height:30px;
+					background:#ccc;
+					font-size:15px;
+					padding:3px;
+				}
+				table tr td{
+					font-size:12px;
+				}
+				ul.pur_info li{line-height:18px; 
+						font-weight: normal !important;}
+				ul.pur_info li strong{font-weight: bold;}
+			   .hover:hover{background: #ccc;}
+				table.collape td{border: 1px solid #000 !important;}
+				table { page-break-inside:auto }
+				tr{ page-break-inside:avoid; page-break-after:auto; }
+				#header {
+				  display: table-header-group;
+				  page-break-inside:avoid; page-break-after:auto;
+				}
+		
+		</style>
+		<table style="font-family: 'Khmer OS Content'; width:99%;">
+			<tbody>
+			<tr>
+		    	<td align="center">
+		        	<table width="100%" style="font-family: 'Khmer OS Battambang';" cellpadding="0" cellpadding="0">
+		            	<tbody><tr>
+		                	<td width="20%" valign="top"><img src="<?php echo $this->baseUrl();?>/images/logo.jpg" height="55px"></td>
+		                	<td width="60%" valign="top">
+								<ul>
+								    <li style="text-align:center; font-size:18px; font-family:'Khmer OS Muol Light'"><?php echo $tr->translate("COMPANY_CUSTOMER");?></li>
+		                			<li style="text-align:center; font-size:14px; font-family:'Khmer OS Muol Light'"><?php echo $tr->translate("STOCK_SUMMARY");?></li>
+									<li style="text-align:center; font-size:14px; font-family:'Khmer OS Muol Light'"><?php if($this->search!=""){echo $this->searchs;}else{echo "All Branch";}?></li>
+		                			<!--<li style="text-align:center; font-size:13px;"><?php //echo date("d/m/Y",strtotime($this->rssearch['start_date']));?> ដល់ <?php echo date("d/m/Y",strtotime($this->rssearch['end_date']));?></li>-->
+		                		</ul>
+		                	</td>
+		                    <td width="20%"></td>
+		                </tr> 
+		                <tr>
+		                	<td colspan="3" valign="top">
+		                		<table width="100%" cellpadding="0" cellspacing="0">
+		                			<tbody><tr>
+		                				<td style="font-size: 11px;">
+		                				    <span style="white-space: nowrap;"><?php //echo $tr->translate("ADDRESS_COMPANY");?></span>
+		                					<br><?php //echo $tr->translate("TEL_COMPANY");?> 
+		                				</td>
+		                				<td width="65%"></td>
+		                			</tr>
+				                </tbody></table>
+				              </td>
+				           </tr>   
+						</tbody>
+					</table>
+		        </td>
+		    </tr>
+		    <tr>
+		    	<td class="table2excel" >
+		            <table  class="collape tablesorter" style="border-collapse:collapse; font-size:12px;" width="100%" cellspacing="0" border="1">
+		                 <tbody>
+						  <?php $num=1; 
+			               $total_pur_qty = 0;
+						   $total_begin_qty =0;
+						   $toal_issus_qty =0;
+						   $total_edning_qty = 0;
+						   $total_price =0;
+						   $total_amount = 0;
+						  ?>
+						<thead>
+							 <tr bgcolor="#ccc" class="style" align="center" style="font-weight:bold; line-height: 20px; font-size:12px; padding:1px 0px; white-space: nowrap; ">
+			                    <td>&nbsp;<?php echo $tr->translate("NUM");?></td>
+								<td><?php echo $tr->translate("DATE_IN");?></td>
+								<td><?php echo $tr->translate("VENDOR_NAME");?></td>
+								<td><?php echo $tr->translate("ITEM_NAME");?></td>
+								<td><?php echo $tr->translate("ITEM_CODE");?></td>
+								<td><?php echo $tr->translate("ដើមគ្រា");?></td>
+								<td><?php echo $tr->translate("ស្តុកចូល");?></td>
+								<!-- <td><?php //echo $tr->translate("សរុប");?></td> -->
+								<td><?php echo $tr->translate("ស្តុកចេញ");?></td>
+								<td><?php echo $tr->translate("ស្តុកសល់");?></td>
+								<td><?php echo $tr->translate("MEASURE");?></td>
+								<td><?php echo $tr->translate("COST_PRICE");?></td>
+								<td><?php echo $tr->translate("តម្លៃសរុប");?></td>
+								<td><?php echo $tr->translate("OTHER");?></td>
+			                </tr>
+		                </thead>
+		                <?php 
+		                if(!empty($this->stockin))foreach ($this->stockin AS $index => $rs){
+		                        $rs_re = $db->getReceiveByPro($rs["id"],$this->search);
+								$rs_deli = $db->getDeliByPro($rs["id"],$this->search);
+								$pur_qty = $rs_re["qty_receive"];
+								$issuse_qty = $rs_deli["deli_qty"];
+								$begin_qty = ($rs["qty"]+$rs_deli["deli_qty"])-$rs_re["qty_receive"];
+// 								$total_price = $total_price+$rs["price"];
+						?>
+						<tr class='tdborder row-format<?php echo $num; $num=1-$num;?> hover' style="border:1px solid #000;">
+						   <td align="center" style="white-space: nowrap;">&nbsp;<?php echo $index+1;?></td>
+						   <td style="white-space: nowrap;">&nbsp;<?php echo date("d-M-Y",strtotime($rs["date_in"]));?></td>
+						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["vendor_name"];?></td>
+						   <td  >&nbsp;<?php echo $rs["item_name"];?></td>
+						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["item_code"];?></td>
+						  
+						   <td style="white-space: nowrap;">&nbsp;<?php echo $begin_qty;?></td>
+						   <td style="white-space: nowrap;">&nbsp;<?php echo  $pur_qty;?></td>
+						    
+						   <td style="white-space: nowrap;">&nbsp;<?php echo  $issuse_qty;?></td>
+						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["qty"];?></td>
+						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["measure"];?></td>
+						   <td>&nbsp;$<span >&nbsp;&nbsp;<?php echo number_format($rs["price"],2);?></span></td>
+						   <td>&nbsp;$<span >&nbsp;&nbsp;<?php echo number_format($rs["price"]*$rs["qty"],2);?></span></td>
+						   <td style="white-space: nowrap;">&nbsp;<?php //echo $rs["item_code"];?></td>
+						</tr>
+						<?php 
+							 
+						}?>
+		                </tbody>
+		           </table>
+		            <br>
+		              <table align="center" width="100%">
+						   <tbody><tr style="font-size: 11px;">
+						        <td style="width:20%;text-align:center;font-size:13px; font-family:'Khmer OS Muol Light'">អនុម័តដោយ</td>
+						        <td></td>
+								<td style="width:20%;text-align:center;font-size:13px; font-family:'Khmer OS Muol Light'">ត្រួតពិនិត្យដោយ</td>
+								<td></td>
+								<td style="width:20%;text-align:center;font-size:13px; font-family:'Khmer OS Muol Light'">រៀបចំដោយ</td>
+						   </tr>
+						</tbody>
+					</table>	
+		         </td>  
+		             
+		    		 
+		    	</tr>
+			</tbody>
+		</table>
+		</div>
+	  </div>		
+	</div>
+	 </div>
+   </div>
+</div>
+<iframe name=print_frame width=0 height=0 frameborder=0 src=about:blank></iframe>
+<script>
+function doPrint() {
+	var printContents = document.getElementById('divPrint').innerHTML;
+    var originalContents = document.body.innerHTML;
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+}
+</script>

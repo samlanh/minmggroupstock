@@ -9,6 +9,8 @@
   $rpt_request_product=$this->url(array('module'=>'report','controller'=>'product','action'=>'rpt-requestproducts'), null, true);
   $rpt_summary=$this->url(array('module'=>'report','controller'=>'product','action'=>'rptstocksumarylist'), null, true);
   
+  $rpt_stock_summary=$this->url(array('module'=>'report','controller'=>'product','action'=>'rptstocksummary'), null, true);
+  
   $user_info = new Application_Model_DbTable_DbGetUserInfo();
 	$result = $user_info->getUserInfo();
 	$tr = Application_Form_FrmLanguages::getCurrentlanguage(); 
@@ -100,6 +102,7 @@
 					</div>
 				</div>
 				
+			<!-- 
 				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 					<div class="dashboard-stat green-haze">
 						<a class="more" href="<?php echo $rpt_summary;?>">
@@ -119,6 +122,28 @@
 						View more <i class="m-icon-swapright m-icon-white"></i>
 						</a>
 					</div>
+				</div>
+				 -->
+				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">	
+					<div class="dashboard-stat green-haze">
+						<a class="more" href="<?php echo $rpt_stock_summary;?>">
+						<div class="visual">
+							<i class="fa fa-shopping-cart"></i>
+						</div>
+						<div class="details">
+							<div class="number">
+							</div>
+							<div class="desc">
+								 
+								 <?php echo $tr->translate("STOCK_SUMMARY");?>
+							</div>
+						</div>
+						</a>
+						<a class="more" href="javascript:;">
+						View more <i class="m-icon-swapright m-icon-white"></i>
+						</a>
+					</div>
+					
 				</div>
 				<!-- <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 					<div class="dashboard-stat purple-plum">
@@ -205,6 +230,8 @@
 						</a>
 					</div>
 				</div>
+				
+				
 				
 				<?php }?>
 			</div>

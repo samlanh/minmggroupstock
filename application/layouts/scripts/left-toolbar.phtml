@@ -29,6 +29,8 @@
  $truck_type = array($this->url(array('module'=>'billing','controller'=>'trucktype','action'=>'index'),null, true), "TRUCK_TYPE");
  $truck = array($this->url(array('module'=>'billing','controller'=>'truck','action'=>'index'),null, true), "TRUCK");
  
+ $location = array($this->url(array('module'=>'product','controller'=>'branch','action'=>'index'),null, true), "Location List");
+ 
  //module billing product
  $product = array($this->url(array('module'=>'billing','controller'=>'billingproduct','action'=>'index'),null, true), "ADD_PRODUCT");
  //$location = array($this->url(array('module'=>'billing','controller'=>'trucktype','action'=>'index'),null, true), "LOCATION");
@@ -40,6 +42,8 @@ $module_str  = array(
 		'report'=>'REPORT',
 		);	
  ?>
+ 
+ 
 <!-- BEGIN SIDEBAR -->
 	<div class="page-sidebar-wrapper">
 		<!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
@@ -96,6 +100,13 @@ $module_str  = array(
 					<span class="arrow "></span>
 					</a>
 					<ul class="sub-menu">
+					
+						<li>
+	            			<a href="<?php echo $location[0]; ?>">
+		            			<i class="icon-user"></i><?php echo $tr->translate($location[1]);?>
+		            		</a>
+	            		</li>
+					
 						<li>
 	            			<a href="<?php echo $url_user_list[0]; ?>">
 		            			<i class="icon-user"></i><?php echo $tr->translate($url_user_list[1]);?>
