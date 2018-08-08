@@ -53,7 +53,7 @@ public function init()
 		$link=array(
 				'module'=>'product','controller'=>'index','action'=>'edit',
 		);
-	
+		$this->view->row = $rows;
 		$list = new Application_Form_Frmlist();
 		$this->view->list=$list->getCheckList(0, $columns, $rows,array('item_name'=>$link,'item_code'=>$link,'barcode'=>$link,'branch'=>$link));
 		

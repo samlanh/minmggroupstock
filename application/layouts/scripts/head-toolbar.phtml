@@ -4,6 +4,9 @@ $result = $user_info->getUserInfo();
 $tr = Application_Form_FrmLanguages::getCurrentlanguage();
 $session_user=new Zend_Session_Namespace('auth');
 $request=Zend_Controller_Front::getInstance()->getRequest();
+
+$session_lang=new Zend_Session_Namespace('lang');
+$currentLang=$session_lang->lang_id;
 ?>
 <style>
 .page-header.navbar .top-menu .navbar-nav > li.dropdown .dropdown-toggle .badge.badge-default {
@@ -65,37 +68,7 @@ $request=Zend_Controller_Front::getInstance()->getRequest();
 						</li>
 					</ul>
 				</li>
-			
-				<!-- BEGIN NOTIFICATION DROPDOWN -->
-				<!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
-				<li style="display: none;" class="dropdown dropdown-extended dropdown-notification" id="header_notification_bar">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
-					<i class="icon-bell"></i>
-					<span class="badge badge-default">
-					7 </span>
-					</a>
-					<ul class="dropdown-menu">
-						<li class="external">
-							<h3><span class="bold">12 pending</span> notifications</h3>
-							<a href="extra_profile.html">view all</a>
-						</li>
-						<li>
-							<ul class="dropdown-menu-list scroller" style="height: 250px;" data-handle-color="#637283">
-								<li>
-									<a href="javascript:;">
-									<span class="time">9 days</span>
-									<span class="details">
-									<span class="label label-sm label-icon label-danger">
-									<i class="fa fa-bolt"></i>
-									</span>
-									Storage server failed. </span>
-									</a>
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</li>
-				<!-- END NOTIFICATION DROPDOWN -->
+				
 				<!-- BEGIN INBOX DROPDOWN -->
 				<!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
 				<li style="display: none;" class="dropdown dropdown-extended dropdown-inbox" id="header_inbox_bar">
@@ -156,36 +129,24 @@ $request=Zend_Controller_Front::getInstance()->getRequest();
 										</a>
 									</li>
 								<?php };?>
-								<li>
-									<a onclick="changeLange(1);" href="#">
-									<span class="task">
-									<span class="desc">Khmer</span>
-									</span>
-									</a>
-								</li>
-								<li>
-									<a onclick="changeLange(2);" href="#">
-									<span class="task">
-									<span class="desc">English</span>
-									</span>
-									</a>
-								</li>
 							</ul>
 						</li>
 					</ul>
 				</li>
-				<?php if($session_user->user_img !=''){
+				<?php 
+				$images = $this->baseUrl().'/images/profile.png';
+				if($session_user->user_img !=''){
 				       $img=$session_user->user_img ;
-				}else
-				{
-					$img='profile.png';
+				       if (file_exists(PUBLIC_PATH.'/images/user/'.$img)) {
+				       	$images = $this->baseUrl().'/images/user/'.$img;
+				       }
 				}?>
 				<!-- END TODO DROPDOWN -->
 				<!-- BEGIN USER LOGIN DROPDOWN -->
 				<!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
 				<li class="dropdown dropdown-user">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
-					<img alt="" class="img-circle" src="<?php echo $this->baseUrl()?>/images/<?php echo $img?>"/>
+					<img alt="" class="img-circle" src="<?php echo $images;?>"/>
 					<span class="username username-hide-on-mobile">
 					<?php echo $session_user->fullname;?> </span>
 					<i class="fa fa-angle-down"></i>
@@ -219,19 +180,47 @@ $request=Zend_Controller_Front::getInstance()->getRequest();
 						</li> -->
 						<li>
 							<a href="<?php echo $this->baseUrl();//echo $this->url(array("module"=>"default","controller"=>"index"));?>">
-							<i class="icon-key"></i> Log Out </a>
+							<i class="icon-key"></i> <?php echo $tr->translate("Log Out")?> </a>
 						</li>
 					</ul>
 				</li>
 				<!-- END USER LOGIN DROPDOWN -->
-				<!-- BEGIN QUICK SIDEBAR TOGGLER -->
-				<!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
-				<li class="dropdown dropdown-quick-sidebar-toggler">
-					<a href="javascript:;" class="dropdown-toggle">
-					<i class="icon-logout"></i>
+				<li class="dropdown dropdown-extended dropdown-tasks" id="header_task_bar">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" style=" padding: 3px;">
+						<?php if ($currentLang == 1){
+							$flage = $this->baseUrl()."/images/km.png";
+						}else{
+							$flage = $this->baseUrl()."/images/en.jpg";
+						}?>
+						<img src="<?php echo $flage;?>" style=" width: 40px; height: 40px; border-radius: 50% !important;" />
 					</a>
+					<ul class="dropdown-menu extended tasks">
+						<li>
+							<ul class="dropdown-menu-list scroller" style="height: 275px;" data-handle-color="#637283">
+								<li>
+									<a onclick="changeLange(1);" href="#" style=" padding: 4px 10px; background: #f5f5f5; color: #02014a;">
+									<span class="task">
+									<span class="desc" style="font-weight: 600;">
+										<img src="<?php echo $this->baseUrl()."/images/km.png";;?>" style=" width: 40px; height: 40px; border-radius: 50% !important;" /> 
+										<?php echo $tr->translate("Khmer")?>
+									</span>
+									</span>
+									</a>
+								</li>
+								<li>
+									<a onclick="changeLange(2);" href="#" style=" padding: 4px 10px; background: #f5f5f5; color: #02014a;">
+									<span class="task">
+									<span class="desc" style="font-weight: 600;">
+										<img src="<?php echo $this->baseUrl()."/images/en.jpg";;?>" style=" width: 40px; height: 40px; border-radius: 50% !important;" /> 
+										<?php echo $tr->translate("English")?>
+										</span>
+									</span>
+									</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
 				</li>
-				<!-- END QUICK SIDEBAR TOGGLER -->
 			</ul>
 		</div>
 		<!-- END TOP NAVIGATION MENU -->

@@ -125,18 +125,36 @@ class RsvAcl_Model_DbTable_DbUser extends Zend_Db_Table_Abstract
 	//add user
 	public function insertUser($arr)
 	{ 
-		$photoname = str_replace(" ", "_", $arr['username']). '.jpg';
-		$upload = new Zend_File_Transfer();
-		$upload->addFilter('Rename',
-				array('target' => PUBLIC_PATH . '/images/'. $photoname, 'overwrite' => true) ,'signature');
-		$receive = $upload->receive();
-		if($receive)
-		{
-			$arr['photo'] = $photoname;
+		$part= PUBLIC_PATH.'/images/user/';
+		if (!file_exists($part)) {
+			mkdir($part, 0777, true);
 		}
-		else{
-			$arr['photo']="";
+		$photoname = str_replace(" ", "_", $arr['username']);
+		$photo = "";
+		$name = $_FILES['signature']['name'];
+		if (!empty($name)){
+			$ss = 	explode(".", $name);
+			$image_name = "signature_".date("Y").date("m").date("d").time()."_".$photoname.".".end($ss);
+			$tmp = $_FILES['signature']['tmp_name'];
+			if(move_uploaded_file($tmp, $part.$image_name)){
+				$photo = $image_name;
+			}
+			else
+				$string = "Image Upload failed";
 		}
+		
+// 		$photoname = str_replace(" ", "_", $arr['username']). '.jpg';
+// 		$upload = new Zend_File_Transfer();
+// 		$upload->addFilter('Rename',
+// 				array('target' => PUBLIC_PATH . '/images/'. $photoname, 'overwrite' => true) ,'signature');
+// 		$receive = $upload->receive();
+// 		if($receive)
+// 		{
+// 			$arr['photo'] = $photoname;
+// 		}
+// 		else{
+// 			$arr['photo']="";
+// 		}
 		
 		try{
 			$db=$this->getAdapter();
@@ -149,12 +167,13 @@ class RsvAcl_Model_DbTable_DbUser extends Zend_Db_Table_Abstract
 	     			"username"		=>	$arr["username"],
 	     			"password"		=>	$arr['password'],
 	     			//"confirm_pass"	=>	$arr['confirm_password'],
-	     			"photo"			=>	$arr['photo'],
+// 	     			"photo"			=>	$arr['photo'],
 	     			
 	     			"email"			=>	$arr["email"],
 	     			"user_type_id"	=>	$arr["user_type_id"],
 	     			"LocationId"	=>	$arr["LocationId"],
 	     			"status"		=>	$arr["status"],
+	     			"photo"		=>	$photo,
 	     			"created_date"	=>	date("Y-m-d H:i:s")
 	     			);
 	     	$id=$this->insert($array_data);
@@ -232,19 +251,23 @@ class RsvAcl_Model_DbTable_DbUser extends Zend_Db_Table_Abstract
 				$this->_name="tb_acl_user";
 				$this->update($arr, $where);
 		}
+		$part= PUBLIC_PATH.'/images/user/';
+		if (!file_exists($part)) {
+			mkdir($part, 0777, true);
+		}
 		
-	    $photoname = str_replace(" ", "_", $arr['username']). '.jpg';
-		$upload = new Zend_File_Transfer();
-		$upload->addFilter('Rename',
-				array('target' => PUBLIC_PATH . '/images/'. $photoname, 'overwrite' => true) ,'signature');
-		$receive = $upload->receive();
-		if($receive)
-		{
-			$arr['photo'] = $photoname;
-		}
-		else{
-			$arr['photo']=$arr["old_pic"];
-		}
+// 	    $photoname = str_replace(" ", "_", $arr['username']). '.jpg';
+// 		$upload = new Zend_File_Transfer();
+// 		$upload->addFilter('Rename',
+// 				array('target' => PUBLIC_PATH . '/images/'. $photoname, 'overwrite' => true) ,'signature');
+// 		$receive = $upload->receive();
+// 		if($receive)
+// 		{
+// 			$arr['photo'] = $photoname;
+// 		}
+// 		else{
+// 			$arr['photo']=$arr["old_pic"];
+// 		}
 		try{
 			$db=$this->getAdapter();
 			$db->beginTransaction();
@@ -252,13 +275,33 @@ class RsvAcl_Model_DbTable_DbUser extends Zend_Db_Table_Abstract
 					"title"			=>	$arr["title"],
 					"fullname"		=>	$arr["fullname"],
 					"username"		=>	$arr["username"],
-					"photo"			=>	$arr['photo'],
+// 					"photo"			=>	$arr['photo'],
 					"email"			=>	$arr["email"],
 					"user_type_id"	=>	$arr["user_type_id"],
 					"LocationId"	=>	$arr["LocationId"],
 					"status"		=>	$arr["status"],
 					"created_date"	=>	date("Y-m-d H:i:s")
 			);
+			
+			
+			$photoname = str_replace(" ", "_", $arr['username']);
+			$photo = "";
+			$name = $_FILES['signature']['name'];
+			if (!empty($name)){
+				$ss = 	explode(".", $name);
+				$image_name = "signature_".date("Y").date("m").date("d").time()."_".$photoname.".".end($ss);
+				$tmp = $_FILES['signature']['tmp_name'];
+				if(move_uploaded_file($tmp, $part.$image_name)){
+					if (file_exists($part.$arr["old_photo"])) {
+						unlink($part.$arr["old_photo"]);//delete old file
+					}
+// 					$photo = $image_name;
+					$data["photo"] = $image_name;
+				}
+				else
+					$string = "Image Upload failed";
+			}
+			
 			$where=$this->getAdapter()->quoteInto('user_id=?',$user_id);
 			$id=$this->update($data, $where);
 			$ids = explode(",", $arr["identity"]);

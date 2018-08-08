@@ -6,6 +6,46 @@
 		    height: 32px;
 		}
 </style>
+<style>
+.image-box {
+    text-align: center;
+}
+.image-box img {
+    width: 150px;
+    height: 140px;
+    border: solid 1px #eee;
+}
+.button_browse {
+    /*margin-top: 10px; */
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    width: 100%;
+    height: 45px;
+    cursor: pointer;
+    background: #fbf9f9;
+    border: 1px solid #e8e8e8;
+}
+.button_browse span {
+    line-height: 40px;
+    font-weight: 600;
+    cursor: pointer;
+}
+input.btn_borwse_image {
+    position: absolute;
+    width: 100%;
+    height: 45px;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    opacity: 0;
+    cursor: pointer;
+}
+.account-image {
+    border: solid 1px #eee;
+    width: 150px;
+}
+</style>
 <script language="javascript">
       var temp=-1;
    
@@ -185,9 +225,23 @@
 												</span>
 											</label>
 											<div class="col-md-7 col-sm-7 col-xs-12">
+												<br />
 												<div class="input-icon right">
-													<i class="fa"></i>
-													<?php echo $frm_agent->getElement("signature");?>
+													<?php 
+														$images = $this->baseUrl().'/images/profile.png';
+														?>
+														<input name="old_photo"  value="<?php echo $this->photo;?>" type="hidden" />
+														<div class="account-image" >
+															<div class="image-box">
+																<img id="profile_wiew" src="<?php echo $images;?>" alt=""  />
+															</div>
+															<div class="button_browse">
+															<div id='preview'></div>	
+																	<span>Upload <span ><i class="fa fa-camera" aria-hidden="true"></i></span></span>
+																	<input class="btn_borwse_image" type="file" id="signature" name="signature" />
+															</div>
+														</div>
+													<?php //echo $frm_agent->getElement("signature");?>
 												</div>
 											</div>
 										</div>
@@ -336,6 +390,48 @@
 	</div>
 </div>
 <script>
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        
+        reader.onload = function (e) {
+            $('#profile_wiew').attr('src', e.target.result);
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+var maxSize = 0;
+$("#signature").change(function(){
+	var iSize = ($("#signature")[0].files[0].size / 1024); 
+	
+    if (iSize / 1024 > 1) 
+    { 
+       if (((iSize / 1024) / 1024) > 1) 
+       { 
+           iSize = (Math.round(((iSize / 1024) / 1024) * 100) / 100);
+           alert('<?php echo $tr->translate("Image size more than 5Mb can not upload");?>');
+     	   maxSize = 1;
+           return false;
+           //$("#lblSize").html( iSize + "Gb"); 
+       }else{ 
+           iSize = (Math.round((iSize / 1024) * 100) / 100);
+           if(iSize>5){
+               alert('<?php echo $tr->translate("Image size more than 5Mb can not upload");?>');
+         	   maxSize = 1;
+               return false;
+           }
+       } 
+    } 
+    else 
+    {
+       iSize = (Math.round(iSize * 100) / 100);
+       maxSize = 0;
+    }
+    maxSize = 0;
+    readURL(this);
+   
+});
+
 var index5 = 0;
 var option5 = '<?php echo $this->locations; ?>';
 

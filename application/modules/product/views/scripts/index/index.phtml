@@ -50,7 +50,94 @@
 						</div>				
 				</form> 
 				<div class="contain_form" style="clear: both;">
-						<?php echo $this->list; ?>
+				<?php 
+				$stringPagination = '<script type="text/javascript">
+				$(document).ready(function(){
+				$("#table").tablesorter();
+				$("#table").tablesorter().tablesorterPager({container: $("#pagination_table"),size:15});
+				$("#pagedisplay").focus(function(){ this.blur();
+				});
+				});
+				</script>
+				<div id="pagination_table" class="pager" >
+				<form >
+				<table  style="width: 200px;"><tr>
+				<td><img src="'.$this->baseUrl().'/images/first.gif" class="first"/></td>
+				<td><img src="'.$this->baseUrl().'/images/previous.gif" class="prev"/></td>
+				<td><input id="pagedisplay" type="text" class="pagedisplay"/></td>
+				<td><img src="'.$this->baseUrl().'/images/next.gif" class="next"/></td>
+				<td><img src="'.$this->baseUrl().'/images/last.gif" class="last"/></td>
+				<td><select class="pagesize" >
+				<option   value="10">10</option>
+				<option selected="selected"  value="15">15</option>
+				<option value="20">20</option>
+				<option value="30">30</option>
+				<option value="40">40</option>
+				<option value="50">50</option>
+				<option value="60">60</option>
+				<option value="70">70</option>
+				<option value="80">80</option>
+				<option value="90">90</option>
+				<option value="100">100</option>
+				</select>
+				</td>
+				</tr>
+				</table>
+				</form>
+				</div>	';
+				?>
+				<form name="list">
+					<div style="overflow:scroll; max-height: 450px; overflow-x:hidden;" >
+						<table class="collape tablesorter" id="table" width="100%">
+							<thead>
+								<tr>
+									<th class="tdheader"><?php echo $tr->translate("NUM");?></th>
+									<th class="tdheader"><?php echo $tr->translate("BRANCH_NAME");?></th>
+									<th class="tdheader"><?php echo $tr->translate("PHOTO");?></th>
+									<th class="tdheader"><?php echo $tr->translate("ITEM_CODE");?></th>
+									<th class="tdheader"><?php echo $tr->translate("ITEM_NAME");?></th>
+									<th class="tdheader"><?php echo $tr->translate("PRODUCT_CATEGORY");?></th>
+									<th class="tdheader"><?php echo $tr->translate("MEASURE");?></th>
+									<th class="tdheader"><?php echo $tr->translate("QTY");?></th>
+									<th class="tdheader"><?php echo $tr->translate("COST_PRICE");?></th>
+									<th class="tdheader"><?php echo $tr->translate("USER");?></th>
+									<th class="tdheader"><?php echo $tr->translate("STATUS");?></th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php 
+								$r=0;
+								if (!empty($this->row)) foreach ($this->row as $rs){
+									if($r%2==0){$attb='normal';}else{ $attb='alternate';}
+									$r++;
+									$images = $this->baseUrl().'/images/no_images.jpg';
+									if (!empty($rs["photo"])){
+										if (file_exists(PUBLIC_PATH.'/images/proimage/'.$rs["photo"])) {
+											$images = $this->baseUrl().'/images/proimage/'.$rs['photo'];
+										}
+									}
+								?>
+								<tr class="<?php echo $attb; ?>">
+									<td class="items-no"><?php echo $r;?></td>
+									<td class="items">&nbsp;<img style="width: 70px;height: 35px;" src="<?php echo $images;?>" />&nbsp;</td>
+									<td class="items">&nbsp;<a href="<?php echo $this->baseUrl()."/product/index/edit/id/".$rs['id'];?>"><?php echo $rs['branch'];?></a>&nbsp;</td>
+									<td class="items">&nbsp;<a href="<?php echo $this->baseUrl()."/product/index/edit/id/".$rs['id'];?>"><?php echo $rs['item_code'];?></a>&nbsp;</td>
+									<td class="items">&nbsp;<a href="<?php echo $this->baseUrl()."/product/index/edit/id/".$rs['id'];?>"><?php echo $rs['item_name'];?></a>&nbsp;</td>
+									<td class="items">&nbsp;<?php echo $rs['cat'];?>&nbsp;</td>
+									<td class="items">&nbsp;<?php echo $rs['measure'];?>&nbsp;</td>
+									<td class="items" align="center">&nbsp;<?php echo $rs['qty'];?>&nbsp;</td>
+									<td class="items" align="right">&nbsp;<?php echo $rs['price'];?>&nbsp;</td>
+									<td class="items" align="center">&nbsp;<?php echo $rs['user_name'];?>&nbsp;</td>
+									<td class="items" align="center">&nbsp;<?php echo $rs['status'];?>&nbsp;</td>
+								</tr>
+								<?php }?>
+							</tbody>
+						</table>
+						<?php $counter='<span class="row_num">'.$tr->translate('NUM-RECORD').count($this->row).'</span>';?>
+						<div class="footer_list"><?php echo $stringPagination.$counter;?></div>
+					</div>
+				</form>
+						<?php //echo $this->list; ?>
 			    </div>
 		   </div>
 		</div>

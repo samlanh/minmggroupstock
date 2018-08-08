@@ -112,6 +112,7 @@ class Product_Model_DbTable_DbProduct extends Zend_Db_Table_Abstract
   	$sql ="SELECT 
 			  p.`id`,
 			  (SELECT b.name FROM `tb_sublocation` AS b WHERE b.id=pl.`location_id` LIMIT 1) AS branch,
+			  p.photo,
 			  p.`item_code`,
 			  p.`item_name` ,
 			  
@@ -170,6 +171,7 @@ class Product_Model_DbTable_DbProduct extends Zend_Db_Table_Abstract
   	$sql ="SELECT 
 			  p.`id`,
 			  (SELECT b.name FROM `tb_sublocation` AS b WHERE b.id=pl.`location_id` LIMIT 1) AS branch,
+			  p.photo,
 			  p.`item_code`,
 			  p.`item_name` ,
 			  (SELECT c.name FROM `tb_category` AS  c WHERE c.id=p.`cate_id` LIMIT 1) AS cat,
@@ -430,18 +432,35 @@ class Product_Model_DbTable_DbProduct extends Zend_Db_Table_Abstract
 		$request=Zend_Controller_Front::getInstance()->getRequest();
 		$level = $result["level"];
 		
-		$photoname = str_replace(" ", "_", $data['name']).rand(). '.jpg';
-		$upload = new Zend_File_Transfer();
-		$upload->addFilter('Rename',
-				array('target' => PUBLIC_PATH . '/images/proimage/'. $photoname, 'overwrite' => true) ,'pro_img');
-		$receive = $upload->receive();
-		if($receive)
-		{
-			$arr['photo'] = $photoname;
+		$part= PUBLIC_PATH.'/images/proimage/';
+		if (!file_exists($part)) {
+			mkdir($part, 0777, true);
 		}
-		else{
-			$arr['photo']="";
+		$photo = "";
+		$name = $_FILES['pro_img']['name'];
+		if (!empty($name)){
+			$ss = 	explode(".", $name);
+			$image_name = "product_".date("Y").date("m").date("d").time().".".end($ss);
+			$tmp = $_FILES['pro_img']['tmp_name'];
+			if(move_uploaded_file($tmp, $part.$image_name)){
+				$photo = $image_name;
+			}
+			else
+				$string = "Image Upload failed";
 		}
+		
+// 		$photoname = str_replace(" ", "_", $data['name']).rand(). '.jpg';
+// 		$upload = new Zend_File_Transfer();
+// 		$upload->addFilter('Rename',
+// 				array('target' => PUBLIC_PATH . '/images/proimage/'. $photoname, 'overwrite' => true) ,'pro_img');
+// 		$receive = $upload->receive();
+// 		if($receive)
+// 		{
+// 			$arr['photo'] = $photoname;
+// 		}
+// 		else{
+// 			$arr['photo']="";
+// 		}
 		
     	try {
 			
@@ -461,6 +480,7 @@ class Product_Model_DbTable_DbProduct extends Zend_Db_Table_Abstract
     			'user_id'		=>	$this->getUserId(),
     			'note'			=>	$data["description"],
     			'status'		=>	$data["status"],
+    			'photo'		=>	$photo,
     		);
     		$this->_name="tb_product";
     		$id = $this->insert($arr);
@@ -528,18 +548,24 @@ class Product_Model_DbTable_DbProduct extends Zend_Db_Table_Abstract
 		$request=Zend_Controller_Front::getInstance()->getRequest();
 		$level = $result["level"];
 		 
-		 $photoname = str_replace(" ", "_", $data['name']).'.jpg';
-		 $upload = new Zend_File_Transfer();
-		 $upload->addFilter('Rename',
-		 		array('target' => PUBLIC_PATH . '/images/proimage/'. $photoname, 'overwrite' => true) ,'pro_img');
-		 $receive = $upload->receive();
-		 if($receive)
-		 {
-		 	$arr['photo'] = $photoname;
-		 }
-		 else{
-		 	$arr['photo']=$data['old_pic'];
-		 }
+		$part= PUBLIC_PATH.'/images/proimage/';
+		if (!file_exists($part)) {
+			mkdir($part, 0777, true);
+		}
+		
+		
+// 		 $photoname = str_replace(" ", "_", $data['name']).'.jpg';
+// 		 $upload = new Zend_File_Transfer();
+// 		 $upload->addFilter('Rename',
+// 		 		array('target' => PUBLIC_PATH . '/images/proimage/'. $photoname, 'overwrite' => true) ,'pro_img');
+// 		 $receive = $upload->receive();
+// 		 if($receive)
+// 		 {
+// 		 	$arr['photo'] = $photoname;
+// 		 }
+// 		 else{
+// 		 	$arr['photo']=$data['old_pic'];
+// 		 }
 		 
     	try {
     		$arr = array(
@@ -553,7 +579,6 @@ class Product_Model_DbTable_DbProduct extends Zend_Db_Table_Abstract
     				'measure_id'	=>	$data["measure"],
     				//'size_id'		=>	$data["size"],
     				//'serial_number'	=>	$data["serial"],
-    				'photo'		    =>	$arr["photo"],
     				'qty_perunit'	=>	$data["qty_unit"],
     				'unit_label'	=>	$data["label"],
     				'user_id'		=>	$this->getUserId(),
@@ -561,6 +586,23 @@ class Product_Model_DbTable_DbProduct extends Zend_Db_Table_Abstract
     				'status'		=>	$data["status"],
 					
     		);
+    		
+    		$photo = "";
+    		$name = $_FILES['pro_img']['name'];
+    		if (!empty($name)){
+    			$ss = 	explode(".", $name);
+    			$image_name = "product_".date("Y").date("m").date("d").time().".".end($ss);
+    			$tmp = $_FILES['pro_img']['tmp_name'];
+    			if(move_uploaded_file($tmp, $part.$image_name)){
+    				if (file_exists($part.$data["old_photo"])) {
+    					unlink($part.$data["old_photo"]);//delete old file
+    				}
+    				$arr['photo']=$image_name;
+    			}
+    			else
+    				$string = "Image Upload failed";
+    		}
+    		
 			$this->_name="tb_product";
 			if($level==1 OR  $level==2){
 				$arrs =array("price" =>$data["price"]);
