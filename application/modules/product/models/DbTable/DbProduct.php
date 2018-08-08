@@ -399,7 +399,8 @@ class Product_Model_DbTable_DbProduct extends Zend_Db_Table_Abstract
   	$result = $dbgb->getUserInfo();
   	$level = $result["level"];
   	if($level==1){
-  		$location = " AND pl.`location_id` = s.`id`";
+  		$location="";
+//   		$location = " AND pl.`location_id` = s.`id`";
   	}else{
   		$db_globle = new Application_Model_DbTable_DbGlobal();
   		$location = $db_globle->getAccessPermission('pl.`location_id`');

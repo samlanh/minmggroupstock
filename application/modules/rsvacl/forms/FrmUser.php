@@ -39,7 +39,7 @@ class Rsvacl_Form_FrmUser extends Zend_Form
     	$location->setValue($request->getParam('location'));
     	$this->addElement($location);
 		
-		$options=array(''=>'All Status',1=>"ACTIVE",'0'=>"DEACTIVE");
+		$options=array(''=>$tr->translate('All Status'),1=>$tr->translate("ACTIVE"),'0'=>$tr->translate("DEACTIVE"));
 		$status_r = $request->getParam('status_se');
 		$status_se=new Zend_Form_Element_Select('status_se');
     	$status_se->setMultiOptions($options);
@@ -115,14 +115,14 @@ class Rsvacl_Form_FrmUser extends Zend_Form
     	$user_type_id->setMultiOptions($options);
     	$user_type_id->setAttribs(array(
     		'id'=>'user_type_id',
-    		'class'=>'form-control',
+    		'class'=>'form-control form-control select2me select2-offscreen',
     		'required'=>true
     	));
     	$this->addElement($user_type_id);
 		
 		$status = new Zend_Form_Element_Select("status");
     	$status->setAttribs(array('class'=>'form-control'));
-    	$status->setMultiOptions(array("1"=>"Active","0"=>"Deactive"));
+    	$status->setMultiOptions(array("1"=>$tr->translate("ACTIVE"),"0"=>$tr->translate("DEACTIVE")));
     	$this->addElement($status);
         
     	$photo = new Zend_Form_Element_File('pic');
@@ -151,6 +151,7 @@ class Rsvacl_Form_FrmUser extends Zend_Form
     
     public function showSaleAgentForm($data=null, $stockID=null) {
     
+    	$tr = Application_Form_FrmLanguages::getCurrentlanguage();
     	$db=new Application_Model_DbTable_DbGlobal();
     	$db_sale = new Sales_Model_DbTable_DbSalesAgent();
     	$codes = $db_sale->getSaleAgentCode(1);
@@ -158,31 +159,31 @@ class Rsvacl_Form_FrmUser extends Zend_Form
     	
     	$date =new Zend_Date();
     	$nameElement = new Zend_Form_Element_Text('name');
-    	$nameElement->setAttribs(array('class'=>'form-control','placeholder'=>'Enter Agent Name'));
+    	$nameElement->setAttribs(array('class'=>'form-control','placeholder'=>$tr->translate("Enter Agent Name")));
     	$this->addElement($nameElement);
     	 
     	$phoneElement = new Zend_Form_Element_Text('phone');
-    	$phoneElement->setAttribs(array('class'=>'form-control','placeholder'=>'Enter Phone Number'));
+    	$phoneElement->setAttribs(array('class'=>'form-control','placeholder'=>$tr->translate("Enter Phone Number")));
     	$this->addElement($phoneElement);
     	 
     	$emailElement = new Zend_Form_Element_Text('email_detail');
-    	$emailElement->setAttribs(array('class'=>'form-control','placeholder'=>'Enter Email Address'));
+    	$emailElement->setAttribs(array('class'=>'form-control','placeholder'=>$tr->translate("Enter Email Address")));
     	$this->addElement($emailElement);
     	 
     	$addressElement = new Zend_Form_Element_Text('address');
-    	$addressElement->setAttribs(array('placeholder'=>'Enter Current Address',"class"=>"form-control"));
+    	$addressElement->setAttribs(array('placeholder'=>$tr->translate("Enter Current Address"),"class"=>"form-control"));
     	$this->addElement($addressElement);
     	 
     	$jobTitleElement = new Zend_Form_Element_Text('job_title');
-    	$jobTitleElement->setAttribs(array('placeholder'=>'Enter Position',"class"=>"form-control"));
+    	$jobTitleElement->setAttribs(array('placeholder'=>$tr->translate("Enter Position"),"class"=>"form-control"));
     	$this->addElement($jobTitleElement);
     	 
     	$descriptionElement = new Zend_Form_Element_Textarea('description');
-    	$descriptionElement->setAttribs(array('placeholder'=>'Descrtion Here...',"class"=>"form-control","rows"=>3));
+    	$descriptionElement->setAttribs(array('placeholder'=>$tr->translate("DESCRIPTION"),"class"=>"form-control","rows"=>3));
     	$this->addElement($descriptionElement);
     	 
     	$rowsStock = $db->getGlobalDb('SELECT id,name FROM tb_sublocation WHERE name!=""  ORDER BY id DESC ');
-    	$optionsStock = array('1'=>'Default Location','-1'=>'Add New Location');
+    	$optionsStock = array('1'=>$tr->translate("Default Location"),'-1'=>$tr->translate("Add New Location"));
     	if(count($rowsStock) > 0) {
     		foreach($rowsStock as $readStock) $optionsStock[$readStock['id']]=$readStock['name'];
     	}
@@ -192,21 +193,21 @@ class Rsvacl_Form_FrmUser extends Zend_Form
     	$this->addElement($mainStockElement);
     	 
     	$user_name = new Zend_Form_Element_Text('user_name');
-    	$user_name->setAttribs(array('placeholder'=>'Enter User Name',"class"=>"form-control",'required'=>'required'));
+    	$user_name->setAttribs(array('placeholder'=>$tr->translate("Enter User Name"),"class"=>"form-control",'required'=>'required'));
     	$this->addElement($user_name);
     	 
     	$password = new Zend_Form_Element_Password('password');
-    	$password->setAttribs(array('placeholder'=>'Enter Password',"class"=>"form-control",
+    	$password->setAttribs(array('placeholder'=>$tr->translate("Enter Password"),"class"=>"form-control",
     			                     'required'=>true
     			));
     	$this->addElement($password);
     	 
     	$pob= new Zend_Form_Element_Text('pob');
-    	$pob->setAttribs(array('placeholder'=>'Enter Place of Birdth',"class"=>"form-control"));
+    	$pob->setAttribs(array('placeholder'=>$tr->translate("Enter Place of Birdth"),"class"=>"form-control"));
     	$this->addElement($pob);
     	 
     	$dob= new Zend_Form_Element_Text('dob');
-    	$dob->setAttribs(array('placeholder'=>'Enter Position',"class"=>"form-control date-picker"));
+    	$dob->setAttribs(array('placeholder'=>$tr->translate("Enter Position"),"class"=>"form-control date-picker"));
     	$dob->setValue($date->get('MM/dd/1990'));
     	$this->addElement($dob);
     	 
@@ -220,28 +221,28 @@ class Rsvacl_Form_FrmUser extends Zend_Form
     	$this->addElement($signature);
     	 
     	$bank_acc = new Zend_Form_Element_Text("bank_acc");
-    	$bank_acc->setAttribs(array('placeholder'=>'Enter Bank Account',"class"=>"form-control"));
+    	$bank_acc->setAttribs(array('placeholder'=>$tr->translate("Enter Bank Account"),"class"=>"form-control"));
     	$this->addElement($bank_acc);
     	 
     	$refer_name = new Zend_Form_Element_Text("refer_name");
-    	$refer_name->setAttribs(array('placeholder'=>'Enter Reference Name',"class"=>"form-control"));
+    	$refer_name->setAttribs(array('placeholder'=>$tr->translate("Enter Reference Name"),"class"=>"form-control"));
     	$this->addElement($refer_name);
     	 
     	$refer_phone = new Zend_Form_Element_Text("refer_phone");
-    	$refer_phone->setAttribs(array('placeholder'=>'Enter Reference Phone',"class"=>"form-control"));
+    	$refer_phone->setAttribs(array('placeholder'=>$tr->translate("Enter Reference Phone"),"class"=>"form-control"));
     	$this->addElement($refer_phone);
     	 
     	$refer_addres = new Zend_Form_Element_Textarea("refer_address");
-    	$refer_addres->setAttribs(array('placeholder'=>'Enter Reference Address',"class"=>"form-control","style"=>"height:40px"));
+    	$refer_addres->setAttribs(array('placeholder'=>$tr->translate("Enter Reference Address"),"class"=>"form-control","style"=>"height:40px"));
     	$this->addElement($refer_addres);
     	 
     	$satrt_working_date = new Zend_Form_Element_Text("start_working_date");
-    	$satrt_working_date->setAttribs(array('placeholder'=>'Enter Bank Account',"class"=>"form-control date-picker"));
+    	$satrt_working_date->setAttribs(array('placeholder'=>$tr->translate("Enter start working"),"class"=>"form-control date-picker"));
     	$satrt_working_date->setValue($date->get('MM/dd/YYYY'));
     	$this->addElement($satrt_working_date);
     	 
     	$row_user_type = $db->getGlobalDb('SELECT u.`user_type_id`,u.`user_type`,u.`parent_id` FROM `tb_acl_user_type` AS u WHERE u.`status`=1');
-    	$option_user = array('-1'=>'Select User Type');
+    	$option_user = array('-1'=>$tr->translate("Select User Type"));
     	if(count($row_user_type) > 0) {
     		foreach($row_user_type as $rs) $option_user[$rs['user_type_id']]=$rs['user_type'];
     	}

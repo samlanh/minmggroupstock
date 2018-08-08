@@ -12,9 +12,9 @@ $request=Zend_Controller_Front::getInstance()->getRequest();
 </style>
 	<div class="page-header-inner">
 		<!-- BEGIN LOGO -->
-		<div class="page-logo">
-			<a href="<?php echo $this->baseUrl(); ?>/default/index/dashboad">
-				<h2 style="font-size:16px;line-height: 7px;font-weight: bold;color: #fff;">Cam App Technology</h2>
+		<div class="page-logo text-center">
+			<a title="<?php echo $tr->translate("Cam App Technology");?>" href="<?php echo $this->baseUrl(); ?>/default/index/dashboad">
+				<img style=" width: 120px; padding: 4px 0;" src="<?php echo $this->baseUrl()."/images/cam-app-logo.png"?>" alt="<?php echo $tr->translate("Cam App Technology");?>" />
 			</a>
 			<div class="menu-toggler sidebar-toggler hide">
 				<!-- DOC: Remove the above "hide" to enable the sidebar toggler button on header -->
@@ -24,6 +24,7 @@ $request=Zend_Controller_Front::getInstance()->getRequest();
 		<!-- BEGIN RESPONSIVE MENU TOGGLER -->
 		<a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse">
 		</a>
+		
 		<!-- END RESPONSIVE MENU TOGGLER -->
 		<!-- BEGIN TOP NAVIGATION MENU -->
 		<div class="top-menu">

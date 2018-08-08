@@ -55,16 +55,16 @@ $array_icon = array(
 	<div class="page-sidebar-wrapper">
 		<!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
 		<!-- DOC: Change data-auto-speed="200" to adjust the sub menu slide up/down speed -->
-		<div class="page-sidebar navbar-collapse collapse">
+		<div class="page-sidebar navbar-collapse collapse" style="margin-top: 25px;">
 			
 			<ul class="page-sidebar-menu" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
 				<!-- DOC: To remove the sidebar toggler from the sidebar you just need to completely remove the below "sidebar-toggler-wrapper" LI element -->
-				<li class="sidebar-toggler-wrapper" style="background: #364150;height: 30px;border-bottom:2px solid #9a9a9a !important;">
+				<!--<li class="sidebar-toggler-wrapper" style="/* background: #364150; *//* height: 30px; */"> -->
 					<!-- BEGIN SIDEBAR TOGGLER BUTTON -->
-					<div class="sidebar-toggler">
-					</div>
+					<!--<div class="sidebar-toggler">
+					</div>-->
 					<!-- END SIDEBAR TOGGLER BUTTON -->
-				</li>
+				<!--</li>-->
 				<!-- DOC: To remove the search box from the sidebar you just need to completely remove the below "sidebar-search-wrapper" LI element -->
 				<?php if(!empty($db->getAllAclParentUserType($level))){ foreach ($db->getAllAclParentUserType($level) as $rs){ 
 					
@@ -83,7 +83,7 @@ $array_icon = array(
 						<?php if(!empty($db->getAllAclSubParentUserType($level,$rs["parent"]))){ 
 							foreach($db->getAllAclSubParentUserType($level,$rs["parent"]) as $row){ ?>
 						<?php if($row["lable"]!="NO_SUB"){?>
-						<li  class="start " style="padding: 6px 0 6px 2px;background:#1e3340">
+						<li  class="start " style="padding: 6px 0 6px 2px;background:#02014a">
 								<span style="color:#fff; "><?php if (empty($array_icon[$row["lable"]])){ echo '<i class="icon-arrow-right"></i>';}else{ echo $array_icon[$row["lable"]]; }?> <?php echo $tr->translate($row["lable"])?></span>
 						</li> 
 						<?php }?>
@@ -101,9 +101,9 @@ $array_icon = array(
 				
 				
 				<?php if($level==1){?>
-				<li class="start">
+				<li class="start <?php if($module=="rsvacl"){echo 'start active open';}?>">
 					<a href="javascript:;">
-					<i class="icon-user"></i>
+					<i class="fa fa-user " aria-hidden="true"></i>
 					<span class="title"><?php echo $tr->translate("USER_ACCESS");?></span>
 					<span class="arrow "></span>
 					</a>
@@ -111,13 +111,13 @@ $array_icon = array(
 					
 						<li>
 	            			<a href="<?php echo $location[0]; ?>">
-		            			<i class="icon-user"></i><?php echo $tr->translate($location[1]);?>
+		            			<i class="fa fa-map-marker " aria-hidden="true"></i> <?php echo $tr->translate($location[1]);?>
 		            		</a>
 	            		</li>
 					
 						<li>
 	            			<a href="<?php echo $url_user_list[0]; ?>">
-		            			<i class="icon-user"></i><?php echo $tr->translate($url_user_list[1]);?>
+		            			<i class="fa fa-user " aria-hidden="true"></i> <?php echo $tr->translate($url_user_list[1]);?>
 		            		</a>
 	            		</li> 
 	            		<!--<li>
@@ -137,7 +137,7 @@ $array_icon = array(
 	            		</li> -->
 	            		<li>
 	            			<a href="<?php echo $url_user_type[0]; ?>">
-		            			<i class="icon-settings"></i><span class="title"><?php echo $tr->translate($url_user_type[1]);?></span>
+		            			<i class="fa fa-gear " aria-hidden="true"></i> <span class="title"><?php echo $tr->translate($url_user_type[1]);?></span>
 		            		</a>
 	            		</li> 
 					</ul>
