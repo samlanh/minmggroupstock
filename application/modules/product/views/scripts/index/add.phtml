@@ -515,6 +515,22 @@ $( document ).ready(function() {
 		var strings = arrays.join(',');
 	}
 	function addNewProLocation(){
+			var currentBranch = $("#branch").val();
+			var iden = $("#identity").val();
+			var arrays = iden.split(',');
+			if(currentBranch==""){
+				alert("<?php echo $tr->translate("Please Select Branch")?>");
+				 return false;
+			}
+			 if(arrays!=""){
+				 for(var i=0;i< arrays.length;i++) {
+					 readychoose = $("#branch_id_"+arrays[i]).val(); 
+					 if(readychoose==currentBranch){
+							alert("<?php echo $tr->translate("Choosen ready")?>");
+						 return false;
+					 }
+				}
+			}
 			index++;
 			var branch_text = $("#branch");
 			var txt_br = $("option:selected",branch_text).text();

@@ -704,7 +704,8 @@ function getDnNo($completed=null,$opt=null){
     	}
     	else{
     		$sql_string = $this->getAllLocationByUser($result['user_id'],$branch);
-    		$result = " AND (".$sql_string.")";
+//     		$result = " AND (".$sql_string.")";
+    		$result = " AND ".$sql_string;
     		return $result;
     	} 
     }
@@ -732,16 +733,22 @@ function getDnNo($completed=null,$opt=null){
     	}
     	$sql=" SELECT * FROM `tb_acl_ubranch` WHERE user_id=$user_id ";
     	
-    	//echo $sql;exit();
     	$rows = $db->fetchAll($sql);
     	$s_where = array();
     	$where='';
-		//print_r($rows);exit();
     	if(!empty($rows)){
+//     		foreach ($rows as $rs){
+//     			$s_where[] = $branch_name." = {$rs['location_id']}";
+//     		}
+//     		$where .=' '.implode(' OR ',$s_where).'';
     		foreach ($rows as $rs){
-    			$s_where[] = $branch_name." = {$rs['location_id']}";
+    			if (empty($where)){
+    				$where=$rs['location_id'];
+    			}else{
+    				$where=$where.",".$rs['location_id'];
+    			}
     		}
-    		$where .=' '.implode(' OR ',$s_where).'';
+    		$where = $branch_name." IN ($where) ";
     	}
     	return $where;
     }

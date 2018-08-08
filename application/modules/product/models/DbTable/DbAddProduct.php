@@ -322,10 +322,10 @@ class Product_Model_DbTable_DbAddProduct extends Zend_Db_Table_Abstract
 					
 					'item_name'		=> $post["pro_name"],
 					'p_code'		=> $post["pro_code"],
-					'barcode'=>
+					'barcode'=>"",
 // 					'brand_id'
 					'cate_id'		=> $post["category_id"],//test
-					'branch_id'	 	=> 
+					'branch_id'	 	=> "",
 					'remark'		=> $post['remark'],
 					'last_usermod'	=> $GetUserId,
 					'last_mod_date'	=> new Zend_Date(),//test

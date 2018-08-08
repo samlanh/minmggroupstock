@@ -41,6 +41,13 @@ $module_str  = array(
 		'sales'=>'SALES_INVENTORY',
 		'report'=>'REPORT',
 		);	
+
+$array_icon = array(
+		'PRODUCT'=>'<i class="fa fa-cubes" aria-hidden="true"></i>',
+		'TRANSFER_STOCK'=>'<i class="fa fa-exchange" aria-hidden="true"></i>',
+		'REQUEST_STOCK'=>'<i class="fa  fa-tasks" aria-hidden="true"></i>',
+		'OTHER'=>'<i class="fa fa-folder-open " aria-hidden="true"></i>',
+);
  ?>
  
  
@@ -52,7 +59,7 @@ $module_str  = array(
 			
 			<ul class="page-sidebar-menu" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
 				<!-- DOC: To remove the sidebar toggler from the sidebar you just need to completely remove the below "sidebar-toggler-wrapper" LI element -->
-				<li class="sidebar-toggler-wrapper" style="background:#6c5353;height: 41px; border-bottom:2px solid #9a9a9a !important;">
+				<li class="sidebar-toggler-wrapper" style="background: #364150;height: 30px;border-bottom:2px solid #9a9a9a !important;">
 					<!-- BEGIN SIDEBAR TOGGLER BUTTON -->
 					<div class="sidebar-toggler">
 					</div>
@@ -73,16 +80,17 @@ $module_str  = array(
 					<span class="arrow "></span>
 					</a>
 					<ul class="sub-menu">
-						<?php if(!empty($db->getAllAclSubParentUserType($level,$rs["parent"]))){ foreach($db->getAllAclSubParentUserType($level,$rs["parent"]) as $row){ ?>
+						<?php if(!empty($db->getAllAclSubParentUserType($level,$rs["parent"]))){ 
+							foreach($db->getAllAclSubParentUserType($level,$rs["parent"]) as $row){ ?>
 						<?php if($row["lable"]!="NO_SUB"){?>
-						<li  class="start " style="padding: 6px 0 6px 2px;background:#6c5353">
-								<span style="color:#fff; "><i class="icon-arrow-right"></i><?php echo $tr->translate($row["lable"])?></span>
+						<li  class="start " style="padding: 6px 0 6px 2px;background:#1e3340">
+								<span style="color:#fff; "><?php if (empty($array_icon[$row["lable"]])){ echo '<i class="icon-arrow-right"></i>';}else{ echo $array_icon[$row["lable"]]; }?> <?php echo $tr->translate($row["lable"])?></span>
 						</li> 
 						<?php }?>
 							<?php if(!empty($db->getAllAclUserTypeAndParent($rs["parent"],$level,$row["sub_parent"]))){ foreach($db->getAllAclUserTypeAndParent($rs["parent"],$level,$row["sub_parent"]) as $rows){?>
 								<li>
 									<a href="<?php echo $this->baseUrl()."/".$rows["module"]."/".$rows["controller"]."/".$rows["action"]?>">
-										<i class="icon-arrow-right"></i><?php echo $tr->translate($rows["lable"])?></a>
+										&nbsp;<?php echo $tr->translate($rows["lable"])?>
 									</a>
 								</li> 
 							<?php }}?>

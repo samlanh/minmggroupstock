@@ -45,10 +45,10 @@ class Product_Model_DbTable_DbRequestStock extends Zend_Db_Table_Abstract
 		 		if(!empty($data["staff_id"])){
 		 			$where.=' AND sr.`staff_id`='.$data["staff_id"];
 		 		}
-		$location = $db_globle->getAccessPermission('m.`location_id`');
+		$location = $db_globle->getAccessPermission('sr.`branch_id`');
 		$order=' ORDER BY sr.id DESC';
 		//echo $sql;
-		return $db->fetchAll($sql.$where.$order.$location);
+		return $db->fetchAll($sql.$where.$location.$order);
 			
 	}
 	
@@ -323,7 +323,8 @@ class Product_Model_DbTable_DbRequestStock extends Zend_Db_Table_Abstract
 		$result = $user_info->getUserInfo();
 		$db = $this->getAdapter();
 		$sql = "SELECT id,`staff_name` AS `name` FROM `tb_staff` WHERE STATUS=1 AND `staff_name`!=''";
-		$location = $db_globle->getAccessPermission('pl.`location_id`');
+// 		$location = $db_globle->getAccessPermission('pl.`location_id`');
+		$location="";
 		return $db->fetchAll($sql.$location);
 	}
 	

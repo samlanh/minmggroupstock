@@ -41,7 +41,7 @@ class Product_Model_DbTable_DbCloselist extends Zend_Db_Table_Abstract
 		$location = $db_globle->getAccessPermission('`location_id`');
 		$order=' ORDER BY id DESC';
 		//echo $sql;
-		return $db->fetchAll($sql.$where.$order.$location);
+		return $db->fetchAll($sql.$where.$location.$order);
 	}
 	
 	function getRequestStockByids($reques_id){

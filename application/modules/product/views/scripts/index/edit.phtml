@@ -505,7 +505,7 @@ $( document ).ready(function() {
 			template+='<td><input type="text" id="other_qty_<?php echo $key+1;?>" onKeyup="totalQty(<?php echo $key+1;?>)" name="other_qty_<?php echo $key+1;?>" value="'+other_qty+'" class="form-control"></td>'; 
 			template+='<td><input type="text" id="total_qty_<?php echo $key+1;?>" name="total_qty_<?php echo $key+1;?>" value="<?php echo $rs['qty'];?>" class="form-control"></td>'; 
 			template+='<td><input type="text" id="qty_warning_<?php echo $key+1;?>" name="qty_warnning_<?php echo $key+1;?>" value="<?php echo $rs['qty_warning'];?>" class="form-control"></td>';
-			template+='<td><button type="button" onClick="deleteRecord(<?php echo $key+1;?>,1)" name="save_close" class="btn default"><?php echo $tr->translate("DELETE");?></button></td>';
+			template+='<td><button type="button" onClick="deleteRecord(<?php echo $key+1;?>,1)" name="save_close" class="btn default"><?php echo $tr->translate("DELETE");?></button><input type="hidden" value="<?php echo $rs['id'];?>"  name="detailid'+inx+'" class="fullside" id="detailid'+inx+'"  /></td>';
 			template+='</tr>';
 			$('#tr_location').append(template);
 			if($('#identity').val()!="") {
@@ -516,6 +516,22 @@ $( document ).ready(function() {
 	}
 	
 		function addNewProLocation(){
+			var currentBranch = $("#branch").val();
+			var iden = $("#identity").val();
+			var arrays = iden.split(',');
+			if(currentBranch==""){
+				alert("<?php echo $tr->translate("Please Select Branch")?>");
+				 return false;
+			}
+			 if(arrays!=""){
+				 for(var i=0;i< arrays.length;i++) {
+					 readychoose = $("#branch_id_"+arrays[i]).val(); 
+					 if(readychoose==currentBranch){
+							alert("<?php echo $tr->translate("Choosen ready")?>");
+						 return false;
+					 }
+				}
+			}
 			index++;
 			var branch_text = $("#branch");
 			var txt_br = $("option:selected",branch_text).text();

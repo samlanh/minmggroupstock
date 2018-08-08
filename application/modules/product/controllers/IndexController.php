@@ -40,7 +40,8 @@ public function init()
     			'status'	=>	1
     		);
     	}
-		if($level==1 or $level==2){
+		if($level==1 ){
+// 		if($level==1 or $level==2){
 			$rows = $db->getAllProductForAdmin($data);
 			$columns=array("BRANCH_NAME","ITEM_CODE","ITEM_NAME",
 					"PRODUCT_CATEGORY","MEASURE","QTY","COST_PRICE","USER","STATUS");

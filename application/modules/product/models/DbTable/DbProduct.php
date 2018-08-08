@@ -376,19 +376,35 @@ class Product_Model_DbTable_DbProduct extends Zend_Db_Table_Abstract
   }
   function getProductLocation($id){
   	$db = $this->getAdapter();
-  	$sql = "SELECT 
-			  pl.`id`,
-			  pl.`pro_id`,
-			  pl.`qty`,
-			  pl.`qty_warning`,
-			  pl.`location_id`,
-			  s.`name` 
-			FROM
-			  `tb_prolocation` AS pl,
-			  `tb_sublocation` AS s 
-			WHERE pl.`pro_id` = $id 
-			  AND pl.`location_id` = s.`id` ";
-  	return $db->fetchAll($sql);
+//   	$sql = "SELECT 
+// 			  pl.`id`,
+// 			  pl.`pro_id`,
+// 			  pl.`qty`,
+// 			  pl.`qty_warning`,
+// 			  pl.`location_id`,
+// 			  s.`name` 	FROM
+// 			  `tb_prolocation` AS pl,
+// 			  `tb_sublocation` AS s 
+// 			WHERE pl.`pro_id` = $id 
+// 			   ";
+  	
+  	$sql = "
+  	SELECT pl.`id`, pl.`pro_id`, pl.`qty`, pl.`qty_warning`, 
+		pl.`location_id`, 
+		(SELECT s.`name` FROM `tb_sublocation` AS s WHERE pl.`location_id` = s.`id` LIMIT 1  ) AS `name`
+		FROM `tb_prolocation` AS pl
+		WHERE pl.`pro_id` = $id ";
+  	$dbgb = new Application_Model_DbTable_DbGlobal();
+  	$user_info = new Application_Model_DbTable_DbGetUserInfo();
+  	$result = $dbgb->getUserInfo();
+  	$level = $result["level"];
+  	if($level==1){
+  		$location = " AND pl.`location_id` = s.`id`";
+  	}else{
+  		$db_globle = new Application_Model_DbTable_DbGlobal();
+  		$location = $db_globle->getAccessPermission('pl.`location_id`');
+  	}
+  	return $db->fetchAll($sql.$location);
   }
   
   function getPriceType(){
@@ -504,11 +520,12 @@ class Product_Model_DbTable_DbProduct extends Zend_Db_Table_Abstract
     	//print_r($data);exit();
     	$db = $this->getAdapter();
     	$db->beginTransaction();
-		$user_info = new Application_Model_DbTable_DbGetUserInfo();
+    	
+		$user_info = new Application_Model_DbTable_DbGlobal();
 		$result = $user_info->getUserInfo();
 		$session_user=new Zend_Session_Namespace('auth');
 		$request=Zend_Controller_Front::getInstance()->getRequest();
-		 $level = $result["level"];
+		$level = $result["level"];
 		 
 		 $photoname = str_replace(" ", "_", $data['name']).'.jpg';
 		 $upload = new Zend_File_Transfer();
@@ -553,32 +570,69 @@ class Product_Model_DbTable_DbProduct extends Zend_Db_Table_Abstract
     		$where = $db->quoteInto("id=?", $data["id"]);
     		$this->update($arr, $where);
     
+//     		if($level==1 OR  $level==2){
+    		if ($level==1){
+    			// For Product Location Section
+    			$identitys = explode(',',$data['identity']);
+    			$detailId="";
+    			if (!empty($identitys)){
+    				foreach ($identitys as $i){
+    					if (empty($detailId)){
+    						if (!empty($data['detailid'.$i])){
+    							$detailId = $data['detailid'.$i];
+    						}
+    					}else{
+    						if (!empty($data['detailid'.$i])){
+    							$detailId= $detailId.",".$data['detailid'.$i];
+    						}
+    					}
+    				}
+    			}
+    			$this->_name="tb_prolocation";
+    			$where="pro_id = ".$data["id"];
+    			if (!empty($detailId)){
+    				$where.=" AND id NOT IN ($detailId) ";
+    			}
+    			$this->delete($where);
+    			
+    		}
     		// For Product Location Section
-    		$sql = "DELETE FROM tb_prolocation WHERE pro_id=".$data["id"];
-    		$db->query($sql);
-    		$location_id = 1;
     		if(!empty($data['identity'])){
     			$identitys = explode(',',$data['identity']);
     			foreach($identitys as $i)
     			{
-    				$arr1 = array(
+    				if (!empty($data['detailid'.$i])){
+    					$arr1 = array(
     						'pro_id'			=>	$data["id"],
     						'location_id'		=>	$data["branch_id_".$i],
     						'qty'				=>	$data["total_qty_".$i],
     						'qty_warning'		=>	$data["qty_warnning_".$i],
     						'last_mod_userid'	=>	$this->getUserId(),
     						'last_mod_date'		=>	new Zend_Date(),
-    				);
-    				$this->_name = "tb_prolocation";
-    				$location_id = $data["branch_id_".$i];
-    				$this->insert($arr1);
+	    				);
+    					$this->_name = "tb_prolocation";
+    					$where =" id =".$data['detailid'.$i];
+    					$this->update($arr1, $where);
+    				}else{
+    					$arr1 = array(
+    						'pro_id'			=>	$data["id"],
+    						'location_id'		=>	$data["branch_id_".$i],
+    						'qty'				=>	$data["total_qty_".$i],
+    						'qty_warning'		=>	$data["qty_warnning_".$i],
+    						'last_mod_userid'	=>	$this->getUserId(),
+    						'last_mod_date'		=>	new Zend_Date(),
+	    				);
+	    				$this->_name = "tb_prolocation";
+	    				$location_id = $data["branch_id_".$i];
+	    				$this->insert($arr1);
+    				}
     			}
     		}
+    		
     		if($level==1 OR  $level==2){
-    		// For Product Price
-    		$sql = "DELETE FROM tb_product_price WHERE pro_id=".$data["id"];
-    		$db->query($sql);
-			
+	    		// For Product Price
+	    		$sql = "DELETE FROM tb_product_price WHERE pro_id=".$data["id"];
+	    		$db->query($sql);
 				if(!empty($data['identity_price'])){
 					$identitys = explode(',',$data['identity_price']);
 					foreach($identitys as $i)

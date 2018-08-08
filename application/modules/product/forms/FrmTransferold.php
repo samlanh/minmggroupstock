@@ -299,7 +299,7 @@ class Product_Form_FrmTransfer extends Zend_Form
     	if($data != null) {
     		$re_num->setValue($data["re_no"]);
 			$re_id = new Zend_Form_Element_Hidden("re_id");
-			if(!empty(@$data["re_id"])){
+			if(@!empty($data["re_id"])){
 				$re_id->setValue($data["re_id"]);
 			}
 			
@@ -428,7 +428,7 @@ class Product_Form_FrmTransfer extends Zend_Form
     	if($data != null) {
     		$re_num->setValue($data["re_no"]);
 			$re_id = new Zend_Form_Element_Hidden("re_id");
-			if(!empty(@$data["re_id"])){
+			if(@!empty($data["re_id"])){
 				$re_id->setValue($data["re_id"]);
 			}
 			

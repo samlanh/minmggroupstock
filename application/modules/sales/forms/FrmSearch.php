@@ -47,10 +47,8 @@ public function init()
 // 		Application_Form_DateTimePicker::addDateField(array('start_date','end_date'));
 		
 		$options="";
-		$sql = "SELECT id, name FROM tb_sublocation WHERE name!='' ";
-		$sql.=" ORDER BY id DESC ";
-		$rs=$db->getGlobalDb($sql);
-		$options=array(0=>"Choose Branch");
+		$rs=$db->getBranch();
+		$options=array(0=>$tr->translate("Choose Branch"));
 		if(!empty($rs)) foreach($rs as $read) $options[$read['id']]=$read['name'];
 		$locationID = new Zend_Form_Element_Select('branch_id');
 		$locationID ->setAttribs(array('class'=>'validate[required] form-control select2me'));
@@ -67,7 +65,7 @@ public function init()
 				'class'=>'form-control form-control-inline date-picker'
 		));
 		
-		$opt=array(-1=>"Choose Sale Person");
+		$opt=array(-1=>$tr->translate("Choose Sale Person"));
 		$rows = $db->getGlobalDb('SELECT id ,name FROM `tb_sale_agent` WHERE name!="" AND status=1');
 		if(!empty($rows)) {
 			foreach($rows as $rs) $opt[$rs['id']]=$rs['name'];
@@ -79,7 +77,7 @@ public function init()
 		$this->addElement($saleagent_id);
 		
 		$rows= $db->getGlobalDb('SELECT v.key_code,v.`name_en`,v.`name_kh` FROM `tb_view` AS v WHERE v.`status`=1 AND v.`name_en`!="" AND v.`type`=6');
-		$opt= array(0=>"Choose Customer Type");
+		$opt= array(0=>$tr->translate("Choose Customer Type"));
 		if(count($rows) > 0) {
 			foreach($rows as $readStock) $opt[$readStock['key_code']]=$readStock['name_en'];
 		}

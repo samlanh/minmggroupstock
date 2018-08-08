@@ -140,7 +140,7 @@ table.user td{
 						   
 						<label class="control-label col-md-2">
 						<input type="hidden" id="identity" name="identity" />
-									<button class="btn btn-primary" type="button" id="new_item" onclick="addRow(1);" name="new_followup" value="New">
+									<button class="btn btn-primary" type="button" id="new_item"  name="new_followup" value="New">
 													&nbsp;<img src="<?php echo $this->baseUrl()?>/images/icon/new-row.png" alt="">Add</button>
 						</label>
 							<label class="control-label col-md-4">
@@ -271,6 +271,9 @@ table.user td{
 </div>
 
 <script>
+function AddLocation(){
+	
+}
 jQuery(document).ready(function(){
 	var index5 = '<?php echo count($rowbranch);?>';
 	var option5 = '<?php echo $this->locations; ?>';

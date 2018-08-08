@@ -143,6 +143,7 @@ class Rsvacl_Form_FrmUser extends Zend_Form
 			$email->setValue($data["email"]);
 			$user_type_id->setValue($data["user_type_id"]);
 			$status->setValue($data["status"]);
+			$locationID->setValue($data["LocationId"]);
 		}
     	
     	return $this;

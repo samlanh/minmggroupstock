@@ -43,6 +43,7 @@ public function init()
    		$frm = new Product_Form_FrmSearchInfomation();
     	Application_Model_Decorator::removeAllDecorator($frm);
     	$this->view->formFilter = $frm->filter();
+    	
    	}
    	
     public function addAction()
