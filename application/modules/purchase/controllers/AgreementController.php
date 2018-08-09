@@ -64,11 +64,12 @@ public function indexAction()
 		$this->view->rsproduct = $db->getAllProductName();
 		$db = new Application_Model_DbTable_DbGlobal();
 		$this->view->term_opt = $db->getAllTermCondition();
-	
+		
 		$formpopup = new Sales_Form_FrmCustomer(null);
 		$formpopup = $formpopup->Formcustomer(null);
 		Application_Model_Decorator::removeAllDecorator($formpopup);
 		$this->view->form_customer = $formpopup;
+		
 		$db = new Application_Model_DbTable_DbGlobal();
 		$this->view->invoice = $db->getSalesNumber(1);
 		

@@ -27,7 +27,7 @@
 									<?php echo $formFilter->getElement('branch_name');?>
 								</div>
 								<div class="col-md-4">
-									<?php echo $formFilter->getElement('status');?></button>
+									<?php echo $formFilter->getElement('status');?>
 								</div>				
 								<div class="col-md-2">
 									<button type="submit" class="btn green"><?php echo $tr->translate("SEARCH");?></button>
@@ -50,28 +50,41 @@
 								<tr>
 									<th><?php echo $tr->translate("NO");?></th>
 									<th><?php echo $tr->translate("BRANCH_NAME");?></th>
+									<th><?php echo $tr->translate("LOGO");?></th>
 									<th><?php echo $tr->translate("CODE");?></th>
 									<th><?php echo $tr->translate("PREFIX");?></th>
 									<th><?php echo $tr->translate("CONTACT_NAME");?></th>
 									<th><?php echo $tr->translate("PHONE");?></th>
-									<th><?php echo $tr->translate("EMAIL");?></th>
-									<th><?php echo $tr->translate("OFFICE_PHONE");?></th>
+									<!-- 
+									<th><?php //echo $tr->translate("EMAIL");?></th>
+									<th><?php //echo $tr->translate("OFFICE_PHONE");?></th>
+									 -->
 									<th><?php echo $tr->translate("ADDRESS");?></th>
 									<th><?php echo $tr->translate("STATUS");?></th>
 									<th><?php echo $tr->translate("ACTION");?></th>
 								</tr>
 							</thead>
 							<tbody style="font-size: 12px;">
-								<?php if(!empty($rs)){ foreach ($rs as $key => $row){?>
+								<?php if(!empty($rs)){ foreach ($rs as $key => $row){
+									$images = $this->baseUrl().'/images/no_images.jpg';
+									if (!empty($row["logo"])){
+										if (file_exists(PUBLIC_PATH.'/images/logo/'.$row["logo"])) {
+											$images = $this->baseUrl().'/images/logo/'.$row['logo'];
+										}
+									}
+									?>
 								<tr class="odd gradeX">
 									<td><?php echo $key+1;?></td>
 									<td><?php echo $row["name"]?></td>
+									<td class="items">&nbsp;<img style="width: 70px;height: 35px;" src="<?php echo $images;?>" />&nbsp;</td>
 									<td><?php echo $row["branch_code"]?></td>
 									<td><?php echo $row["prefix"]?></td>
 									<td><?php echo $row["contact"]?></td>
 									<td><?php echo $row["phone"]?></td>
-									<td><a href="mailto:shuxer@gmail.com"><?php echo $row["email"]?> </a></td>
-									<td><?php echo $row["office_tel"]?></td>
+									<!-- 
+									<td><a href="mailto:shuxer@gmail.com"><?php //echo $row["email"]?> </a></td>
+									<td><?php //echo $row["office_tel"]?></td>
+									 -->
 									<td class="center"><?php echo $row["address"]?></td>
 									<td>
 										<?php if($row["status"] == 1){?>

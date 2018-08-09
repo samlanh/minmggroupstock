@@ -33,7 +33,7 @@ class Product_Form_FrmBranchFilter extends Zend_Form
     	));
     	$status = new Zend_Form_Element_Select("status");
     	$status->setAttribs(array(
-    			'class'=>'form-control',
+    			'class'=>'form-control select2me',
     			'required'=>'required'
     	));
     	$opt = array('1'=>$tr->translate("ACTIVE"),'0'=>$tr->translate("DEACTIVE"));

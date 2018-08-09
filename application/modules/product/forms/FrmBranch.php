@@ -66,7 +66,7 @@ class Product_Form_FrmBranch extends Zend_Form
 		
 		$status = new Zend_Form_Element_Select("status");
 		$status->setAttribs(array(
-				'class'=>'form-control',
+				'class'=>'form-control select2me',
 				//'required'=>'required'
 		));
 		$opt = array('1'=>$tr->translate("ACTIVE"),'0'=>$tr->translate("DEACTIVE"));
@@ -80,7 +80,7 @@ class Product_Form_FrmBranch extends Zend_Form
 		
 		$show_by = new Zend_Form_Element_Select("show_by");
 		$show_by->setAttribs(array(
-				'class'=>'form-control',
+				'class'=>'form-control select2me',
 				//'required'=>'required'
 		));
 		$opt_show = array('1'=>$tr->translate("SHOW_BY_TEXT"),'2'=>$tr->translate("SHOW_BY_LOGO"),'3'=>$tr->translate("SHOW_BY_ALL"));

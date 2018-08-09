@@ -66,6 +66,7 @@ public function init()
 			}
 		}
 		$rs = $db->getBranchById($id);
+		$this->view->rs = $rs;
 		$formFilter = new Product_Form_FrmBranch();
 		$formAdd = $formFilter->branch($rs);
 		$this->view->frmAdd = $formAdd;

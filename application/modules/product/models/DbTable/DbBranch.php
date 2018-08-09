@@ -11,10 +11,13 @@ class Product_Model_DbTable_DbBranch extends Zend_Db_Table_Abstract
 		//print_r($data);exit();
 		$db = $this->getAdapter();
 		$part= PUBLIC_PATH.'/images/logo/';
+		if (!file_exists($part)) {
+			mkdir($part, 0777, true);
+		}
 		$photo = $_FILES['logo'];
 			if($photo["name"]!=""){
 				$temp = explode(".", $photo["name"]);
-				$newfilename =str_replace(" ","",$data["branch_name"]).str_replace(" ","",$data["code"]). '.' . end($temp);
+				$newfilename ="logo-".date("Y").date("m").date("d").time(). '.' . end($temp);
 				move_uploaded_file($_FILES['logo']["tmp_name"], $part . $newfilename);
 				$photo_name = $newfilename;
 			}
@@ -44,17 +47,10 @@ class Product_Model_DbTable_DbBranch extends Zend_Db_Table_Abstract
 		//print_r($data);exit();
 		$db = $this->getAdapter();
 		$part= PUBLIC_PATH.'/images/logo/';
-		$photo = $_FILES['logo'];
-		echo $photo["name"];
-			if($photo["name"]!=""){
-				$temp = explode(".", $photo["name"]);
-				$newfilename =str_replace(" ","",$data["branch_name"]).str_replace(" ","",$data["code"]). '.' . end($temp);
-				move_uploaded_file($_FILES['logo']["tmp_name"], $part . $newfilename);
-				$photo_name = $newfilename;
-			}else {
-				$photo_name = $data["old_logo"];
-				//echo "<script>alert(1);</script>";
-			}
+		if (!file_exists($part)) {
+			mkdir($part, 0777, true);
+		}
+		
 		$arr = array(
 				'name'			=>	$data["branch_name"],
 				'branch_code'	=>	$data["code"],
@@ -70,8 +66,20 @@ class Product_Model_DbTable_DbBranch extends Zend_Db_Table_Abstract
 				'status'		=>	$data["status"],
 				'remark'		=>	$data["remark"],
 				'show_by'		=>	$data["show_by"],
-				'logo'			=>	$photo_name,
+// 				'logo'			=>	$photo_name,
 		);
+		$photo = $_FILES['logo'];
+		if($photo["name"]!=""){
+			$temp = explode(".", $photo["name"]);
+			$newfilename ="logo-".$data["id"].date("Y").date("m").date("d").time().'.' . end($temp);
+			$tmp = $_FILES['logo']['tmp_name'];
+			if(move_uploaded_file($tmp, $part.$newfilename)){
+				if (file_exists($part.$data["old_photo"])) {
+					unlink($part.$data["old_photo"]);//delete old file
+				}
+				$arr['logo']=$newfilename;
+			}
+		}
 		$this->_name = "tb_sublocation";
 		$where = $db->quoteInto("id=?", $data["id"]);
 		$this->update($arr, $where);
@@ -83,6 +91,7 @@ class Product_Model_DbTable_DbBranch extends Zend_Db_Table_Abstract
 		$sql = "SELECT 
 				  s.`id`,
 				  s.`name`,
+				  s.`logo`,
 				  s.`branch_code`,
 				  s.prefix,
 				  s.`contact`,
