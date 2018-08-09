@@ -5,6 +5,13 @@
 	$action=$request->getActionName();
 	$controller=$request->getControllerName();
 	$module=$request->getModuleName();
+	
+	$session_user=new Zend_Session_Namespace('auth');
+	$user_id = $session_user->user_id;
+	if(empty($user_id)){
+		Application_Form_FrmMessage::redirectUrl("/");
+		exit();
+	}
 ?>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">	
 <link rel="stylesheet" media="print" href="<?php echo $this->baseUrl()?>/assets/global/plugins/bootstrap/css/bootstrap.css" />

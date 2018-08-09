@@ -12,7 +12,7 @@ class Product_Form_FrmItemPrice extends Zend_Form
 		
 		$optionsStatus=array(1=>$tr->translate("ACTIVE"),0=>$tr->translate('DEACTIVE'));
 		$statusElement = new Zend_Form_Element_Select('status');
-		$statusElement->setAttribs(array('class'=>'form-control'));
+		$statusElement->setAttribs(array('class'=>'form-control select2me select2-offscreen'));
 		$statusElement->setMultiOptions($optionsStatus);
 		
 		if($data!=""){
@@ -160,7 +160,7 @@ class Product_Form_FrmItemPrice extends Zend_Form
 		$optionsStatus=array(1=>$tr->translate("ACTIVE"),0=>$tr->translate("DEACTIVE"));
 		$statusElement = new Zend_Form_Element_Select('status');
 		$statusvalue = $request->getParam("status");
-		$statusElement->setAttribs(array('class'=>"form-control"));
+		$statusElement->setAttribs(array('class'=>"form-control select2me select2-offscreen"));
 		$statusElement->setValue($statusvalue);
 		$statusElement->setMultiOptions($optionsStatus);
 		$this->addElement($statusElement);

@@ -30,7 +30,7 @@ class Measure_Form_FrmMeasure extends Zend_Form
 		
 		$status = new Zend_Form_Element_Select("status");
 		$status->setAttribs(array(
-				'class'=>'form-control',
+				'class'=>'form-control select2me select2-offscreen',
 				'required'=>'required'
 		));
 		$opt = array('1'=>$tr->translate("ACTIVE"),'0'=>$tr->translate("DEACTIVE"));
@@ -63,9 +63,9 @@ class Measure_Form_FrmMeasure extends Zend_Form
 		
 		$parent = new Zend_Form_Element_Select("parent");
 		$parent->setAttribs(array(
-				'class'=>'form-control',
+				'class'=>'form-control select2me select2-offscreen',
 		));
-		$opt = array(''=>$tr->translate("SEELECT_Measure"));
+		$opt = array(''=>$tr->translate("SELECT_MEASURE"));
 		$row = $db->getAllMeasure();
 		if(!empty($row)){
 			foreach ($row as $rs){
@@ -75,7 +75,7 @@ class Measure_Form_FrmMeasure extends Zend_Form
 		$parent->setMultiOptions($opt);
 		$status = new Zend_Form_Element_Select("status");
 		$status->setAttribs(array(
-				'class'=>'form-control',
+				'class'=>'form-control select2me select2-offscreen',
 				'required'=>'required'
 		));
 		$opt = array('1'=>$tr->translate("ACTIVE"),'0'=>$tr->translate("DEACTIVE"));

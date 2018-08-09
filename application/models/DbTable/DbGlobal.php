@@ -1103,7 +1103,7 @@ function getDnNo($completed=null,$opt=null){
    public function getVewOptoinTypeByTypes($type=null,$limit =null){
    	$db = $this->getAdapter();
    	$lang = $this->getCurrentLang();
-   	$array = array(1=>"name_en",2=>"name_kh");
+   	$array = array(1=>"name_kh",2=>"name_en");
    	$sql="SELECT key_code as id,".$array[$lang]." AS name ,displayby FROM `tb_view` WHERE status =1 AND name_en!='' ";//just concate
    	if($type!=null){
    		$sql.=" AND type = $type ";

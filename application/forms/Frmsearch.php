@@ -30,9 +30,9 @@ class Application_Form_Frmsearch extends Zend_Form
 		
 		$_stutas = new Zend_Form_Element_Select('status');
 		$_stutas ->setAttribs(array(
-				'class'=>' form-control',			
+				'class'=>' form-control select2me select2-offscreen',			
 		));
-		$options= array(-1=>"ទាំងអស់",1=>"ប្រើប្រាស់",0=>"មិនប្រើប្រាស់");
+		$options= array(-1=>$tr->translate('ALL'),1=>$tr->translate('ACTIVE'),0=>$tr->translate('DEACTIVE'));
 		$_stutas->setMultiOptions($options);
 		$this->addElement($_stutas);
 		
@@ -70,7 +70,7 @@ class Application_Form_Frmsearch extends Zend_Form
 		
 		$status_paid = new Zend_Form_Element_Select('status_paid');
 		$status_paid ->setAttribs(array(
-				'class'=>' form-control',
+				'class'=>' form-control select2me select2-offscreen',
 		));
 		$options= array(-1=>"ជ្រើសរើសការបង់",1=>"បង់ដាច់",2=>"នៅជំពាក់");
 		$status_paid->setMultiOptions($options);
@@ -84,7 +84,7 @@ class Application_Form_Frmsearch extends Zend_Form
 		$statusCO->setMultiOptions($optionsCOStatus);
 		$statusCO->setattribs(array(
 				'id'=>'status',
-				'class'=>'form-control'
+				'class'=>'form-control select2me select2-offscreen'
 		));
 		
 		$statusCO->setValue($statusCOValue);

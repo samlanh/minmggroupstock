@@ -1,4 +1,4 @@
-<title>Edit User Type </title>
+
 <script type="text/javascript">
 $(document).ready(function() { 
 		jQuery('#frm').validationEngine('attach', {promptPosition : "centerRight"});		
@@ -13,6 +13,7 @@ $(document).ready(function() {
 	$request=Zend_Controller_Front::getInstance()->getRequest();
 	$level = $result["level"];
 ?>
+<title><?php echo $tr->translate("USER_PERMISSION")?></title>
 <style>
 fieldset.fifthy {	
 	border-right: 0px;

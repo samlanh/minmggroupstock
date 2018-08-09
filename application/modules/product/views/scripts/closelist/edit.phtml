@@ -105,16 +105,25 @@ function getProCloseList(){
 				index++;
 				    var qty='<?php echo $rs['curr_qty']?>';
 				    var qty_close='<?php echo $rs['qty_adjust']?>';
-					var arrays =qty.split('.');
-					var arrayc =qty_close.split('.');
-					
-					unit_qty = arrays[0];
-					qty_per_unit = arrays[1];
+				    if(qty==null){
+				    	unit_qty = 0;
+				    	qty_per_unit = "";
+					}else{
+						var arrays =qty.split('.');
+						unit_qty = arrays[0];
+						qty_per_unit = arrays[1];
+					}
+				    if(qty==null){
+				    	unit_qtyc = 0;
+				    	qty_per_unitc = "";
+				    }else{
+				    	var arrayc =qty_close.split('.');
+						unit_qtyc = arrayc[0];
+						qty_per_unitc = arrayc[1];
+				    }
 					unit_label ='<?php echo $rs['unit_label']?>';  
 					measure = '<?php echo $rs['measure']?>'; 
 
-					unit_qtyc = arrayc[0];
-					qty_per_unitc = arrayc[1];
 				
 					if(unit_qty>0 && qty_per_unit>0){
 						l_qty = unit_qty+" "+measure+" & "+qty_per_unit+" "+unit_label;

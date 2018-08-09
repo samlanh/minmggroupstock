@@ -16,7 +16,7 @@ class Product_Form_FrmOther extends Zend_Form
 		));
 		$status_search=  new Zend_Form_Element_Select('status_search');
 		$status_search->setAttribs(array(
-				'class'=>'form-control',
+				'class'=>'form-control select2me select2-offscreen',
 				'required'=>'required'));
 		$_status_opt = array(
 				-1=>$tr->translate("ALL"),
@@ -45,13 +45,13 @@ class Product_Form_FrmOther extends Zend_Form
 		$_status = new Zend_Form_Element_Select("status");
 		$_status->setMultiOptions($_arr);
 		$_status->setAttribs(array(
-				'class'=>'form-control',
+				'class'=>'form-control select2me select2-offscreen',
 				'required'=>'required'));
 		
 		$opt = array(''=>$tr->translate("SELECT_TYPE"),16=>$tr->translate("STAFF_POSITION"),2=>$tr->translate("MODEL"),3=>$tr->translate("SIZE"),4=>$tr->translate("COLOR"),6=>$tr->translate("Customer Type"));
 		$type = new Zend_Form_Element_Select("type");
 		$type->setAttribs(array(
-				'class'=>'validate[required] form-control'
+				'class'=>'validate[required] form-control select2me select2-offscreen'
 				 ));
 		$type->setMultiOptions($opt);
 		
@@ -88,7 +88,7 @@ class Product_Form_FrmOther extends Zend_Form
 		
 		$status_search=  new Zend_Form_Element_Select('status_search');
 		$status_search->setAttribs(array(
-				'class'=>'form-control',));
+				'class'=>'form-control select2me select2-offscreen',));
 		$_status_opt = array(
 				1=>$tr->translate("ACTIVE"),
 				0=>$tr->translate("DACTIVE"),
@@ -99,7 +99,7 @@ class Product_Form_FrmOther extends Zend_Form
 		$opt = array(''=>$tr->translate("SELECT_TYPE"),16=>$tr->translate("STAFF_POSITION"),2=>$tr->translate("MODEL"),3=>$tr->translate("SIZE"),4=>$tr->translate("COLOR"));
 		$type = new Zend_Form_Element_Select("type");
 		$type->setAttribs(array(
-				'class'=>'form-control',));
+				'class'=>'form-control select2me select2-offscreen',));
 		$type->setMultiOptions($opt);
 		$type->setValue($request->getParam("type"));
 		

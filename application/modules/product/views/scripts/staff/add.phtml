@@ -28,7 +28,7 @@ $tr = Application_Form_FrmLanguages::getCurrentlanguage();
 							<div class="col-md-4">
 								<div class="input-icon right">
 									<i class="fa"></i>
-									<input type="text" name="staff_name" id="staff_name" value="" class="validate[required] form-control" placeholder="Employee Name">
+									<input type="text" name="staff_name" id="staff_name" value="" class="validate[required] form-control" placeholder="<?php echo $tr->translate("EMPLOYEE_NAME");?>">
 								</div>
 							</div>
 							<label class="control-label col-md-2"><?php echo $tr->translate("STAFF_NO");?> <span class="required">
@@ -60,7 +60,7 @@ $tr = Application_Form_FrmLanguages::getCurrentlanguage();
 							</label>
 							<div class="col-md-4">
 								<div class="input-icon right">
-									<input type="text" name="car_number" id="car_number" value="" placeholder="Car Charger" class="form-control">
+									<input type="text" name="car_number" id="car_number" value="" placeholder="<?php echo $tr->translate("CAR_NUMBER");?>" class="form-control">
 								</div>
 							</div>
 					</div>
@@ -71,7 +71,7 @@ $tr = Application_Form_FrmLanguages::getCurrentlanguage();
 							<div class="col-md-4">
 								<div class="input-icon right">
 									<i class="fa"></i>
-									<input type="text" name="phone" id="phone" value="" placeholder="Phone Number" class="form-control">
+									<input type="text" name="phone" id="phone" value="" placeholder="<?php echo $tr->translate("PHONE");?>" class="form-control">
 								</div>
 							</div>	
 						<label class="control-label col-md-2">
@@ -98,7 +98,7 @@ $tr = Application_Form_FrmLanguages::getCurrentlanguage();
 							<div class="col-md-4">
 								<div class="input-icon right">
 									<i class="fa"></i>
-									<textarea name="pob" id="pob" placeholder="Place Of Birth" class="form-control" rows="3" cols="80"></textarea>
+									<textarea name="pob" id="pob" placeholder="<?php echo $tr->translate("PLACE_OF_BIRTH");?>" class="form-control" rows="3" cols="80"></textarea>
 								</div>
 							</div>
 							
@@ -109,7 +109,7 @@ $tr = Application_Form_FrmLanguages::getCurrentlanguage();
 							<div class="col-md-4">
 									<div class="input-icon right">
 										<i class="fa"></i>
-										<textarea name="note" id="note" placeholder="Notice" class="form-control" rows="3" cols="80"></textarea>
+										<textarea name="note" id="note" placeholder="<?php echo $tr->translate("NOTE");?>" class="form-control" rows="3" cols="80"></textarea>
 									</div>
 							</div>
 					</div>
@@ -129,8 +129,8 @@ $tr = Application_Form_FrmLanguages::getCurrentlanguage();
 								<div class="input-icon right">
 									<i class="fa"></i>
 									<select name="status" id="status"  class="form-control select2me">
-									    <option value="1">Active</option>
-									    <option value="2">Deactive</option>
+									    <option value="1"><?php echo $tr->translate("ACTIVE");?></option>
+									    <option value="0"><?php echo $tr->translate("DEACTIVE");?></option>
 									</select>
 								</div>	 
 							</div>

@@ -29,7 +29,7 @@ $row=$this->row;
 							<div class="col-md-4">
 								<div class="input-icon right">
 									<i class="fa"></i>
-									<input type="text" name="staff_name" id="staff_name" value="<?php echo $row['staff_name'];?>" class="validate[required] form-control" placeholder="Employee Name">
+									<input type="text" name="staff_name" id="staff_name" value="<?php echo $row['staff_name'];?>" class="validate[required] form-control" placeholder="<?php echo $tr->translate("EMPLOYEE_NAME");?>">
 								</div>
 							</div>
 							<label class="control-label col-md-2"><?php echo $tr->translate("STAFF_NO");?> <span class="required">
@@ -61,7 +61,7 @@ $row=$this->row;
 							</label>
 							<div class="col-md-4">
 								<div class="input-icon right">
-									<input type="text" name="car_number" id="car_number" value="<?php echo $row['car_number'];?>" placeholder="Car Charger" class="form-control">
+									<input type="text" name="car_number" id="car_number" value="<?php echo $row['car_number'];?>" placeholder="<?php echo $tr->translate("CAR_NUMBER");?>" class="form-control">
 								</div>
 							</div>
 					</div>
@@ -72,7 +72,7 @@ $row=$this->row;
 							<div class="col-md-4">
 								<div class="input-icon right">
 									<i class="fa"></i>
-									<input type="text" name="phone" id="phone" value="<?php echo $row['phone'];?>" placeholder="Phone Number" class="form-control">
+									<input type="text" name="phone" id="phone" value="<?php echo $row['phone'];?>" placeholder="<?php echo $tr->translate("PHONE");?>" class="form-control">
 								</div>
 							</div>	
 						<label class="control-label col-md-2">
@@ -99,7 +99,7 @@ $row=$this->row;
 							<div class="col-md-4">
 								<div class="input-icon right">
 									<i class="fa"></i>
-									<textarea name="pob" id="pob" placeholder="Place Of Birth" class="form-control" rows="3" cols="80"><?php echo $row['pob'];?></textarea>
+									<textarea name="pob" id="pob" placeholder="<?php echo $tr->translate("PLACE_OF_BIRTH");?>" class="form-control" rows="3" cols="80"><?php echo $row['pob'];?></textarea>
 								</div>
 							</div>
 							
@@ -110,7 +110,7 @@ $row=$this->row;
 							<div class="col-md-4">
 									<div class="input-icon right">
 										<i class="fa"></i>
-										<textarea name="note" id="note" placeholder="Notice" class="form-control" rows="3" cols="80"><?php echo $row['note'];?></textarea>
+										<textarea name="note" id="note" placeholder="<?php echo $tr->translate("NOTE");?>" class="form-control" rows="3" cols="80"><?php echo $row['note'];?></textarea>
 									</div>
 							</div>
 					</div>
@@ -130,8 +130,8 @@ $row=$this->row;
 								<div class="input-icon right">
 									<i class="fa"></i>
 									<select name="status" id="status"  class="form-control select2me">
-									    <option value="1" <?php if($row['status']== 1) echo "selected='selected'";?>>Active</option>
-									    <option value="2" <?php if($row['status']== 2) echo "selected='selected'";?>>Deactive</option>
+									    <option value="1" <?php if($row['status']== 1) echo "selected='selected'";?>><?php echo $tr->translate("ACTIVE");?></option>
+									    <option value="0" <?php if($row['status']== 0) echo "selected='selected'";?>><?php echo $tr->translate("DEACTIVE");?></option>
 									</select>
 								</div>	 
 							</div>

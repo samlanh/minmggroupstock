@@ -124,7 +124,7 @@ function getProCloseList(type){
 				template+='<th><?php echo $tr->translate("REMARK");?></th>';
 				template+='<th><?php echo $tr->translate("ACTION");?></th>';
 				template+='</tr>';
-				
+			
 				$('#identity').val("");
 				data = $.parseJSON(data);
 				
@@ -134,12 +134,18 @@ function getProCloseList(type){
 						//$("#customer_id").select2();
 					}
 
-					
-					var arrays = data[i].qty.split('.');
-					unit_qty = arrays[0];
-					qty_per_unit = arrays[1];
-					unit_label = data[i].unit_label;
-					measure =  data[i].measure;
+					if(data[i].qty==null){
+						unit_qty = 0;
+						qty_per_unit = "";
+						unit_label = data[i].unit_label;
+						measure =  data[i].measure;
+					}else{
+						var arrays = data[i].qty.split('.');
+						unit_qty = arrays[0];
+						qty_per_unit = arrays[1];
+						unit_label = data[i].unit_label;
+						measure =  data[i].measure;
+					}
 
 					if(unit_qty>0 && qty_per_unit>0){
 						l_qty = unit_qty+" "+measure+" & "+qty_per_unit+" "+unit_label;
@@ -153,7 +159,7 @@ function getProCloseList(type){
 					
 					index=i+1;
 					template+='<tr style="height:30px;" id="row_order_'+index+'">';
-			           // template+='<td ><img onClick="deleteRecord('+index+')" src="<?php echo BASE_URL; ?>/images/icon/delete.gif" /></td>';
+			           // template+='<td ><img onClick="deleteRecord('+index+')" src="<?php //echo BASE_URL; ?>/images/icon/delete.gif" /></td>';
 					template+='<td>'+index+'</td>';
 					template+='<td style="white-space: nowrap;">'+data[i].item_name+'<input type="hidden"  id="pro_id_'+index+'" name="pro_id_'+index+'" value="'+data[i].id+'" </td>';
 					template+='<td style="white-space: nowrap;">'+l_qty+'<input type="hidden" id="current_qty_'+index+'"  name="current_qty_'+index+'" value="'+data[i].qty+'" class="form-control"><input type="hidden" name="measure_'+index+'" id="measure_'+index+'" value="'+data[i].measure+'"/></td>'; 
