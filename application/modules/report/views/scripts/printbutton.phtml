@@ -1,0 +1,17 @@
+<?php 
+$tr=Application_Form_FrmLanguages::getCurrentlanguage();
+?>
+<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true" aria-expanded="false">
+   <?php echo $tr->translate("ACTION");?> <i class="fa fa-angle-down"></i>
+ </button>
+<ul class="dropdown-menu" role="menu">
+	<li>
+		<a href="#" onclick="doPrint();">
+			<i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;<?php echo $tr->translate("PRINT");?>
+		</a>
+	</li>
+	<li>
+		<a href="#" onClick="exports()"><i class="fa fa-file-excel-o" aria-hidden="true"></i>&nbsp;&nbsp;<?php echo $tr->translate("Export Excel");?></a>
+	</li>
+	
+</ul>

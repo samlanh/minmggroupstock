@@ -3,29 +3,16 @@ $tr=Application_Form_FrmLanguages::getCurrentlanguage();
 $brach_name =  $this->branch;
 $formFilter = $this->formFilter;
 ?>
-<title>Product Current Stock Report</title>
+<title><?php echo $tr->translate("Current Stock");?></title>
 <div class="row">
 	<div class="col-md-12">
 		<div class="portlet box blue">
 			<div class="portlet-title">
 				<div class="caption">
-					<i class="fa fa-globe"></i><?php echo $tr->translate("PRODUCT_REPORT");?>
+					<i class="fa fa-globe"></i><?php echo $tr->translate("Current Stock");?>
 				</div>
-					<div class="btn-group pull-right">
-					 <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true" aria-expanded="false">
-					   Actions <i class="fa fa-angle-down"></i>
-					 </button>
-					<ul class="dropdown-menu" role="menu">
-						<li>
-							<a href="#" onclick="doPrint();">
-								<i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Print
-							</a>
-						</li>
-						<li>
-							<a href="#" onClick="exports()"><i class="fa fa-file-excel-o" aria-hidden="true"></i>&nbsp;&nbsp;Export Excel </a>
-						</li>
-						
-					</ul>
+				<div class="btn-group pull-right">
+					 <?php 	echo $this->render('printbutton.phtml');?>
 				</div>
 			</div>
             <div class="portlet-body form frmfilter">
@@ -68,7 +55,7 @@ $formFilter = $this->formFilter;
 						
 				</div><div style="clear:both;"></div>	
 				</form> 
-	<div style=" min-height:28cm; margin:0 auto; border: 1px dotted #ccc; padding:0px 0.2cm">
+	<div style="min-height:26cm; margin:0 auto; padding:0.2cm 0.2cm 0cm 0.2cm">	
 	<div id="divPrint" style="width: 100%;">
 	<style>
 		.style{
@@ -92,16 +79,16 @@ $formFilter = $this->formFilter;
 		    	<td align="center">
 		        	<table width="100%" style="font-family: 'Khmer OS Battambang';" cellpadding="0" cellpadding="0">
 		            	<tbody><tr>
-		                	<td width="20%" valign="top"><img src="<?php echo $this->baseUrl();?>/images/logo.jpg" height="55px"></td>
-		                	<td width="60%" valign="top">
+		                	<td width="25%" valign="top"><img src="<?php echo $this->baseUrl();?>/images/logo.jpg" height="85px"></td>
+		                	<td width="50%" valign="top">
 		                		<ul>
-		                			<li style="text-align:center; font-size:18px; font-family:'Khmer OS Muol Light'"><?php echo $tr->translate("COMPANY_CUSTOMER");?></li>
-		                			<li style="text-align:center; font-size:14px; font-family:'Khmer OS Muol Light'"><?php echo $tr->translate("RPT_PRODUCT_LIST");?></li>
-									<li style="text-align:center; font-size:14px; font-family:'Khmer OS Muol Light'"><?php if($this->search!=""){echo $this->search;}else{echo "All Branch";}?></li>
+		                			<li style="text-align:center; font-size:18px; font-family:'Khmer MEF2'"><?php echo $tr->translate("COMPANY_CUSTOMER");?></li>
+		                			<li style="text-align:center; font-size:14px; font-family:'Khmer MEF2'"><?php echo $tr->translate("RPT_PRODUCT_LIST");?></li>
+									<li style="text-align:center; font-size:14px; font-family:'Khmer MEF2'"><?php if($this->search!=""){echo $this->search;}else{echo "All Branch";}?></li>
 		                			<!--<li style="text-align:center; font-size:13px;"><?php //echo date("d/m/Y",strtotime($this->rssearch['start_date']));?> ដល់ <?php echo date("d/m/Y",strtotime($this->rssearch['end_date']));?></li>-->
 		                		</ul>
 		                	</td>
-		                    <td width="20%"></td>
+		                    <td width="25%"></td>
 		                </tr> 
 		                <tr>
 		                	<td colspan="3" valign="top">
@@ -121,9 +108,9 @@ $formFilter = $this->formFilter;
 		    </tr>
 		    <tr>
 		    	<td id="exportExcel">
-		            <table class="table2excel" border="1" &#8203;="" style="border-collapse:collapse;border:1px solid #000; font-size:12px;" width="100%" cellspacing="0">
+		            <table class="table2excel" border="1"​ style="border-collapse:collapse;border:1px solid #000; font-size:12px;" width="100%" cellspacing="0">
 		                 <thead>
-			                 <tr bgcolor="#ccc" class="style" align="center" style="font-weight:bold; line-height: 20px; font-size:12px; padding:1px 0px; white-space: nowrap; ">
+		                 	<tr bgcolor="#c1d0f3" class="style" align="center" style="font-weight:bold;line-height: 30px; font-size:12px; padding:1px 0px; white-space: nowrap; ">
 			                    <td>&nbsp;<?php echo $tr->translate("NUM");?></td>
 								<td><?php echo $tr->translate("BRANCH_NAME");?></td>
 								<td><?php echo $tr->translate("ITEM_CODE");?></ts>
@@ -160,15 +147,15 @@ $formFilter = $this->formFilter;
 							}
 						?>
 						<tr class='row-format<?php echo $num; ?>' id="item_<?php echo $index; ?>">
-									<td align="center" style="width:3% !important">&nbsp;<?php echo $index+1 ?></td>
-									<td style="white-space: nowrap;" class="center"><?php echo $row["branch"]?></td>
+									<td align="center" style="width:3% !important">&nbsp;<?php echo $index+1 ?>&nbsp;</td>
+									<td style="white-space: nowrap;" class="center">&nbsp;<?php echo $row["branch"]?>&nbsp;</td>
 									<td style="white-space: nowrap;">&nbsp;&nbsp;<?php echo $row["item_code"]?>&nbsp;&nbsp;</td>
 									<td style="">&nbsp;&nbsp;<?php echo $row["item_name"]?>&nbsp;&nbsp;</td>
 									<td style="width:8% !important">&nbsp;&nbsp;<?php echo $row["barcode"]?>&nbsp;&nbsp;</td>
-									<td style="width:10% !important" class="center"><?php echo $row["cat"]?></td>
-									<td style="width:5% !important" class="center"><?php echo $row["measure"]?></td>
-									<td style="width:8% !important" class="center"><?php echo $l_qty;?></td>
-									<!--<td style="width:8% !important" class="center"><?php echo $row["price"];?></td>
+									<td align="left" style="width:10% !important" >&nbsp;<?php echo $row["cat"]?>&nbsp;</td>
+									<td style="width:5% !important" class="center">&nbsp;<?php echo $row["measure"]?>&nbsp;</td>
+									<td align="center" style="width:8% !important" class="center">&nbsp;<?php echo $l_qty;?>&nbsp;</td>
+									<!--<td style="width:8% !important" class="center">&nbsp;<?php //echo $row["price"];?>&nbsp;</td>
 									<td style="white-space:nowrap"class="center">
 										<?php //if($row["status"] == 1){?>
 										<span class="label label-sm label-success"><?php //echo $tr->translate("ACTIVE");?> </span>
@@ -203,8 +190,10 @@ $formFilter = $this->formFilter;
    </div>
 </div>
 <iframe name=print_frame width=0 height=0 frameborder=0 src=about:blank></iframe>
+<?php 
+	echo $this->render('printscript.phtml');
+?>
 <script>
-function doPrint() {var divToPrint = document.getElementById('divPrint');var htmlToPrint = '' +'<style type="text/css">' +'</style>';htmlToPrint += divToPrint.outerHTML;window.document.write(htmlToPrint);window.print();window.close();}
 
 /*var currentTime = new Date();
 var month = currentTime.getMonth() + 1;

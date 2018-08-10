@@ -11,22 +11,9 @@ $formFilter = $this->formFilter;
 				<div class="caption">
 					<i class="fa fa-globe"></i><?php echo $tr->translate("RPT_TRANSFER_PRODUCT");?>
 				</div>
-					<div class="btn-group pull-right">
-							 <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true" aria-expanded="false">
-							   Actions <i class="fa fa-angle-down"></i>
-							 </button>
-						<ul class="dropdown-menu" role="menu">
-							<li>
-								<a href="#" onclick="doPrint();">
-									<i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Print
-								</a>
-							</li>
-							<li>
-								<a href="#" onClick="exports()"><i class="fa fa-file-excel-o" aria-hidden="true"></i>&nbsp;&nbsp;Export Excel </a>
-							</li>
-							
-						</ul>
-					</div>
+				<div class="btn-group pull-right">
+						 <?php 	echo $this->render('printbutton.phtml');?>
+				</div>
 			</div>
             <div class="portlet-body form frmfilter">
 				 <form class="form-horizontal" method="post" action="" >
@@ -52,7 +39,7 @@ $formFilter = $this->formFilter;
 							</div>		
 					</div>
 				</form>
-	<div style=" min-height:28cm; margin:0 auto; border: 1px dotted #ccc; padding:0px 0.2cm">
+	<div style="min-height:26cm; margin:0 auto; padding:0.2cm 0.2cm 0cm 0.2cm">	
 	<div id="divPrint" style="width: 100%;">
 	<style>
 		.style{
@@ -63,6 +50,11 @@ $formFilter = $this->formFilter;
 		table tr td ul li{text-align: center;list-style: none;line-height: 25px; font-weight: bold;}
 		th{padding: 5px;}
 		.hover:hover{background: #ccc;}
+		td.table2excel tbody tr td span {
+		    display: block;
+		    padding: 0;
+		    width: 100%;
+		}
 	</style>
 		<table style="font-family: 'Khmer OS Content'; width:100%;">
 			<tbody>
@@ -73,9 +65,9 @@ $formFilter = $this->formFilter;
 		                	<td width="20%" valign="top"><img src="<?php echo $this->baseUrl();?>/images/logo.jpg" height="55px"></td>
 		                	<td width="60%" valign="top">
 		                		<ul>
-		                			<li style="text-align:center; font-size:16px; font-family:'Khmer OS Muol Light'"><?php echo $tr->translate("COMPANY_CUSTOMER");?></li>
-		                			<li style="text-align:center; font-size:14px; font-family:'Khmer OS Muol Light'"><?php echo $tr->translate("RPT_TRANSFER_PRODUCT");?></li>
-		                			<li style="text-align:center; font-size:14px;"><?php echo date("d/m/Y",strtotime($this->rssearch['start_date']));?> ដល់ <?php echo date("d/m/Y",strtotime($this->rssearch['end_date']));?></li>
+		                			<li style="text-align:center; font-size:16px; font-family:'Khmer MEF2'"><?php echo $tr->translate("COMPANY_CUSTOMER");?></li>
+		                			<li style="text-align:center; font-size:14px; font-family:'Khmer MEF2'"><?php echo $tr->translate("RPT_TRANSFER_PRODUCT");?></li>
+		                			<li style="text-align:center; font-size:14px;"><?php if (!empty($this->rssearch['start_date'])){ echo date("d/m/Y",strtotime($this->rssearch['start_date']));?> ដល់ <?php echo date("d/m/Y",strtotime($this->rssearch['end_date']));}?></li>
 		                		</ul>
 		                	</td>
 		                    <td width="20%"></td>
@@ -99,38 +91,40 @@ $formFilter = $this->formFilter;
 		    <tr>
 		    	<td class="table2excel" id="exportExcel">
 		            <table border="1" style="border-collapse:collapse;border:1px solid #000; font-size:12px;" width="100%" cellspacing="0">
-		                 <tbody>
-		                 <tr bgcolor="#ccc" class="style" align="center" style="font-weight:bold; line-height: 25px; font-size:12px; padding:1px 0px; white-space: nowrap; ">
-		                    <td >&nbsp;<?php echo $tr->translate("NUM");?></td>
-							<td >&nbsp;<?php echo  $tr->translate("TRANSFER_NO");?></ts>
-							<td >&nbsp;<?php echo $tr->translate("TRANSFER_DTE");?></td>
-							<td>&nbsp;<?php echo $tr->translate("FROM_LOCATION");?></td>
-							<td>&nbsp;<?php echo $tr->translate("TO_LOCATION");?></td>
-							<td>&nbsp;<?php echo $tr->translate("TOTAL_QTY");?></td>
-							<td>&nbsp;<?php echo $tr->translate("NOTE");?></td>
-							<td>&nbsp;<?php echo $tr->translate("APPROVE");?></td>
-							<td>&nbsp;<?php echo $tr->translate("ACTION");?></td>
-							<td>&nbsp;<?php echo $tr->translate("BY_USER");?></td>
-							<td>&nbsp;<?php echo $tr->translate("STATUS");?></td>
+		                 <thead>
+		                 <tr bgcolor="#c1d0f3" class="style" align="center" style="font-weight:bold;line-height: 30px; font-size:12px; padding:1px 0px; white-space: nowrap; ">
+		                    <td >&nbsp;<?php echo $tr->translate("NUM");?>&nbsp;</td>
+							<td >&nbsp;<?php echo  $tr->translate("TRANSFER_NO");?>&nbsp;</ts>
+							<td >&nbsp;<?php echo $tr->translate("TRANSFER_DTE");?>&nbsp;</td>
+							<td>&nbsp;<?php echo $tr->translate("FROM_LOCATION");?>&nbsp;</td>
+							<td>&nbsp;<?php echo $tr->translate("TO_LOCATION");?>&nbsp;</td>
+							<td>&nbsp;<?php echo $tr->translate("TOTAL_QTY");?>&nbsp;</td>
+							<td>&nbsp;<?php echo $tr->translate("NOTE");?>&nbsp;</td>
+							<td>&nbsp;<?php echo $tr->translate("APPROVE");?>&nbsp;</td>
+							<td>&nbsp;<?php echo $tr->translate("ACTION");?>&nbsp;</td>
+							<td>&nbsp;<?php echo $tr->translate("BY_USER");?>&nbsp;</td>
+							<td>&nbsp;<?php echo $tr->translate("STATUS");?>&nbsp;</td>
 		                </tr>
+		                </thead>
+		                <tbody>
 		                <?php $num=1; 
 		                $r_netotal = 0;$r_paid = 0; $r_balance = 0;
 		                $d_netotal = 0;$d_paid = 0; $d_balance = 0;
 		                $b_netotal = 0;$b_paid = 0; $b_balance = 0;
 		                if(!empty($this->rs))foreach ($this->rs AS $index => $rs){?>
 						<tr class='row-format<?php echo $num; $num=1-$num;?> hover' style="border:1px solid #000;">
-						   <td align="center" style="white-space: nowrap;">&nbsp;<?php echo $index+1?></td>
+						   <td align="center" style="white-space: nowrap;">&nbsp;<?php echo $index+1?>&nbsp;</td>
 						   
-						   <td style="white-space: nowrap;"><a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/product/rpt-transfer-productdetail/id/".$rs["id"];?>">&nbsp;<?php echo $rs["transfer_no"];?></a></td>
-						   <td style="white-space: nowrap;"><a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/product/rpt-transfer-productdetail/id/".$rs["id"];?>">&nbsp;<?php echo date("d-M-Y",strtotime($rs["transfer_date"]));?></a></td>
-						   <td style="white-space: nowrap;"><a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/product/rpt-transfer-productdetail/id/".$rs["id"];?>">&nbsp;<?php echo $rs["location_name"];?></a></td>
-						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["to_location_name"];?></td>
-						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["total_qty"];?></td>
-						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["note"];?></td>
-						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["approve"];?></td>
-						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["receive"];?></td>
-						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["user_id"];?></td>
-						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["status"];?></td>
+						   <td style="white-space: nowrap;"><a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/product/rpt-transfer-productdetail/id/".$rs["id"];?>">&nbsp;<?php echo $rs["transfer_no"];?></a>&nbsp;</td>
+						   <td style="white-space: nowrap;"><a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/product/rpt-transfer-productdetail/id/".$rs["id"];?>">&nbsp;<?php echo date("d-M-Y",strtotime($rs["transfer_date"]));?></a>&nbsp;</td>
+						   <td style="white-space: nowrap;"><a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/product/rpt-transfer-productdetail/id/".$rs["id"];?>">&nbsp;<?php echo $rs["location_name"];?></a>&nbsp;</td>
+						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["to_location_name"];?>&nbsp;</td>
+						   <td align="center" style="white-space: nowrap;">&nbsp;<?php echo $rs["total_qty"];?>&nbsp;</td>
+						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["note"];?>&nbsp;</td>
+						   <td align="center" style="white-space: nowrap;"><?php echo $rs["approve"];?></td>
+						   <td align="center" style="white-space: nowrap;"><?php echo $rs["receive"];?></td>
+						   <td align="center"  style="white-space: nowrap;">&nbsp;<?php echo $rs["user_id"];?>&nbsp;</td>
+						   <td align="center"  style="white-space: nowrap;">&nbsp;<?php echo $rs["status"];?>&nbsp;</td>
 						</tr>
 						
                   <?php   }?> 
@@ -160,7 +154,6 @@ $formFilter = $this->formFilter;
    </div>
 </div>
 <iframe name=print_frame width=0 height=0 frameborder=0 src=about:blank></iframe>
-<script>
-function doPrint() {var divToPrint = document.getElementById('divPrint');var htmlToPrint = '' +'<style type="text/css">' +'</style>';htmlToPrint += divToPrint.outerHTML;window.document.write(htmlToPrint);window.print();window.close();}
-
-</script>
+<?php 
+	echo $this->render('printscript.phtml');
+?>

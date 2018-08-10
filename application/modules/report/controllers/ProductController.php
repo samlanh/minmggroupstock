@@ -191,7 +191,7 @@ class report_ProductController extends Zend_Controller_Action
     	$date =new Zend_Date();
     	if($this->getRequest()->isPost()){
     		$data = $this->getRequest()->getPost();
-    		$data['start_date']=date("Y-m-d",strtotime($data['start_date']));
+    		$data['start_date']= empty($data['start_date'])?"": date("Y-m-d",strtotime($data['start_date']));
     		$data['end_date']=date("Y-m-d",strtotime($data['end_date']));
     	}else{
     		$data = array(

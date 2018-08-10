@@ -1,0 +1,7 @@
+<script>
+function doPrint() {
+	window.frames["print_frame"].document.body.innerHTML= $( "#divPrint" ).html();
+    window.frames["print_frame"].window.focus();
+    window.frames["print_frame"].window.print();
+}
+</script>

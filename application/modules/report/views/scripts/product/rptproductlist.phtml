@@ -3,7 +3,12 @@ $tr=Application_Form_FrmLanguages::getCurrentlanguage();
 $brach_name =  $this->branch;
 $formFilter = $this->formFilter;
 ?>
-<title>Product List Report</title>
+<title><?php echo $tr->translate("Product List Report");?></title>
+<style>
+.noneprint{
+	display: table-cell !important; 
+}
+</style>
 <div class="row">
 	<div class="col-md-12">
 		<div class="portlet box blue">
@@ -13,16 +18,21 @@ $formFilter = $this->formFilter;
 				</div>
 						<div class="btn-group pull-right">
 							 <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true" aria-expanded="false">
-							   Actions <i class="fa fa-angle-down"></i>
+							   <?php echo $tr->translate("ACTION");?> <i class="fa fa-angle-down"></i>
 							 </button>
 								<ul class="dropdown-menu" role="menu">
 									<li>
 										<a href="#" onclick="doPrint();">
-											<i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Print
+											<i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;<?php echo $tr->translate("PRINT");?>
 										</a>
 									</li>
 									<li>
-										<a href="#" onClick="exports()"><i class="fa fa-file-excel-o" aria-hidden="true"></i>&nbsp;&nbsp;Export Excel </a>
+										<a href="#" onclick="printSelected();">
+											<i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;<?php echo $tr->translate("Print Selected");?>
+										</a>
+									</li>
+									<li>
+										<a href="#" onClick="exports()"><i class="fa fa-file-excel-o" aria-hidden="true"></i>&nbsp;&nbsp;<?php echo $tr->translate("Export Excel");?> </a>
 									</li>
 									
 								</ul>
@@ -72,7 +82,7 @@ $formFilter = $this->formFilter;
 						
 				</div><div style="clear:both;"></div>	
 				</form> 
-	<div style=" min-height:28cm; margin:0 auto; border: 1px dotted #ccc; padding:0px 0.2cm">
+<div style="min-height:26cm; margin:0 auto; padding:0.2cm 0.2cm 0cm 0.2cm">	
 	<div id="divPrint" style="width: 100%;">
 	<style>
 		.style{
@@ -96,16 +106,16 @@ $formFilter = $this->formFilter;
 		    	<td align="center">
 		        	<table width="100%" style="font-family: 'Khmer OS Battambang';" cellpadding="0" cellpadding="0">
 		            	<tbody><tr>
-		                	<td width="20%" valign="top"><img src="<?php echo $this->baseUrl();?>/images/logo.jpg" height="55px"></td>
-		                	<td width="60%" valign="top">
+		                	<td width="25%" valign="top"><img src="<?php echo $this->baseUrl();?>/images/logo.jpg" height="85px"></td>
+		                	<td width="50%" valign="top">
 		                		<ul>
-		                			<li style="text-align:center; font-size:18px; font-family:'Khmer OS Muol Light'"><?php echo $tr->translate("COMPANY_CUSTOMER");?></li>
-		                			<li style="text-align:center; font-size:14px; font-family:'Khmer OS Muol Light'"><?php echo $tr->translate("MENU_REPORT_PRODUCT");?></li>
+		                			<li style="text-align:center; font-size:18px; font-family:'Khmer MEF2'"><?php echo $tr->translate("COMPANY_CUSTOMER");?></li>
+		                			<li style="text-align:center; font-size:14px; font-family:'Khmer MEF2'"><?php echo $tr->translate("MENU_REPORT_PRODUCT");?></li>
 									<li style="text-align:center; font-size:14px; font-family:'Khmer MEF2'"><?php if($this->search!=""){echo $this->search;}else{echo "";}?></li>
 		                			<!-- <li style="text-align:center; font-size:13px;"><?php //echo date("d/m/Y",strtotime($this->rssearch['start_date']));?> ដល់ <?php //echo date("d/m/Y",strtotime($this->rssearch['end_date']));?></li> -->
 		                		</ul>
 		                	</td>
-		                    <td width="20%"></td>
+		                    <td width="25%"></td>
 		                </tr> 
 		                <tr>
 		                	<td colspan="3" valign="top">
@@ -125,9 +135,9 @@ $formFilter = $this->formFilter;
 		    </tr>
 		    <tr>
 		    	<td id="exportExcel">
-		            <table class="table2excel" border="1" style="border-collapse:collapse;border:1px solid #000; font-size:12px;" width="100%" cellspacing="0">
+		            <table class="table2excel" border="1"​ style="border-collapse:collapse;border:1px solid #000; font-size:12px;" width="100%" cellspacing="0">
 		                <thead>
-		                 <tr bgcolor="#ccc" class="style" align="center" style="font-weight:bold; line-height: 25px; font-size:12px; padding:1px 0px; white-space: nowrap; ">
+		                 <tr bgcolor="#c1d0f3" class="style" align="center" style="font-weight:bold;line-height: 30px; font-size:12px; padding:1px 0px; white-space: nowrap; ">
 		                    <td>&nbsp;<?php echo $tr->translate("NUM");?></td>
 							<td><?php echo $tr->translate("ITEM_CODE");?></ts>
 							<td><?php echo $tr->translate("ITEM_NAME");?></td>
@@ -137,7 +147,7 @@ $formFilter = $this->formFilter;
 							<td><?php echo $tr->translate("PRODUCT_PRICE_INFO");?></td>
 							<td><?php echo $tr->translate("COST_PRICE");?></td>
 							<td><?php echo $tr->translate("TOTAL_COST");?></td>
-							<td><?php echo $tr->translate("BARCODE");?></td>
+							<td class="noneprint" style="display: none;"><?php echo $tr->translate("BARCODE");?></td>
 		                </tr>
 		                </thead>
 		                 <tbody>
@@ -170,17 +180,17 @@ $formFilter = $this->formFilter;
 						?>
 							<tr class='row-format<?php echo $num; ?>' id="item_<?php echo $index; ?>">
 								<td align="center" style="white-space: nowrap;">&nbsp;<?php echo $index+1; ?></td>
-								<td style="white-space: nowrap;">&nbsp;<?php echo $row["item_code"]?></td>
-								<td style="">&nbsp;<?php echo $row["item_name"]?></td>
+								<td style="white-space: nowrap;">&nbsp;<?php echo $row["item_code"]?>&nbsp;</td>
+								<td style="">&nbsp;<?php echo $row["item_name"]?>&nbsp;</td>
 								<!--<td style="width:5% !important"><?php //echo $row["barcode"]?></td>-->
 								<!--<td style="width:8% !important"><?php //echo $row["serial_number"]?> </td>-->
-								<td style="width:10% !important" class="center"><?php echo $row["cat"];?></td>
-								<td style="width:5% !important" class="center"><?php echo $row["measure"];?></td>
-								<td style="width:8% !important" class="center"><?php echo $l_qty;?></td>
-								<td style="width:8% !important" class="center"><?php echo $row["master_price"];?></td>
-								<td style="width:8% !important" class="center"><?php echo $row["price"];?></td>
-								<td style="width:8% !important" class="center"><?php echo number_format($row["price"]*$l_qty,2);?></td>
-								<td style="width:8% !important" class="center">
+								<td align="left" style="width:10% !important" >&nbsp;<?php echo $row["cat"];?>&nbsp;</td>
+								<td style="width:5% !important" class="center">&nbsp;<?php echo $row["measure"];?>&nbsp;</td>
+								<td align="center" style="width:8% !important" class="center">&nbsp;<?php echo $l_qty;?>&nbsp;</td>
+								<td align="right" style="width:8% !important" class="center"><?php echo number_format($row["master_price"],2);?></td>
+								<td align="right" style="width:8% !important" >&nbsp;<?php echo number_format($row["price"],2);?>&nbsp;</td>
+								<td align="right" style="width:8% !important" >&nbsp;<?php echo number_format($row["price"]*$l_qty,2);?>&nbsp;</td>
+								<td align="center" class="noneprint" style=" display:none; width:8% !important" class="center">
 									<input style="height: 15px;margin-top: 5px;" type="checkBox" onClick="checked_id(<?php echo $i?>)" name="check_box<?php echo $i?>" id="check_box<?php echo $i?>" />
 									<input type="hidden" name="pro_id<?php echo $i;?>" id="pro_id<?php echo $i;?>" value="<?php echo $row['id'];?>" dojoType="dijit.form.TextBox" />
 								</td>
@@ -188,7 +198,7 @@ $formFilter = $this->formFilter;
 						  <?php }?> 
 						  <tr>
 							<td colspan="8" align="right">&nbsp;<strong>ថ្លៃដើមសរុប</strong>&nbsp;</td>
-							<td style="font-weight:bold;">&nbsp;$ <?php echo number_format($cost_price);?></td>
+							<td style="font-weight:bold;">&nbsp;$ <?php echo number_format($cost_price,2);?></td>
 							<td></td>
 						  </tr>
 		                </tbody>
@@ -218,8 +228,6 @@ $formFilter = $this->formFilter;
 			</tbody>
 		</table>
 		</div>
-		<center><button dojoType="dijit.form.Button" id="printselected" iconClass="dijitEditorIcon dijitEditorIconPrint"
-					type="button" onclick="printSelected();">Print Selected</button></center>
 	  </div>		
 	</div>
 	 </div>
@@ -262,7 +270,9 @@ function checked_id(index){
 	}
 }
 function doPrint() {
-	var divToPrint = document.getElementById('divPrint');var htmlToPrint = '' +'<style type="text/css">' +'</style>';htmlToPrint += divToPrint.outerHTML;window.document.write(htmlToPrint);window.print();window.close();
+	window.frames["print_frame"].document.body.innerHTML= $( "#divPrint" ).html();
+    window.frames["print_frame"].window.focus();
+    window.frames["print_frame"].window.print();
 }
 
 </script>
