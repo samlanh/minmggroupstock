@@ -8,6 +8,13 @@ class IndexController extends Zend_Controller_Action
     }
     public function indexAction()
     {
+    	
+    	$session_user=new Zend_Session_Namespace('auth');
+    	$user_id = $session_user->user_id;
+    	if (!empty($user_id)){
+    		$this->_redirect("/index/dashboad");
+    	}
+    	
     	$this->_helper->layout()->disableLayout();///sopharat disablelayout to display login
   		$tr = Application_Form_FrmLanguages::getCurrentlanguage();
   		$key = new Application_Model_DbTable_DbGlobal();
@@ -31,7 +38,7 @@ class IndexController extends Zend_Controller_Action
 						Application_Form_FrmLanguages::getCurrentlanguage($session_lang->lang_id);//for choose lang for when login
 						
 						
-						$session_user=new Zend_Session_Namespace('auth');
+						
 						$session_user->unlock();
 						$session_user->user_id=$user_id;
 						$session_user->fullname=$user_info['fullname'];
