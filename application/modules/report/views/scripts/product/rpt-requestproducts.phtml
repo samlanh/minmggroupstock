@@ -12,22 +12,9 @@ $formFilter = $this->formFilter;
 				<div class="caption">
 					<i class="fa fa-globe"></i><?php echo $tr->translate("RPT_REQUEST_PRODUCT");?>
 				</div>
-					<div class="btn-group pull-right">
-							 <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true" aria-expanded="false">
-							   Actions <i class="fa fa-angle-down"></i>
-							 </button>
-						<ul class="dropdown-menu" role="menu">
-							<li>
-								<a href="#" onclick="doPrint();">
-									<i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Print
-								</a>
-							</li>
-							<li>
-								<a href="#" onClick="exports()"><i class="fa fa-file-excel-o" aria-hidden="true"></i>&nbsp;&nbsp;Export Excel </a>
-							</li>
-							
-						</ul>
-					</div>
+				<div class="btn-group pull-right">
+						 <?php 	echo $this->render('printbutton.phtml');?>
+				</div>
 			</div>
             <div class="portlet-body form frmfilter">
 				 <form class="form-horizontal" method="post" action="" >
@@ -57,7 +44,7 @@ $formFilter = $this->formFilter;
 								</div>		
 					</div>
 				</form>
-	<div style=" min-height:28cm; margin:0 auto; border: 1px dotted #ccc; padding:0px 0.2cm">
+	<div style="min-height:26cm; margin:0 auto; padding:0.2cm 0.2cm 0cm 0.2cm">	
 	<div id="divPrint" style="width: 100%;">
 	<style>
 		.style{
@@ -75,15 +62,15 @@ $formFilter = $this->formFilter;
 		    	<td align="center">
 		        	<table width="100%" style="font-family: 'Khmer OS Battambang';" cellpadding="0" cellpadding="0">
 		            	<tbody><tr>
-		                	<td width="20%" valign="top"><img src="<?php echo $this->baseUrl();?>/images/logo.jpg" height="55px"></td>
-		                	<td width="60%" valign="top">
+		                	<td width="25%" valign="top"><img src="<?php echo $this->baseUrl();?>/images/logo.jpg" height="85px"></td>
+		                	<td width="50%" valign="top">
 		                		<ul>
-		                			<li style="text-align:center; font-size:16px; font-family:'Khmer OS Muol Light'"><?php echo $tr->translate("COMPANY_CUSTOMER");?></li>
-		                			<li style="text-align:center; font-size:14px; font-family:'Khmer OS Muol Light'"><?php echo $tr->translate("RPT_REQUEST_PRODUCT");?></li>
-		                			<li style="text-align:center; font-size:14px;"><?php echo date("d/m/Y",strtotime($this->rssearch['start_date']));?> ដល់ <?php echo date("d/m/Y",strtotime($this->rssearch['end_date']));?></li>
+		                			<li style="text-align:center; font-size:16px; font-family:'Khmer MEF2'"><?php echo $tr->translate("COMPANY_CUSTOMER");?></li>
+		                			<li style="text-align:center; font-size:14px; font-family:'Khmer MEF2'"><?php echo $tr->translate("RPT_REQUEST_PRODUCT");?></li>
+		                			<li style="text-align:center; font-size:14px;"><?php if (!empty($this->rssearch['start_date'])){ echo date("d/m/Y",strtotime($this->rssearch['start_date']));?> ដល់ <?php echo date("d/m/Y",strtotime($this->rssearch['end_date']));}?></li>
 		                		</ul>
 		                	</td>
-		                    <td width="20%"></td>
+		                    <td width="25%"></td>
 		                </tr> 
 		                <tr>
 		                	<td colspan="3" valign="top">
@@ -103,43 +90,44 @@ $formFilter = $this->formFilter;
 		    </tr>
 		    <tr>
 		    	<td class="table2excel" id="exportExcel">
-		            <table border="1" style="border-collapse:collapse;border:1px solid #000; font-size:12px;" width="100%" cellspacing="0">
-		                 <tbody>
-		                 <tr bgcolor="#ccc" class="style" align="center" style="font-weight:bold; line-height: 25px; font-size:12px; padding:1px 0px; white-space: nowrap; ">
-		                    <td >&nbsp;<?php echo $tr->translate("NUM");?></td>
-							<td >&nbsp;<?php echo  $tr->translate("LOCATION");?></ts>
-							<td >&nbsp;<?php echo $tr->translate("REQUEST_NO");?></td>
-							<td>&nbsp;<?php echo $tr->translate("REQUEST_NAME");?></td>
-							<td>&nbsp;<?php echo $tr->translate("REQUEST_QTY");?></td>
-							<td>&nbsp;<?php echo $tr->translate("RECEIVE_QTY");?></td>
-							<td>&nbsp;<?php echo $tr->translate("REQUEST_DATE");?></td>
-							<td>&nbsp;<?php echo $tr->translate("RECEIVE_DATE");?></td>
-							<td>&nbsp;<?php echo $tr->translate("NOTE");?></td>
-							<td>&nbsp;<?php echo $tr->translate("BY_USER");?></td>
-							<td>&nbsp;<?php echo $tr->translate("STATUS");?></td>
+		            <table class="table2excel" border="1"​ style="border-collapse:collapse;border:1px solid #000; font-size:12px;" width="100%" cellspacing="0">
+		                 <thead>
+		                 <tr bgcolor="#c1d0f3" class="style" align="center" style="font-weight:bold;line-height: 30px; font-size:12px; padding:1px 0px; white-space: nowrap; ">
+		                     <td >&nbsp;<?php echo $tr->translate("NUM");?>&nbsp;</td>
+							<td >&nbsp;<?php echo  $tr->translate("LOCATION");?>&nbsp;</ts>
+							<td >&nbsp;<?php echo $tr->translate("REQUEST_NO");?>&nbsp;</td>
+							<td>&nbsp;<?php echo $tr->translate("REQUEST_NAME");?>&nbsp;</td>
+							<td>&nbsp;<?php echo $tr->translate("REQUEST_QTY");?>&nbsp;</td>
+							<td>&nbsp;<?php echo $tr->translate("RECEIVE_QTY");?>&nbsp;</td>
+							<td>&nbsp;<?php echo $tr->translate("REQUEST_DATE");?>&nbsp;</td>
+							<td>&nbsp;<?php echo $tr->translate("RECEIVE_DATE");?>&nbsp;</td>
+							<td>&nbsp;<?php echo $tr->translate("NOTE");?>&nbsp;</td>
+							<td>&nbsp;<?php echo $tr->translate("BY_USER");?>&nbsp;</td>
+							<td>&nbsp;<?php echo $tr->translate("STATUS");?>&nbsp;</td>
 		                </tr>
+		                </thead>
+		                <tbody>
 		                <?php $num=1; 
-		                $r_netotal = 0;$r_paid = 0; $r_balance = 0;
-		                $d_netotal = 0;$d_paid = 0; $d_balance = 0;
-		                $b_netotal = 0;$b_paid = 0; $b_balance = 0;
-		                if(!empty($this->rs))foreach ($this->rs AS $index => $rs){?>
-						<tr class='row-format<?php echo $num; $num=1-$num;?> hover' style="border:1px solid #000;">
-						   <td align="center" style="white-space: nowrap;">&nbsp;<?php echo $index+1?></td>
-						   
-						   <td style="white-space: nowrap;"><a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/product/rpt-request-productdetail/id/".$rs["id"];?>">&nbsp;<?php echo $rs["location_name"];?></a></td>
-						   <td style="white-space: nowrap;"><a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/product/rpt-request-productdetail/id/".$rs["id"];?>">&nbsp;<?php echo $rs["reques_no"];?></a></td>
-						   <td style="white-space: nowrap;"><a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/product/rpt-request-productdetail/id/".$rs["id"];?>">&nbsp;<?php echo $rs["staff_name"];?></a></td>
-						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["qty"];?></td>
-						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["qty_receive"];?></td>
-						   <td style="white-space: nowrap;">&nbsp;<?php echo date("d-M-Y",strtotime($rs["date_request"]));?></td>
-						   <td style="white-space: nowrap;">&nbsp;<?php echo date("d-M-Y",strtotime($rs["receive_date"]));?></td>
-						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["note"];?></td>
-						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["user_id"];?></td>
-						   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["status"];?></td>
-						</tr>
-						
-                  <?php   }?> 
-                 </tbody>
+			                $r_netotal = 0;$r_paid = 0; $r_balance = 0;
+			                $d_netotal = 0;$d_paid = 0; $d_balance = 0;
+			                $b_netotal = 0;$b_paid = 0; $b_balance = 0;
+			                if(!empty($this->rs))foreach ($this->rs AS $index => $rs){?>
+							<tr class='row-format<?php echo $num; $num=1-$num;?> hover' style="border:1px solid #000;">
+							   <td align="center" style="white-space: nowrap;">&nbsp;<?php echo $index+1?>&nbsp;</td>
+							   
+							   <td style="white-space: nowrap;"><a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/product/rpt-request-productdetail/id/".$rs["id"];?>">&nbsp;<?php echo $rs["location_name"];?></a>&nbsp;</td>
+							   <td style="white-space: nowrap;"><a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/product/rpt-request-productdetail/id/".$rs["id"];?>">&nbsp;<?php echo $rs["reques_no"];?></a>&nbsp;</td>
+							   <td style="white-space: nowrap;"><a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/product/rpt-request-productdetail/id/".$rs["id"];?>">&nbsp;<?php echo $rs["staff_name"];?></a>&nbsp;</td>
+							   <td align="center" style="white-space: nowrap;">&nbsp;<?php echo $rs["qty"];?>&nbsp;</td>
+							   <td align="center" style="white-space: nowrap;">&nbsp;<?php echo $rs["qty_receive"];?>&nbsp;</td>
+							   <td align="center" style="white-space: nowrap;">&nbsp;<?php echo date("d-M-Y",strtotime($rs["date_request"]));?>&nbsp;</td>
+							   <td align="center" style="white-space: nowrap;">&nbsp;<?php echo date("d-M-Y",strtotime($rs["receive_date"]));?>&nbsp;</td>
+							   <td style="white-space: nowrap;">&nbsp;<?php echo $rs["note"];?>&nbsp;</td>
+							   <td align="center" style="white-space: nowrap;">&nbsp;<?php echo $rs["user_id"];?>&nbsp;</td>
+							   <td align="center" style="white-space: nowrap;">&nbsp;<?php echo $rs["status"];?>&nbsp;</td>
+							</tr>
+	                  <?php }?> 
+	                 </tbody>
 		           </table>
 		            <br>
 		             
@@ -165,7 +153,6 @@ $formFilter = $this->formFilter;
    </div>
 </div>
 <iframe name=print_frame width=0 height=0 frameborder=0 src=about:blank></iframe>
-<script>
-function doPrint() {var divToPrint = document.getElementById('divPrint');var htmlToPrint = '' +'<style type="text/css">' +'</style>';htmlToPrint += divToPrint.outerHTML;window.document.write(htmlToPrint);window.print();window.close();}
-
-</script>
+<?php 
+	echo $this->render('printscript.phtml');
+?>

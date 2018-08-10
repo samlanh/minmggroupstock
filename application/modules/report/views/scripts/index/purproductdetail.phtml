@@ -1,7 +1,7 @@
 <?php 
 $tr=Application_Form_FrmLanguages::getCurrentlanguage();
 ?>
-<title>Purchase Report</title>
+<title><?php echo $tr->translate("RPT_PURCHASE_DETAIL");?></title>
 <div class="row">
 	<div class="col-md-12">
 		<div class="portlet box blue">
@@ -9,26 +9,13 @@ $tr=Application_Form_FrmLanguages::getCurrentlanguage();
 				<div class="caption">
 					<i class="fa fa-globe"></i><?php echo $tr->translate("RPT_PURCHASE_DETAIL");?>
 				</div>
-						<div class="btn-group pull-right">
-							 <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true" aria-expanded="false">
-							   Actions <i class="fa fa-angle-down"></i>
-							 </button>
-								<ul class="dropdown-menu" role="menu">
-									<li>
-										<a href="#" onclick="doPrint();">
-											<i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Print
-										</a>
-									</li>
-									<li>
-										<a href="#" onClick="exports()"><i class="fa fa-file-excel-o" aria-hidden="true"></i>&nbsp;&nbsp;Export Excel </a>
-									</li>
-									
-								</ul>
-					</div>
+				<div class="btn-group pull-right">
+						 <?php 	echo $this->render('printbutton.phtml');?>
+				</div>
 			</div>
             <div class="portlet-body form frmfilter">
 					<div style="clear:both;"></div>	
-	<div style=" min-height:28cm; margin:0 auto; border: 1px dotted #ccc; padding:0px 0.2cm">
+	<div style="min-height:26cm; margin:0 auto; padding:0.2cm 0.2cm 0cm 0.2cm">
 	<div id="divPrint" style="width: 100%;">
 	<style>
 		.style{
@@ -49,14 +36,14 @@ $tr=Application_Form_FrmLanguages::getCurrentlanguage();
 		    	<td align="center">
 		        	<table width="100%" style="font-family: 'Khmer OS Battambang';" cellpadding="0" cellpadding="0">
 		            	<tbody><tr>
-		                	<td width="20%" valign="top"><img src="<?php echo $this->baseUrl();?>/images/logo.jpg" height="55px"></td>
-		                	<td width="60%" valign="top">
+		                	<td width="25%" valign="top"><img src="<?php echo $this->baseUrl();?>/images/logo.jpg" height="85px"></td>
+		                	<td width="50%" valign="top">
 		                		<ul>
-		                		    <li style="text-align:center; font-size:14px; font-family:'Khmer OS Muol Light'"><?php echo $tr->translate("COMPANY_CUSTOMER");?></li>
-		                			<li style="text-align:center; font-size:13px; font-family:'Khmer OS Muol Light'"><?php echo $tr->translate("RPT_PURCHASE_DETAIL");?></li>
+		                		    <li style="text-align:center; font-size:14px; font-family:'Khmer MEF2'"><?php echo $tr->translate("COMPANY_CUSTOMER");?></li>
+		                			<li style="text-align:center; font-size:13px; font-family:'Khmer MEF2'"><?php echo $tr->translate("RPT_PURCHASE_DETAIL");?></li>
 		                		</ul>
 		                	</td>
-		                    <td width="20%"></td>
+		                    <td width="25%"></td>
 		                </tr> 
 		                <tr>
 		                	<td colspan="3" valign="top">
@@ -95,7 +82,7 @@ $tr=Application_Form_FrmLanguages::getCurrentlanguage();
 		    <tr>
 		    	<td class="table2excel" id="exportExcel"><br />
 		            <table border="1" style="border-collapse:collapse;border:1px solid #000; font-size:12px;" width="100%" cellspacing="0">
-		                 <tbody><tr bgcolor="#ccc" class="style" align="center" style="font-weight:bold; line-height: 20px; font-size:14px; padding:1px 0px; white-space: nowrap; ">
+		                 <tbody><tr bgcolor="#c1d0f3" class="style" align="center" style="font-weight:bold; line-height: 20px; font-size:14px; padding:1px 0px; white-space: nowrap; ">
 		                    <td>&nbsp;<?php echo $tr->translate("NUM");?></td>
 							<td><?php echo $tr->translate("Products/Particulars Description");?></td>
 							<td>&nbsp;<?php echo $tr->translate("ITEM_CODE");?></td>
@@ -187,8 +174,8 @@ $tr=Application_Form_FrmLanguages::getCurrentlanguage();
 						<td >&nbsp;&nbsp;<?php echo number_format($this->product[0]['paid'],2);?></td>
 					</tr>
 					<tr>
-						<td colspan="2" style="background:#ccc;border-left:1px solid #000;">&nbsp;&nbsp;Balance </td>
-						<td style="background:#ccc;">&nbsp;&nbsp;<?php echo number_format($this->product[0]['balance'],2);//$this->product[0]['balance']-$this->product[0]['paid'];?></td>
+						<td colspan="2" style="background:#c1d0f3;border-left:1px solid #000;">&nbsp;&nbsp;Balance </td>
+						<td style="background:#c1d0f3;">&nbsp;&nbsp;<?php echo number_format($this->product[0]['balance'],2);//$this->product[0]['balance']-$this->product[0]['paid'];?></td>
 					</tr>
 		                </tbody>
 		           </table>

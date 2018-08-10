@@ -10,22 +10,9 @@ $brach_name =  $this->branch;
 				<div class="caption">
 					<i class="fa fa-globe"></i><?php echo $tr->translate("Report Vendor Payment");?>
 				</div>
-						<div class="btn-group pull-right">
-							 <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true" aria-expanded="false">
-							   Actions <i class="fa fa-angle-down"></i>
-							 </button>
-								<ul class="dropdown-menu" role="menu">
-									<li>
-										<a href="#" onclick="doPrint();">
-											<i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Print
-										</a>
-									</li>
-									<li>
-										<a href="#" onClick="exports()"><i class="fa fa-file-excel-o" aria-hidden="true"></i>&nbsp;&nbsp;Export Excel </a>
-									</li>
-									
-								</ul>
-					</div>
+				<div class="btn-group pull-right">
+						 <?php 	echo $this->render('printbutton.phtml');?>
+				</div>
 			</div>
             <div class="portlet-body form frmfilter">
 				<form method="post" action=" ">
@@ -46,7 +33,7 @@ $brach_name =  $this->branch;
 					</div><div style="clear:both;"></div>
 					
 				</form> 
-	<div style=" min-height:28cm; margin:0 auto; border: 1px dotted #ccc; padding:0px 0.2cm">
+	<div style="min-height:26cm; margin:0 auto; padding:0.2cm 0.2cm 0cm 0.2cm">
 	<div id="divPrint" style="width: 100%;">
 	<style>
 		.style{
@@ -64,15 +51,15 @@ $brach_name =  $this->branch;
 		    	<td align="center">
 		        	<table width="100%" style="font-family: 'Khmer OS Battambang';" cellpadding="0" cellpadding="0">
 		            	<tbody><tr>
-		                	<td width="20%" valign="top"><img src="<?php echo $this->baseUrl();?>/images/logo.jpg" height="55px"></td>
-		                	<td width="60%" valign="top">
+		                	<td width="25%" valign="top"><img src="<?php echo $this->baseUrl();?>/images/logo.jpg" height="85px"></td>
+		                	<td width="50%" valign="top">
 		                		<ul>
-		                		    <li style="text-align:center; font-size:16px; font-family:'Khmer OS Muol Light'"><?php echo $tr->translate("COMPANY_CUSTOMER");?></li>
-		                			<li style="text-align:center; font-size:13px; font-family:'Khmer OS Muol Light'"><?php echo $tr->translate("Report Vendor Payment");?></li>
-		                			<li style="text-align:center; font-size:13px;"><?php echo date("d/m/Y",strtotime($this->rssearch['start_date']));?> ដល់ <?php echo date("d/m/Y",strtotime($this->rssearch['end_date']));?></li>
+		                		    <li style="text-align:center; font-size:16px; font-family:'Khmer MEF2'"><?php echo $tr->translate("COMPANY_CUSTOMER");?></li>
+		                			<li style="text-align:center; font-size:13px; font-family:'Khmer MEF2'"><?php echo $tr->translate("Report Vendor Payment");?></li>
+		                			<li style="text-align:center; font-size:13px;"><?php if (!empty($this->rssearch['start_date'])){ echo date("d/m/Y",strtotime($this->rssearch['start_date']));?> ដល់ <?php echo date("d/m/Y",strtotime($this->rssearch['end_date']));}?></li>
 		                		</ul>
 		                	</td>
-		                    <td width="20%"></td>
+		                    <td width="25%"></td>
 		                </tr> 
 		                <tr>
 		                	<td colspan="3" valign="top">
@@ -92,44 +79,47 @@ $brach_name =  $this->branch;
 		    </tr>
 		    <tr>
 		    	<td class="table2excel" id="exportExcel">
-		            <table border="1" style="border-collapse:collapse;border:1px solid #000; font-size:12px;" width="100%" cellspacing="0">
-		                 <tbody><tr bgcolor="#ccc" class="style" align="center" style="font-weight:bold; line-height: 26px; font-size:12px; padding:1px 0px; white-space: nowrap; ">
-		                    <td>&nbsp;<?php echo $tr->translate("NUM");?></td>
-							<td><?php echo $tr->translate("BRANCH_NAME");?></td>
-							<td>&nbsp;<?php echo $tr->translate("VENDOR_NAME");?></td>
-							<td>&nbsp;<?php echo $tr->translate("RECEIPT_NO");?></td>
-							<td><?php echo $tr->translate("PAYMENT_DATE");?></td>
-							<td>&nbsp;<?php echo $tr->translate("GRAND_TOTAL");?></td>
-							<td>&nbsp;<?php echo $tr->translate("PAID");?></td>
-							<td >&nbsp;<?php echo $tr->translate("BALANCE");?></td>
-							<td>&nbsp;<?php echo $tr->translate("BY_USER");?></td>
-		                </tr>
+		           <table class="table2excel" border="1"​ style="border-collapse:collapse;border:1px solid #000; font-size:12px;" width="100%" cellspacing="0">
+		           		<thead>
+			                <tr bgcolor="#c1d0f3" class="style" align="center" style="font-weight:bold;line-height: 30px; font-size:12px; padding:1px 0px; white-space: nowrap; ">
+		                    	<td>&nbsp;<?php echo $tr->translate("NUM");?>&nbsp;</td>
+								<td><?php echo $tr->translate("BRANCH_NAME");?>&nbsp;</td>
+								<td>&nbsp;<?php echo $tr->translate("VENDOR_NAME");?>&nbsp;</td>
+								<td>&nbsp;<?php echo $tr->translate("RECEIPT_NO");?>&nbsp;</td>
+								<td><?php echo $tr->translate("PAYMENT_DATE");?>&nbsp;</td>
+								<td>&nbsp;<?php echo $tr->translate("GRAND_TOTAL");?>&nbsp;</td>
+								<td>&nbsp;<?php echo $tr->translate("PAID");?>&nbsp;</td>
+								<td >&nbsp;<?php echo $tr->translate("BALANCE");?>&nbsp;</td>
+								<td>&nbsp;<?php echo $tr->translate("BY_USER");?>&nbsp;</td>
+			                </tr>
+		                </thead>
+		                <tbody>
 		                <?php $num=1; 
 		                $r_netotal = 0;$r_paid = 0; $r_balance = 0;
 		                $d_netotal = 0;$d_paid = 0; $d_balance = 0;
 		                $b_netotal = 0;$b_paid = 0; $b_balance = 0;
 		                if(!empty($this->vendor_payment))foreach ($this->vendor_payment AS $index => $rs){?>
 						<tr class='row-format<?php echo $num; $num=1-$num;?> hover' style="border:1px solid #000; white-space: nowrap;">
-						   <td align="center" style="white-space: nowrap;">&nbsp;<?php echo $index+1?></td>
-						   <td style="white-space: nowrap;"><a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/index/rpt-vendor-paymentdetail/id/".$rs["id"];?>">&nbsp;<?php echo $rs["branch_name"];?></a></td>
-						   <td style="white-space: nowrap;"><a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/index/rpt-vendor-paymentdetail/id/".$rs["id"];?>">&nbsp;<?php echo $rs["vendor_name"];?></a></td>
-						   <td style="white-space: nowrap;"><a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/index/rpt-vendor-paymentdetail/id/".$rs["id"];?>">&nbsp;<?php echo $rs["receipt_no"];?></a></td>
-						   <td style="white-space: nowrap;">&nbsp;<?php echo date("d-M-Y",strtotime($rs["expense_date"]));?></td>
-						   <td style="white-space: nowrap;font-family:'Open Sans', sans-serif;font-size: 12px; font-weight: bold;">&nbsp;<?php echo number_format($rs["total"],2);?></td>
-						   <td style="white-space: nowrap;font-family:'Open Sans', sans-serif;font-size: 12px; font-weight: bold;">&nbsp;<?php echo number_format($rs["paid"],2);?></td>
-						   <td style="white-space: nowrap;font-family:'Open Sans', sans-serif;font-size: 12px; font-weight: bold;">&nbsp;<?php echo number_format($rs["balance"],2);?></td>
-						   <td>&nbsp;<?php echo $rs["user_name"];?></td>
+						   <td align="center" style="white-space: nowrap;">&nbsp;<?php echo $index+1?>&nbsp;</td>
+						   <td style="white-space: nowrap;">&nbsp;<a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/index/rpt-vendor-paymentdetail/id/".$rs["id"];?>">&nbsp;<?php echo $rs["branch_name"];?></a>&nbsp;</td>
+						   <td style="white-space: nowrap;">&nbsp;<a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/index/rpt-vendor-paymentdetail/id/".$rs["id"];?>">&nbsp;<?php echo $rs["vendor_name"];?></a>&nbsp;</td>
+						   <td align="center" style="white-space: nowrap;">&nbsp;<a style="color:#000;text-decoration: none;" target="_blank" href="<?php echo $this->baseUrl()."/report/index/rpt-vendor-paymentdetail/id/".$rs["id"];?>">&nbsp;<?php echo $rs["receipt_no"];?></a>&nbsp;</td>
+						   <td align="center" style="white-space: nowrap;">&nbsp;<?php echo date("d-M-Y",strtotime($rs["expense_date"]));?></td>
+						   <td align="right" style="white-space: nowrap;font-family:'Open Sans', sans-serif;font-size: 12px; font-weight: bold;">&nbsp;<?php echo number_format($rs["total"],2);?>&nbsp;</td>
+						   <td align="right" style="white-space: nowrap;font-family:'Open Sans', sans-serif;font-size: 12px; font-weight: bold;">&nbsp;<?php echo number_format($rs["paid"],2);?>&nbsp;</td>
+						   <td align="right" style="white-space: nowrap;font-family:'Open Sans', sans-serif;font-size: 12px; font-weight: bold;">&nbsp;<?php echo number_format($rs["balance"],2);?>&nbsp;</td>
+						   <td align="center">&nbsp;<?php echo $rs["user_name"];?>&nbsp;</td>
 						</tr>
 						   <?php 
 								$d_netotal = $d_netotal+$rs["total"];
 								$d_paid = $d_paid+$rs["paid"];
 								$d_balance = $d_balance+$rs["balance"];
                     }?>
-		                </tbody>
+		               </tbody>
 		           </table>
 		            <br>
 		             <table border="1" style="border-collapse:collapse;border:1px solid #000; font-size:12px;" width="100%" cellspacing="0">
-		                <tbody><tr height="30px;" bgcolor="#ccc" class="style" align="center" style="floafont-weight:bold; line-height: 14px; font-size:12px; padding:2px 0px; ">
+		                <tbody><tr height="30px;" bgcolor="#c1d0f3" class="style" align="center" style="floafont-weight:bold; line-height: 14px; font-size:12px; padding:2px 0px; ">
 		                    <td><?php echo $tr->translate("CURRENCY_TYPE");?></td>
 		                    <td><strong><?php echo $tr->translate("ALL_TOTAL");?></strong></td>
 		                    <td><strong><?php echo $tr->translate("ALL_PAID");?></strong></td>
@@ -137,9 +127,9 @@ $brach_name =  $this->branch;
 		                </tr>
 		                 <tr class="style" style=" line-height: 24px; font-size:11px;">
 		                    <td align="center">&nbsp;<?php echo $tr->translate("DOLLAR");?></td>
-		                     <td style="font-family:'Open Sans', sans-serif;font-size: 12px; font-weight: bold;">&nbsp;<?php echo number_format($d_netotal,2);?>&nbsp;</td>
-		                      <td style="font-family:'Open Sans', sans-serif;font-size: 12px; font-weight: bold;">&nbsp;<?php echo number_format($d_paid,2);?>&nbsp;</td>
-		                    <td style="font-family:'Open Sans', sans-serif;font-size: 12px; font-weight: bold;">&nbsp;<?php echo number_format($d_netotal-$d_paid,2);?>&nbsp;</td>
+		                    <td align="right" style="font-family:'Open Sans', sans-serif;font-size: 12px; font-weight: bold;">&nbsp;<?php echo number_format($d_netotal,2);?>&nbsp;</td>
+		                    <td align="right" style="font-family:'Open Sans', sans-serif;font-size: 12px; font-weight: bold;">&nbsp;<?php echo number_format($d_paid,2);?>&nbsp;</td>
+		                    <td align="right" style="font-family:'Open Sans', sans-serif;font-size: 12px; font-weight: bold;">&nbsp;<?php echo number_format($d_netotal-$d_paid,2);?>&nbsp;</td>
 		                 </tr>
 		               </tbody>
 		             </table>
@@ -165,6 +155,6 @@ $brach_name =  $this->branch;
    </div>
 </div>
 <iframe name=print_frame width=0 height=0 frameborder=0 src=about:blank></iframe>
-<script>
-function doPrint() {var divToPrint = document.getElementById('divPrint');var htmlToPrint = '' +'<style type="text/css">' +'</style>';htmlToPrint += divToPrint.outerHTML;window.document.write(htmlToPrint);window.print();window.close();}
-</script>
+<?php 
+	echo $this->render('printscript.phtml');
+?>
