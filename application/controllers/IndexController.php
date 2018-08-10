@@ -10,6 +10,8 @@ class IndexController extends Zend_Controller_Action
     {
     	$this->_helper->layout()->disableLayout();///sopharat disablelayout to display login
   		$tr = Application_Form_FrmLanguages::getCurrentlanguage();
+  		$key = new Application_Model_DbTable_DbGlobal();
+  		$this->view->data=$key->getKeyCodeMiniInv(TRUE);
 		if($this->getRequest()->isPost()){
 			$formdata=$this->getRequest()->getPost();
 			$db_user=new Application_Model_DbTable_DbUsers();
@@ -69,6 +71,8 @@ class IndexController extends Zend_Controller_Action
 // 				$this->view->msg  = $tr->translate('EMAIL_NOT');
 // 			}
 		}
+		$session_lang=new Zend_Session_Namespace('lang');
+		$this->view->rslang = $session_lang->lang_id;
 	}		 
  	public function logoutAction()
     {
