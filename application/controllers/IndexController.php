@@ -79,7 +79,7 @@ class IndexController extends Zend_Controller_Action
 // 			}
 		}
 		$session_lang=new Zend_Session_Namespace('lang');
-		$this->view->rslang = $session_lang->lang_id;
+		$this->view->rslang = empty($session_lang->lang_id)?1:$session_lang->lang_id;
 	}		 
  	public function logoutAction()
     {

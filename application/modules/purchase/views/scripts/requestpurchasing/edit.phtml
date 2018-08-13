@@ -100,9 +100,14 @@
 								</button>
 							</label>
 							<label class="control-label col-md-8">
-								<select data-placeholder="Select..." class="form-control select2me " style="text-align: left;" id="add_item" name="add_item" Onchange="getItemOrder();" >
-								<?php echo $this->items; ?>
+								<div class="form-group scrollable-dropdown">
+		                            <input type="text" class="form-control scrollable-dropdown-menu" id="add_item" placeholder="<?php echo $tr->translate("Please Select Product");?>" />
+	                          	</div>
+	                          	<!-- 
+	                          	<select data-placeholder="Select..." class="form-control select2me " style="text-align: left;" id="add_item" name="add_item" Onchange="getItemOrder();" >
+								<?php //echo $this->items; ?>
 								</select>
+	                          	 -->
 							</label>
 							<label class="control-label col-md-2 col-lg-2 col-sm-12">
 								<button type="button" onclick="popupProduct();" class="btn red delete col-md-12">
@@ -481,8 +486,40 @@
           </div>
         </div>
     </div>
- </div>	
+ </div>
+<script src="<?php echo $this->baseUrl()?>/assets/global/plugins/typeahead/typeahead.bundle.min.js" type="text/javascript"></script>
+<script src="<?php echo $this->baseUrl()."/assets/global/plugins/typeahead/"?>/bloodhound.min.js" type="text/javascript"></script>
+<script src="<?php echo $this->baseUrl()?>/assets/global/plugins/typeahead/handlebars.min.js" type="text/javascript"></script>	
 <script>
+APP_URL = '<?php echo $this->baseUrl()?>';
+var bestLocation = new Bloodhound({
+	  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('item_code'),
+	  queryTokenizer: Bloodhound.tokenizers.whitespace,
+	  prefetch: APP_URL+"/purchase/requestpurchasing/productsjsoneslist"
+	 
+	});
+	  
+	$('.scrollable-dropdown-menu').typeahead(null, {
+	  name: 'from',
+	  display: 'id',
+	  source: bestLocation,
+	  hint: true,
+      highlight: true,
+      minLength: 0,
+	  templates: {
+	    empty: [
+	      '<div class="empty-message">',
+	        'Product not found',
+	      '</div>'
+	    ].join('\n'),
+	    suggestion: Handlebars.compile('<div><strong>{{item_code}}</strong> – ( {{label_info}} )</div>')
+	  },
+	});
+$('.scrollable-dropdown-menu').on('typeahead:selected', function(evt, item) {   
+	getItemOrder();
+	$('.scrollable-dropdown-menu').typeahead('val','');
+});
+
 function getSuppliyer(){
 	v_id = $("#v_name").val();
 	if(v_id==-1){

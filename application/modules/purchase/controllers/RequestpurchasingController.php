@@ -235,6 +235,13 @@ class Purchase_RequestpurchasingController extends Zend_Controller_Action
   		exit();
   	}
   }
+  
+  function productsjsoneslistAction(){
+  	$items = new Application_Model_GlobalClass();
+  	$product = $items->getAllProductForPurchase();
+  	echo json_encode($product);
+  	exit();
+  }
  
 
 }
