@@ -498,26 +498,32 @@
 <script>
 APP_URL = '<?php echo $this->baseUrl()?>';
 var bestLocation = new Bloodhound({
-	  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('item_code'),
+	  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('barcode'),
 	  queryTokenizer: Bloodhound.tokenizers.whitespace,
-	  prefetch: APP_URL+"/purchase/requestpurchasing/productsjsoneslist"
-	 
+	  prefetch: APP_URL+"/purchase/requestpurchasing/getproductjsonlist",
+	  remote: {
+		    url: APP_URL+"/purchase/requestpurchasing/getproductjsonlist",
+		    wildcard: '%QUERY'
+		  }
 	});
 	  
-	$('.scrollable-dropdown-menu').typeahead(null, {
+	$('.scrollable-dropdown-menu').typeahead({
+		  hint: true,
+	      highlight: true,
+	      minLength: 0,
+	}, {
 	  name: 'from',
 	  display: 'id',
 	  source: bestLocation,
-	  hint: true,
-      highlight: true,
-      minLength: 0,
+	 
+      limit: 100,
 	  templates: {
 	    empty: [
 	      '<div class="empty-message">',
 	        'Product not found',
 	      '</div>'
 	    ].join('\n'),
-	    suggestion: Handlebars.compile('<div><strong>{{item_code}}</strong> – ( {{label_info}} )</div>')
+	    suggestion: Handlebars.compile('<div><span style="color:red;">{{barcode}}</span> – <span style="color:#02014a;font-weight: 300;">( {{label_info}} )</span></div>')
 	  },
 	});
 $('.scrollable-dropdown-menu').on('typeahead:selected', function(evt, item) {   

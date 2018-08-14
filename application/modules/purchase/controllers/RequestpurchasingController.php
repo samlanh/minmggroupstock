@@ -236,7 +236,7 @@ class Purchase_RequestpurchasingController extends Zend_Controller_Action
   	}
   }
   
-  function productsjsoneslistAction(){
+  function getproductjsonlistAction(){
   	$items = new Application_Model_GlobalClass();
   	$product = $items->getAllProductForPurchase();
   	echo json_encode($product);

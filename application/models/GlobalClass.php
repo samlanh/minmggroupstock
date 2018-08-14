@@ -345,7 +345,7 @@ class Application_Model_GlobalClass  extends Zend_Db_Table_Abstract
 		$db = $this->getAdapter();
 		$stringstyle = "style='color:red;'";
 		$sql="
-		SELECT id,item_code,
+		SELECT id,barcode,item_code,
 		 CONCAT_WS(' ',item_name,' [',(SELECT c.name FROM tb_category AS c WHERE c.status = 1 AND c.name!='' AND c.id = cate_id LIMIT 1 ),
 ']', ' 1',(SELECT tb_measure.name FROM `tb_measure` WHERE tb_measure.id=measure_id LIMIT 1),'=',qty_perunit,unit_label) AS label_info
 			FROM tb_product WHERE 
