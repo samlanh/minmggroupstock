@@ -87,9 +87,16 @@ class report_ProductController extends Zend_Controller_Action
     				'color'		=>	'',
     				'size'		=>	'',
     				'status'	=>	1,
-    				'status_qty'=>-1
+    				'status_qty'=>-1,
+    				'hideImage'	=>	0,
+    				'hideQty'	=>	0,
+    				'hidePrice'	=>	0,
+    				'hideCost'	=>	0,
+    				'hideTotalCost'	=>	0,
+    				
     		);
     	}
+    	$this->view->filter = $data;
 		$this->view->search = $db->getBranch($data["branch"]);
     	$this->view->product = $db->getAllProduct($data);
     	$formFilter = new Product_Form_FrmProduct();
@@ -142,7 +149,7 @@ class report_ProductController extends Zend_Controller_Action
     }
     function showbarcodeAction(){
     	$id = ($this->getRequest()->getParam('id'));
-    	$sql ="SELECT id,barcode,item_name,cate_id,
+    	$sql ="SELECT id,item_code,barcode,item_name,cate_id,
 			((SELECT name FROM `tb_category` WHERE id=cate_id)) as cate_name
     	FROM `tb_product` WHERE id IN (".$id.")";
     	$db = new Application_Model_DbTable_DbGlobal();

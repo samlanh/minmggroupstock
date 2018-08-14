@@ -19,6 +19,7 @@ Class report_Model_DbProduct extends Zend_Db_Table_Abstract{
 				  p.`id`,
 				  p.`barcode`,
 				  p.`item_code`,
+				   p.`photo`,
 				  p.`item_name` ,
 	  			  p.`serial_number`,
 	  			  p.`status`,

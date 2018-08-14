@@ -8,6 +8,10 @@ $formFilter = $this->formFilter;
 .noneprint{
 	display: table-cell !important; 
 }
+.noneprintes{
+	display: inline-block !important; 
+}
+
 </style>
 <div class="row">
 	<div class="col-md-12">
@@ -39,7 +43,7 @@ $formFilter = $this->formFilter;
 					</div>
 			</div>
             <div class="portlet-body form frmfilter">
-				<form method="post" action="<?php //echo $formFilter->getAction(); ?>">
+				<form id="filterform" method="post" action="<?php //echo $formFilter->getAction(); ?>">
 					<div class="form-body">
 							<div class="form-group">
 								<label class="control-label col-md-3">
@@ -68,6 +72,11 @@ $formFilter = $this->formFilter;
 								</label>
 								<label class="control-label col-md-3">
 									<?php echo $formFilter->getElement('status_qty');?>
+									<input type="hidden" name="hideImage" id="hideImage" value="<?php echo $this->filter['hideImage'];?>">
+									<input type="hidden" name="hideQty" id="hideQty" value="<?php echo $this->filter['hideQty'];?>">
+									<input type="hidden" name="hidePrice" id="hidePrice" value="<?php echo $this->filter['hidePrice'];?>">
+									<input type="hidden" name="hideCost" id="hideCost" value="<?php echo $this->filter['hideCost'];?>">
+									<input type="hidden" name="hideTotalCost" id="hideTotalCost" value="<?php echo $this->filter['hideTotalCost'];?>">
 								</label>
 							</div>	
 							<div class="form-group">
@@ -139,14 +148,15 @@ $formFilter = $this->formFilter;
 		                <thead>
 		                 <tr bgcolor="#c1d0f3" class="style" align="center" style="font-weight:bold;line-height: 30px; font-size:12px; padding:1px 0px; white-space: nowrap; ">
 		                    <td>&nbsp;<?php echo $tr->translate("NUM");?></td>
+		                    <td <?php if ($this->filter['hideImage']==1){ echo 'class="noneprint" style="display: none;"';}?> ><?php echo $tr->translate("PHOTO");?> <span class="noneprintes" style="display: none;"><input <?php if($this->filter['hideImage']==1){ echo 'checked="checked"';}?> style="height: 15px;margin-top: 5px;" type="checkBox" onClick="checkedShow('hideImage')" name="check_hideImage" id="check_hideImage" /></span></td>
 							<td><?php echo $tr->translate("ITEM_CODE");?></ts>
 							<td><?php echo $tr->translate("ITEM_NAME");?></td>
 							<td><?php echo $tr->translate("PRODUCT_CATEGORY");?></td>
 							<td><?php echo $tr->translate("MEASURE");?></td>
-							<td><?php echo $tr->translate("QTY");?></td>
-							<td><?php echo $tr->translate("PRODUCT_PRICE_INFO");?></td>
-							<td><?php echo $tr->translate("COST_PRICE");?></td>
-							<td><?php echo $tr->translate("TOTAL_COST");?></td>
+							<td <?php if ($this->filter['hideQty']==1){ echo 'class="noneprint" style="display: none;"';}?>><?php echo $tr->translate("QTY");?> <span class="noneprintes" style="display: none;"><input style="height: 15px;margin-top: 5px;" type="checkBox" <?php if($this->filter['hideQty']==1){ echo 'checked="checked"';}?> onClick="checkedShow('hideQty')" name="check_hideQty" id="check_hideQty" /></span></td>
+							<td <?php if ($this->filter['hidePrice']==1){ echo 'class="noneprint" style="display: none;"';}?>><?php echo $tr->translate("PRODUCT_PRICE_INFO");?> <span class="noneprintes" style="display: none;"><input style="height: 15px;margin-top: 5px;" type="checkBox" <?php if($this->filter['hidePrice']==1){ echo 'checked="checked"';}?> onClick="checkedShow('hidePrice')" name="check_hidePrice" id="check_hidePrice" /></span></td>
+							<td <?php if ($this->filter['hideCost']==1){ echo 'class="noneprint" style="display: none;"';}?>><?php echo $tr->translate("COST_PRICE");?><span class="noneprintes" style="display: none;"><input style="height: 15px;margin-top: 5px;" type="checkBox" <?php if($this->filter['hideCost']==1){ echo 'checked="checked"';}?> onClick="checkedShow('hideCost')" name="check_hideCost" id="check_hideCost" /></span></td>
+							<td <?php if ($this->filter['hideTotalCost']==1){ echo 'class="noneprint" style="display: none;"';}?>><?php echo $tr->translate("TOTAL_COST");?><span class="noneprintes" style="display: none;"><input style="height: 15px;margin-top: 5px;" type="checkBox" <?php if($this->filter['hideTotalCost']==1){ echo 'checked="checked"';}?> onClick="checkedShow('hideTotalCost')" name="check_hideTotalCost" id="check_hideTotalCost" /></span></td>
 							<td class="noneprint" style="display: none;"><?php echo $tr->translate("BARCODE");?></td>
 		                </tr>
 		                </thead>
@@ -177,19 +187,26 @@ $formFilter = $this->formFilter;
 								$l_qty = 0;
 							}
 							$cost_price = $cost_price+($l_qty*$row["price"]);
+							$images = $this->baseUrl().'/images/no_images.jpg';
+							if (!empty($row["photo"])){
+								if (file_exists(PUBLIC_PATH.'/images/proimage/'.$row["photo"])) {
+									$images = $this->baseUrl().'/images/proimage/'.$row['photo'];
+								}
+							}
 						?>
 							<tr class='row-format<?php echo $num; ?>' id="item_<?php echo $index; ?>">
 								<td align="center" style="white-space: nowrap;">&nbsp;<?php echo $index+1; ?></td>
+								<td <?php if ($this->filter['hideImage']==1){ echo 'class="noneprint" style="display: none;"';}?> >&nbsp;<img style="width: 70px;height: 35px;" src="<?php echo $images;?>" />&nbsp;</td>
 								<td style="white-space: nowrap;">&nbsp;<?php echo $row["item_code"]?>&nbsp;</td>
-								<td style="">&nbsp;<?php echo $row["item_name"]?>&nbsp;</td>
+								<td  >&nbsp;<?php echo $row["item_name"]?>&nbsp;</td>
 								<!--<td style="width:5% !important"><?php //echo $row["barcode"]?></td>-->
 								<!--<td style="width:8% !important"><?php //echo $row["serial_number"]?> </td>-->
 								<td align="left" style="width:10% !important" >&nbsp;<?php echo $row["cat"];?>&nbsp;</td>
-								<td style="width:5% !important" class="center">&nbsp;<?php echo $row["measure"];?>&nbsp;</td>
-								<td align="center" style="width:8% !important" class="center">&nbsp;<?php echo $l_qty;?>&nbsp;</td>
-								<td align="right" style="width:8% !important" class="center"><?php echo number_format($row["master_price"],2);?></td>
-								<td align="right" style="width:8% !important" >&nbsp;<?php echo number_format($row["price"],2);?>&nbsp;</td>
-								<td align="right" style="width:8% !important" >&nbsp;<?php echo number_format($row["price"]*$l_qty,2);?>&nbsp;</td>
+								<td  align="center" >&nbsp;<?php echo $row["measure"];?>&nbsp;</td>
+								<td <?php if ($this->filter['hideQty']==1){ echo 'class="noneprint" style="display: none;"';}?> align="center" style="width:8% !important" class="center">&nbsp;<?php echo $l_qty;?>&nbsp;</td>
+								<td <?php if ($this->filter['hidePrice']==1){ echo 'class="noneprint" style="display: none;"';}?> align="right" style="width:8% !important" class="center"><?php echo number_format($row["master_price"],2);?></td>
+								<td <?php if ($this->filter['hideCost']==1){ echo 'class="noneprint" style="display: none;"';}?> align="right" style="width:8% !important" >&nbsp;<?php echo number_format($row["price"],2);?>&nbsp;</td>
+								<td <?php if ($this->filter['hideTotalCost']==1){ echo 'class="noneprint" style="display: none;"';}?> align="right" style="width:8% !important" >&nbsp;<?php echo number_format($row["price"]*$l_qty,2);?>&nbsp;</td>
 								<td align="center" class="noneprint" style=" display:none; width:8% !important" class="center">
 									<input style="height: 15px;margin-top: 5px;" type="checkBox" onClick="checked_id(<?php echo $i?>)" name="check_box<?php echo $i?>" id="check_box<?php echo $i?>" />
 									<input type="hidden" name="pro_id<?php echo $i;?>" id="pro_id<?php echo $i;?>" value="<?php echo $row['id'];?>" dojoType="dijit.form.TextBox" />
@@ -235,6 +252,15 @@ $formFilter = $this->formFilter;
 </div>
 <iframe name=print_frame width=0 height=0 frameborder=0 src=about:blank></iframe>
 <script>
+						
+function checkedShow(key){
+	if($('#check_'+key).is(':checked')){
+		$('#'+key).val("1");
+	}else{
+		$('#'+key).val("0");
+	}
+	$("#filterform").submit();
+}
 function printSelected(){
 	<?php 
 		defined('BASE_URL')	|| define('BASE_URL', Zend_Controller_Front::getInstance()->getBaseUrl());
