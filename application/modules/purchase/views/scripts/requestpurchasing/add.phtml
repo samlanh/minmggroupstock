@@ -251,6 +251,25 @@
 <script src="<?php echo $this->baseUrl()."/assets/global/plugins/typeahead/"?>/bloodhound.min.js" type="text/javascript"></script>
 <script src="<?php echo $this->baseUrl()?>/assets/global/plugins/typeahead/handlebars.min.js" type="text/javascript"></script>
 <script>
+$( document ).ready(function(){
+	$(window).keydown(function(event){
+		$(":focus").each(function() {
+			if($( "#"+$(this).attr("id") ).hasClass( "scrollable-dropdown-menu" )){
+				if(event.keyCode == 13) {
+					var add_item = $("#add_item").val();
+					$('.scrollable-dropdown-menu').typeahead('val',add_item);
+					 event.preventDefault();
+					return false;
+				}
+			}else{
+				if(event.keyCode == 13) {
+					  event.preventDefault();
+					return false;
+				}
+			}
+		});
+	  });
+});
 APP_URL = '<?php echo $this->baseUrl()?>';
 var bestLocation = new Bloodhound({
 	  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('barcode'),

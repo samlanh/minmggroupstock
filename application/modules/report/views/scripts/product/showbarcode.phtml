@@ -15,32 +15,75 @@
 // 	 $level = $result["level"];
   
   ?>
-<div class="row barcode-read">
-	<h2 style="font-size: 14px;text-align: center;font-family:'Khmer MEF2'">
-		<?php echo $tr->translate("COMPANY_CUSTOMER")."<br /><br />";?>
-		លេខកូដទំនិញ
-	</h2>
-	
-	<?php 
-	$cate_id='';
-	if(!empty($this->rsproduct)) foreach($this->rsproduct as $key => $rs){?>	
-	 <?php $url_barcode = $this->url(array("module"=>"report","controller"=>"product","action"=>"generate-barcode","pro_code"=>$rs['barcode']),null,true); ?>
-		<?php if($rs['cate_id']!=$cate_id){?>		
-		<?php if($key>0){?></ul><?php }?>				
-		<h2 style="clear:left;font-size: 14px;text-align: center;font-family:'Khmer MEF2'"><?php echo $rs['cate_name'];?></h2>
-		<ul>
-		<?php }
-		$cate_id = $rs['cate_id'];?>
-		<li class="<?php if(count($this->rsproduct)==$key+1){ echo 'lastrecord';}?>">
-			<div style="margin-bottom: 3px;"><?php echo $rs['item_name']."<br />"?></div>
-		<img src="<?php echo $url_barcode;?>" /></li>
-	<?php }?>
-	</ul>
+ <title><?php echo $tr->translate("លេខកូដទំនិញ");?></title>
+<div class="row">
+	<div class="col-md-12">
+		<div class="portlet box blue">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-globe"></i><?php echo $tr->translate("លេខកូដទំនិញ");?>
+				</div>
+				<div class="btn-group pull-right">
+					 <?php 	echo $this->render('printbutton.phtml');?>
+				</div>
+			</div>
+		</div>
+		<div style="min-height:26cm; margin:0 auto; padding:0.2cm 0.2cm 0cm 0.2cm">	
+			<div id="divPrint" style="width: 100%;">
+				  <style>
+						div.barcode-read ul li,div.barcode-read  li{list-style: none;
+						float:left;border:1px solid #000;padding:0px 10px; margin-bottom: 10px;
+						text-align: center; border-right:none; style="font-family: 'Khmer OS Battambang';"}
+						div.barcode-read ul{border-right:1px solid #000 !important;}
+						div.barcode-read li.lastrecord,div.barcode-read ul li.lastrecord{border-right:1px solid #000 !important; }
+					</style>
+				<div class="barcode-read">
+					<h2 style="font-size: 14px;text-align: center;font-family:'Khmer MEF2'">
+						<?php echo $tr->translate("COMPANY_CUSTOMER")."<br /><br />";?>
+						លេខកូដទំនិញ
+					</h2>
+					
+					<?php 
+					$cate_id='';
+					if(!empty($this->rsproduct)) foreach($this->rsproduct as $key => $rs){?>	
+					 <?php $url_barcode = $this->url(array("module"=>"report","controller"=>"product","action"=>"generate-barcode","pro_code"=>$rs['barcode']),null,true); ?>
+						<?php if($rs['cate_id']!=$cate_id){?>		
+						<?php if($key>0){?></ul><?php }?>				
+						<h2 style="clear:left;font-size: 14px;text-align: center;font-family:'Khmer MEF2'"><?php echo $rs['cate_name'];?></h2>
+						<ul>
+						<?php }
+						$cate_id = $rs['cate_id'];?>
+						<li class="<?php if(count($this->rsproduct)==$key+1){ echo 'lastrecord';}?>">
+							<div style="margin-bottom: 3px; font-family: 'Khmer OS Battambang'; color:#000;"><?php echo $rs['item_name']."<br />"?></div>
+							<img style="margin-bottom: 5px;" src="<?php echo $url_barcode;?>" /></li>
+					<?php }?>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
-<style>
-div.barcode-read ul li{list-style: none;
-float:left;border:1px solid #000;padding:0px 10px;
-text-align: center; border-right:none;}
-div.barcode-read ul{border-right:1px solid #000 !important;}
-div.barcode-read ul li.lastrecord{border-right:1px solid #000 !important; }
-</style>
+<iframe name=print_frame width=0 height=0 frameborder=0 src=about:blank></iframe>
+<script>
+function doPrint() {
+    var contents = document.getElementById("divPrint").innerHTML;
+    var frame1 = document.createElement('iframe');
+    frame1.name = "frame1";
+    frame1.style.position = "absolute";
+    frame1.style.top = "-1000000px";
+    document.body.appendChild(frame1);
+    var frameDoc = (frame1.contentWindow) ? frame1.contentWindow : (frame1.contentDocument.document) ? frame1.contentDocument.document : frame1.contentDocument;
+    frameDoc.document.open();
+    frameDoc.document.write('<html><head><title>DIV Contents</title>');
+    frameDoc.document.write('</head><body>');
+    frameDoc.document.write(contents);
+    frameDoc.document.write('</body></html>');
+    frameDoc.document.close();
+    setTimeout(function () {
+        window.frames["frame1"].focus();
+        window.frames["frame1"].print();
+        document.body.removeChild(frame1);
+    }, 5000);
+    return false;
+}
+</script>

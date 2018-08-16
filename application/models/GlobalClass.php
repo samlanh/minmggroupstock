@@ -294,49 +294,95 @@ class Application_Model_GlobalClass  extends Zend_Db_Table_Abstract
 // 		return $options;
 // 	}
 	
-	public function getProductOption(){
+// 	public function getProductOption(){
+// 		$db = $this->getAdapter();
+// 		$user_info = new Application_Model_DbTable_DbGetUserInfo();
+// 		$result = $user_info->getUserInfo();
+// 		$sql_cate = 'SELECT `id`,name FROM tb_category WHERE status = 1 AND name!="" ORDER BY name ';
+		
+// 		$row_cate = $db->fetchAll($sql_cate);
+// 		$user_info = new Application_Model_DbTable_DbGetUserInfo();
+// 		$result = $user_info->getUserInfo();
+// 		$option="";		
+// 		if($result["level"]==1 OR $result["level"]==2){
+// 			$option .= '<option value="-1">Please Select Product</option>';
+// 		}
+// 		foreach($row_cate as $cate){
+// 			$option .= '<optgroup  label="'.htmlspecialchars($cate['name'], ENT_QUOTES).'">';
+// 			if($result["level"]==1){
+// 				$sql = "SELECT id,item_name,
+// 				(SELECT tb_measure.name FROM `tb_measure` WHERE tb_measure.id=measure_id LIMIT 1) as measue_name,
+// 				unit_label,qty_perunit,
+// 				(SELECT tb_brand.name FROM `tb_brand` WHERE tb_brand.id=brand_id limit 1) As brand_name,
+// 				barcode AS item_code FROM tb_product WHERE cate_id = ".$cate['id']." 
+// 						AND item_name!='' AND status=1 ORDER BY item_name ASC";
+// 			}else{
+// 				$sql = " SELECT p.id,p.item_name,p.barcode AS item_code ,
+// 				(SELECT tb_measure.name FROM `tb_measure` WHERE tb_measure.id=p.measure_id LIMIT 1) as measue_name,
+// 				p.unit_label,p.qty_perunit,
+// 				(SELECT tb_brand.name FROM `tb_brand` WHERE tb_brand.id=p.brand_id limit 1) As brand_name
+// 				 FROM tb_product AS p				
+// 				WHERE p.cate_id = ".$cate['id']."
+// 				AND p.item_name!='' AND p.status=1 ORDER BY p.item_name ASC ";
+// 			}//AND p.item_name!='' AND p.status=1  ORDER BY p.item_name ASC ";
+// 			//INNER JOIN tb_prolocation As pl ON p.id = pl.pro_id
+// 			//AND pl.location_id =".$result['branch_id']." 
+			
+// 				$rows = $db->fetchAll($sql);
+// 				if($rows){
+// 					foreach($rows as $value){
+// 						$option .= '<option value="'.$value['id'].'" >'.
+// 							htmlspecialchars($value['item_name']." ".$value['brand_name'], ENT_QUOTES)." ".htmlspecialchars($value['item_code'].'(1'.$value['measue_name'].'='.$value['qty_perunit'].$value['unit_label'].')', ENT_QUOTES)
+// 						.'</option>';
+// 					}
+// 				}
+// 			$option.="</optgroup>";
+// 		}
+		
+// 		return $option;
+// 	}
+	function getProductOption(){
 		$db = $this->getAdapter();
 		$user_info = new Application_Model_DbTable_DbGetUserInfo();
 		$result = $user_info->getUserInfo();
-		$sql_cate = 'SELECT `id`,name FROM tb_category WHERE status = 1 AND name!="" ORDER BY name ';
 		
-		$row_cate = $db->fetchAll($sql_cate);
-		$user_info = new Application_Model_DbTable_DbGetUserInfo();
-		$result = $user_info->getUserInfo();
-		$option="";		
+		$option="";
 		if($result["level"]==1 OR $result["level"]==2){
 			$option .= '<option value="-1">Please Select Product</option>';
 		}
-		foreach($row_cate as $cate){
-			$option .= '<optgroup  label="'.htmlspecialchars($cate['name'], ENT_QUOTES).'">';
-			if($result["level"]==1){
-				$sql = "SELECT id,item_name,
-				(SELECT tb_measure.name FROM `tb_measure` WHERE tb_measure.id=measure_id LIMIT 1) as measue_name,
-				unit_label,qty_perunit,
-				(SELECT tb_brand.name FROM `tb_brand` WHERE tb_brand.id=brand_id limit 1) As brand_name,
-				barcode AS item_code FROM tb_product WHERE cate_id = ".$cate['id']." 
-						AND item_name!='' AND status=1 ORDER BY item_name ASC";
-			}else{
-				$sql = " SELECT p.id,p.item_name,p.barcode AS item_code ,
-				(SELECT tb_measure.name FROM `tb_measure` WHERE tb_measure.id=p.measure_id LIMIT 1) as measue_name,
-				p.unit_label,p.qty_perunit,
-				(SELECT tb_brand.name FROM `tb_brand` WHERE tb_brand.id=p.brand_id limit 1) As brand_name
-				 FROM tb_product AS p				
-				WHERE p.cate_id = ".$cate['id']."
-				AND p.item_name!='' AND p.status=1 ORDER BY p.item_name ASC ";
-			}//AND p.item_name!='' AND p.status=1  ORDER BY p.item_name ASC ";
-			//INNER JOIN tb_prolocation As pl ON p.id = pl.pro_id
-			//AND pl.location_id =".$result['branch_id']." 
+		
+		if($result["level"]==1){
+			$sql = "SELECT id,item_name,
+			(SELECT tb_measure.name FROM `tb_measure` WHERE tb_measure.id=measure_id LIMIT 1) as measue_name,
+			unit_label,qty_perunit,
+			(SELECT tb_brand.name FROM `tb_brand` WHERE tb_brand.id=brand_id limit 1) As brand_name,
+			barcode AS item_code FROM tb_product WHERE  item_name!='' AND status=1 ORDER BY item_name ASC";
+		}else{
+			$sql = " SELECT p.id,p.item_name,p.barcode AS item_code ,
+			(SELECT tb_measure.name FROM `tb_measure` WHERE tb_measure.id=p.measure_id LIMIT 1) as measue_name,
+			p.unit_label,p.qty_perunit,
+			(SELECT tb_brand.name FROM `tb_brand` WHERE tb_brand.id=p.brand_id limit 1) As brand_name
+			FROM tb_product AS p
+			WHERE  p.item_name!='' AND p.status=1 ORDER BY p.item_name ASC ";
+		}
+		
+// 		cate_id = ".$cate['id']."
+// 		AND
+
+		//p.cate_id = ".$cate['id']."
+// 			AND
+		
+		//AND p.item_name!='' AND p.status=1  ORDER BY p.item_name ASC ";
+		//INNER JOIN tb_prolocation As pl ON p.id = pl.pro_id
+		//AND pl.location_id =".$result['branch_id']."
 			
-				$rows = $db->fetchAll($sql);
-				if($rows){
-					foreach($rows as $value){
-						$option .= '<option value="'.$value['id'].'" >'.
-							htmlspecialchars($value['item_name']." ".$value['brand_name'], ENT_QUOTES)." ".htmlspecialchars($value['item_code'].'(1'.$value['measue_name'].'='.$value['qty_perunit'].$value['unit_label'].')', ENT_QUOTES)
+		$rows = $db->fetchAll($sql);
+		if($rows){
+			foreach($rows as $value){
+				$option .= '<option value="'.$value['id'].'" >'.
+						htmlspecialchars($value['item_code']." - ".$value['item_name']." ".$value['brand_name'], ENT_QUOTES)." ".htmlspecialchars('(1'.$value['measue_name'].'='.$value['qty_perunit'].$value['unit_label'].')', ENT_QUOTES)
 						.'</option>';
-					}
-				}
-			$option.="</optgroup>";
+			}
 		}
 		
 		return $option;

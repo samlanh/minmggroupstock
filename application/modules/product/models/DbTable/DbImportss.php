@@ -31,7 +31,42 @@ class Product_Model_DbTable_DbImportss extends Zend_Db_Table_Abstract
 		$sql = "SELECT c.id FROM `tb_category` AS c WHERE c.`name` = '".$title."' AND c.`parent_id`=0";
 		return $db->fetchOne($sql);
 	}
-	
+	function getMeaureName($mesure=null){
+		if (!empty($mesure)){
+			$db = $this->getAdapter();
+			$sql="SELECT m.`id` FROM `tb_measure` AS m WHERE m.`name`='$mesure' LIMIT 1";
+			$row =  $db->fetchOne($sql);
+			if (empty($row)){
+				return null;
+			}
+			return $row;
+		}
+		return null;
+	}
+	function getBrandName($brand=null){
+		if (!empty($brand)){
+			$db = $this->getAdapter();
+			$sql="SELECT m.`id` FROM `tb_brand` AS m WHERE m.`name`='$brand' LIMIT 1";
+			$row =  $db->fetchOne($sql);
+			if (empty($row)){
+				return null;
+			}
+			return $row;
+		}
+		return null;
+	}
+	function getVendorName($vendor=null){
+		if (!empty($vendor)){
+			$db = $this->getAdapter();
+			$sql="SELECT m.`vendor_id` FROM `tb_vendor` AS m WHERE m.`v_name`='$vendor' LIMIT 1";
+			$row =  $db->fetchOne($sql);
+			if (empty($row)){
+				return null;
+			}
+			return $row;
+		}
+		return null;
+	}
 	function productImport($data){
 		$db = $this->getAdapter();
     	$db->beginTransaction();
@@ -41,114 +76,188 @@ class Product_Model_DbTable_DbImportss extends Zend_Db_Table_Abstract
 			$userName=$session_user->user_name;
 			$GetUserId= $session_user->user_id;
 		try{
-			for($i=2; $i<=$count; $i++){
-// 				$rs_paren = $this->getParentCat($data[$i]['F']);
-// 				if(empty($rs_paren)){
-// 					$arr_parent = array(
-// 						'name'	=>	$data[$i]['F'],
-// 						'status'	=>	1,
-// 						'parent_id'	=>	0,
-// 						'date'		=>	date("Y-m-d H:i:s"),
-// 						'user_id'	=>	$GetUserId,	
-// 					);
-// 					$this->_name="tb_category";
-// 					$parent_id = $this->insert($arr_parent);
-// 				}else{
-// 					$parent_id = $rs_paren;
-// 				}
-//add category
-				$parent_id=0;
-				$rs_sub_cat=0;
-				if($data[$i]['F']!=''){
-					$rs_sub_cat = $this->getSubCategory($data[$i]['F']);
-					if(empty($rs_sub_cat)){
-						$arr_sub = array(
-								'name'	=>	$data[$i]['F'],
-								'status'	=>	1,
-								'parent_id'	=>	0,
-								'date'		=>	date("Y-m-d"),
-								'user_id'	=>	$GetUserId,
+			for($i=3; $i<=$count; $i++){
+// 				echo $i.$data[$i]['E'];exit();
+				//Add Mesure
+				$mesureId = $this->getMeaureName($data[$i]['N']);
+				if (empty($mesureId)){
+					if (!empty($data[$i]['N'])){
+						$arr_mesure = array(
+	 						'name'	=>	$data[$i]['N'],
+	 						'status'	=>	1,
+	 						'date'		=>	date("Y-m-d H:i:s"),
+	 						'user_id'	=>	$GetUserId,
 						);
-						$db->getProfiler()->setEnabled(true);
 						$this->_name="tb_category";
-						$sub_id = $this->insert($arr_sub);
-					}else{
-						$sub_id = $rs_sub_cat;
+						$mesureId = $this->insert($arr_mesure);
 					}
-				}else{
-					$sub_id=0;
 				}
-//add Measure
-				$rs_measure=0;
-				if($data[$i]['R']!=''){
-					$rs_measure = $this->getMeasure($data[$i]['R']);
-					if(empty($rs_measure)){
-						$arr_measure = array(
-								'name'	=>	$data[$i]['R'],
+				
+				//Add Brand
+				$brandId = $this->getBrandName($data[$i]['F']);
+				if (empty($brandId)){
+					if (!empty($data[$i]['F'])){
+					$arr_brand = array(
+							'name'	=>	$data[$i]['F'],
+							'status'	=>	1,
+							'date'		=>	date("Y-m-d H:i:s"),
+							'user_id'	=>	$GetUserId,
+					);
+					$this->_name="tb_brand";
+					$brandId = $this->insert($arr_brand);
+					}
+				}
+				
+				//Add Vendor
+				$vendorId = $this->getVendorName($data[$i]['D']);
+				if (empty($vendorId)){
+					if (!empty($data[$i]['D'])){
+						$arr_vendor = array(
+								'v_name'	=>	$data[$i]['D'],
+								'contact_name'	=>	$data[$i]['D'],
 								'status'	=>	1,
-								'date'		=>	date("Y-m-d"),
-								'user_id'	=>	$GetUserId,
+								'date'		=>	date("Y-m-d H:i:s"),
+	// 							'user_id'	=>	$GetUserId,
 						);
-						$this->_name="tb_measure";
-						$measur_id = $this->insert($arr_measure);
-					}else{
-						$measur_id = $rs_measure;
+						$this->_name="tb_vendor";
+						$vendorId = $this->insert($arr_vendor);
 					}
-				}else{
-					$measur_id=0;
 				}
-// 				if($data[$i]['L']=="Use"){
-// 					$status = 1;
-// 				}else{
-// 					$status = 0;
-// 				}
-//add product
-				$rs_product = $this->getProduct($sub_id,$data[$i]['E']);
-				if(empty($rs_product)){
+				
 					$arr_product = array(
+						'barcode'	=>	$data[$i]['B'],
 						'item_name'	=>	$data[$i]['E'],
 						'item_code'	=>	$data[$i]['G'],
-						'note'		=>	$data[$i]['U'],
-						'measure_id'=>	$measur_id,
-						'cate_id'	=>	$sub_id,
+						'note'		=>	$data[$i]['Q'],
+						'measure_id'=>	$mesureId,
+						'brand_id'=>	$brandId,
+// 						'cate_id'	=>	$sub_id,
 						'status'	=>	1,
-						'price'		=>	$data[$i]['S'],
-					   // 'price'		=>	number_format($data[$i]['S'],2),
-						'user_id'	=>	$GetUserId,	
+						'price'		=>	empty($data[$i]['O'])?0:$data[$i]['O'],
+						'user_id'	=>	$GetUserId,
 					);
 					$this->_name="tb_product";
 					$pro_id = $this->insert($arr_product);
-				}else{
-					$pro_id = $rs_product;
-				}
-				$row=$this->getLocation($pro_id, $location);
-				if(empty($row)){
+				
 					$arr_pro_loc = array(
 							'pro_id'			=>	$pro_id,
 							'location_id'		=>	1,
-							//'qty'				=>	number_format($data[$i]['C'],2),
-							'qty'				=>	$data[$i]['H'],
+							'qty'				=>	0,//$data[$i]['H'],
 							'qty_warning'		=>	0,
 							'damaged_qty'		=>	0,
 							'last_mod_userid'	=>	$GetUserId,
 					);
 					$this->_name = "tb_prolocation";
 					$this->insert($arr_pro_loc);
-				}else{
-					$arr_pro_loc = array(
-							'pro_id'			=>	$pro_id,
-							'location_id'		=>	1,
-							//'qty'				=>	number_format($data[$i]['C'],2),
-							'qty'				=>	$data[$i]['H'],
-							'qty_warning'		=>	0,
-							'damaged_qty'		=>	0,
-							'last_mod_userid'	=>	$GetUserId,
-					);
-					$this->_name = "tb_prolocation";
-					$where=" id=".$row['id'];
-					$this->update($arr_pro_loc, $where);
-				}
 			}
+// 			for($i=2; $i<=$count; $i++){
+// // 				$rs_paren = $this->getParentCat($data[$i]['F']);
+// // 				if(empty($rs_paren)){
+// // 					$arr_parent = array(
+// // 						'name'	=>	$data[$i]['F'],
+// // 						'status'	=>	1,
+// // 						'parent_id'	=>	0,
+// // 						'date'		=>	date("Y-m-d H:i:s"),
+// // 						'user_id'	=>	$GetUserId,	
+// // 					);
+// // 					$this->_name="tb_category";
+// // 					$parent_id = $this->insert($arr_parent);
+// // 				}else{
+// // 					$parent_id = $rs_paren;
+// // 				}
+// //add category
+// 				$parent_id=0;
+// 				$rs_sub_cat=0;
+// 				if($data[$i]['F']!=''){
+// 					$rs_sub_cat = $this->getSubCategory($data[$i]['F']);
+// 					if(empty($rs_sub_cat)){
+// 						$arr_sub = array(
+// 								'name'	=>	$data[$i]['F'],
+// 								'status'	=>	1,
+// 								'parent_id'	=>	0,
+// 								'date'		=>	date("Y-m-d"),
+// 								'user_id'	=>	$GetUserId,
+// 						);
+// 						$db->getProfiler()->setEnabled(true);
+// 						$this->_name="tb_category";
+// 						$sub_id = $this->insert($arr_sub);
+// 					}else{
+// 						$sub_id = $rs_sub_cat;
+// 					}
+// 				}else{
+// 					$sub_id=0;
+// 				}
+// //add Measure
+// 				$rs_measure=0;
+// 				if($data[$i]['R']!=''){
+// 					$rs_measure = $this->getMeasure($data[$i]['R']);
+// 					if(empty($rs_measure)){
+// 						$arr_measure = array(
+// 								'name'	=>	$data[$i]['R'],
+// 								'status'	=>	1,
+// 								'date'		=>	date("Y-m-d"),
+// 								'user_id'	=>	$GetUserId,
+// 						);
+// 						$this->_name="tb_measure";
+// 						$measur_id = $this->insert($arr_measure);
+// 					}else{
+// 						$measur_id = $rs_measure;
+// 					}
+// 				}else{
+// 					$measur_id=0;
+// 				}
+// // 				if($data[$i]['L']=="Use"){
+// // 					$status = 1;
+// // 				}else{
+// // 					$status = 0;
+// // 				}
+// //add product
+// 				$rs_product = $this->getProduct($sub_id,$data[$i]['E']);
+// 				if(empty($rs_product)){
+// 					$arr_product = array(
+// 						'item_name'	=>	$data[$i]['E'],
+// 						'item_code'	=>	$data[$i]['G'],
+// 						'note'		=>	$data[$i]['U'],
+// 						'measure_id'=>	$measur_id,
+// 						'cate_id'	=>	$sub_id,
+// 						'status'	=>	1,
+// 						'price'		=>	$data[$i]['S'],
+// 					   // 'price'		=>	number_format($data[$i]['S'],2),
+// 						'user_id'	=>	$GetUserId,	
+// 					);
+// 					$this->_name="tb_product";
+// 					$pro_id = $this->insert($arr_product);
+// 				}else{
+// 					$pro_id = $rs_product;
+// 				}
+// 				$row=$this->getLocation($pro_id, $location);
+// 				if(empty($row)){
+// 					$arr_pro_loc = array(
+// 							'pro_id'			=>	$pro_id,
+// 							'location_id'		=>	1,
+// 							//'qty'				=>	number_format($data[$i]['C'],2),
+// 							'qty'				=>	$data[$i]['H'],
+// 							'qty_warning'		=>	0,
+// 							'damaged_qty'		=>	0,
+// 							'last_mod_userid'	=>	$GetUserId,
+// 					);
+// 					$this->_name = "tb_prolocation";
+// 					$this->insert($arr_pro_loc);
+// 				}else{
+// 					$arr_pro_loc = array(
+// 							'pro_id'			=>	$pro_id,
+// 							'location_id'		=>	1,
+// 							//'qty'				=>	number_format($data[$i]['C'],2),
+// 							'qty'				=>	$data[$i]['H'],
+// 							'qty_warning'		=>	0,
+// 							'damaged_qty'		=>	0,
+// 							'last_mod_userid'	=>	$GetUserId,
+// 					);
+// 					$this->_name = "tb_prolocation";
+// 					$where=" id=".$row['id'];
+// 					$this->update($arr_pro_loc, $where);
+// 				}
+// 			}
 		//exit();	
 		$db->commit();
 		}catch(Exception $e){
